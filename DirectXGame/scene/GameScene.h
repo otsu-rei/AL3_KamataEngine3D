@@ -50,17 +50,6 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
-	
-	uint32_t textureHandle_;
-
-	std::unique_ptr<Sprite> sprite_;
-
-	std::unique_ptr<Model> model_;
-	WorldTransform worldTransform_;
-	ViewProjection viewProjection_;
-
-	uint32_t soundHandle_;
-	uint32_t voiceHandle_;
 
 	std::unique_ptr<DebugCamera> debugCamera_;
 
