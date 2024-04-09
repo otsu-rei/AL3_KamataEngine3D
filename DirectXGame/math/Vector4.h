@@ -9,3 +9,5 @@ struct Vector4 final {
 	float z;
 	float w;
 };
+
+using Vector4f = Vector4;

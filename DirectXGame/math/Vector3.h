@@ -8,3 +8,6 @@ struct Vector3 final {
 	float y;
 	float z;
 };
+
+using Vector3f = Vector3;
+// 自作のほうでVector3fで慣れているため
