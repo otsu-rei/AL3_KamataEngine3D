@@ -37,6 +37,7 @@ void GameScene::Initialize() {
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
 
+
 	soundHandle_ = audio_->LoadWave("mokugyo.wav");
 	voiceHandle_ = audio_->PlayWave(soundHandle_, true); //!< soundの再生
 
