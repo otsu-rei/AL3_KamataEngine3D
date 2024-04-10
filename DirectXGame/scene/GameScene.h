@@ -11,6 +11,9 @@
 
 #include <memory>
 
+// Game
+#include "Player.h"
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -52,5 +55,11 @@ private: // メンバ変数
 	/// </summary>
 
 	std::unique_ptr<DebugCamera> debugCamera_;
+
+	/// Game
+
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<Model> model_;
+	uint32_t textureHandle_;
 
 };

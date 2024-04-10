@@ -17,6 +17,10 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 
+	// game 
+	player_.reset();
+	model_.reset();
+
 	debugCamera_.reset();
 
 }
@@ -31,12 +35,18 @@ void GameScene::Initialize() {
 
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+
+	model_.reset(Model::Create());
+	textureHandle_ = TextureManager::Load("uvChecker.png");
+
+	player_ = std::make_unique<Player>();
+	player_->Init(model_.get(), textureHandle_);
 }
 
 void GameScene::Update() {
 
 	debugCamera_->Update();
-
+	player_->Update();
 }
 
 void GameScene::Draw() {
@@ -65,6 +75,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	player_->Draw(debugCamera_->GetViewProjection());
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
