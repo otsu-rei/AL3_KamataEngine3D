@@ -63,6 +63,8 @@ private:
 	// private methods
 	//=========================================================================================
 
+	static void (Enemy::*Action[])();
+
 	void Approach();
 
 	void Leave();

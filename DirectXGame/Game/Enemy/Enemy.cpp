@@ -6,6 +6,15 @@
 #include "imgui.h"
 #include <cassert>
 
+//=========================================================================================
+// static variables
+//=========================================================================================
+
+void (Enemy::*Enemy::Action[])() = {
+	&Enemy::Approach, //!< 接近する
+	&Enemy::Leave,    //!< 離脱する
+};
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Enemy class methods
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,15 +34,8 @@ void Enemy::Init(Model* model, uint32_t textureHandle) {
 
 void Enemy::Update() {
 
-	switch (phase_) {
-		case Phase::Approach:
-			Approach();
-			break;
-
-		case Phase::Leave:
-			Leave();
-			break;
-	}
+	// 関数ptr
+	(this->*Action[static_cast<size_t>(phase_)])();
 
 	worldTransform_.UpdateMatrix();
 
