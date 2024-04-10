@@ -34,8 +34,8 @@ void Player::Update() {
 
 	Attack();
 
-	if (bullet_) {
-		bullet_->Update();
+	for (auto bullet : bullets_) {
+		bullet->Update();
 	}
 
 	worldTransform_.UpdateMatrix();
@@ -44,8 +44,14 @@ void Player::Update() {
 void Player::Draw(const ViewProjection& viewProj) {
 	model_->Draw(worldTransform_, viewProj, textureHandle_);
 
-	if (bullet_) {
-		bullet_->Draw(viewProj);
+	for (auto bullet : bullets_) {
+		bullet->Draw(viewProj);
+	}
+}
+
+void Player::Term() {
+	for (auto bullet : bullets_) {
+		delete bullet;
 	}
 }
 
@@ -98,7 +104,9 @@ void Player::Rotate() {
 
 void Player::Attack() { 
 	if (input_->TriggerKey(DIK_SPACE)) {
-		bullet_ = new PlayerBullet();
-		bullet_->Init(model_, worldTransform_.translation_);
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Init(model_, worldTransform_.translation_);
+
+		bullets_.push_back(newBullet);
 	}
 }

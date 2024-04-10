@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------------------------
 // c++
 #include <cstdint>
+#include <list>
 
 // engine
 #include "Input.h"
@@ -25,6 +26,8 @@ public:
 	// public methods
 	//=========================================================================================
 
+	~Player() { Term(); }
+
 	//! @brief 初期化処理
 	void Init(Model* model, uint32_t textureHandle);
 
@@ -33,6 +36,9 @@ public:
 
 	//! @brief 描画処理
 	void Draw(const ViewProjection& viewProj);
+
+	//! @brief 終了処理
+	void Term();
 
 	//! @brief ImGuiに設定
 	void SetOnImGui();
@@ -57,7 +63,7 @@ private:
 	WorldTransform worldTransform_;
 
 	// bullet
-	PlayerBullet* bullet_ = nullptr;
+	std::list<PlayerBullet*> bullets_;
 
 	//=========================================================================================
 	// private methods
