@@ -7,6 +7,7 @@
 #include <cstdint>
 
 // engine
+#include "Input.h"
 #include "Model.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
@@ -33,16 +34,25 @@ public:
 	//! @brief 終了処理
 	void Term();
 
+	//! @brief ImGuiに設定
+	void SetOnImGui();
+
 private:
 
 	//=========================================================================================
 	// private variables
 	//=========================================================================================
 
-	
-	WorldTransform worldTransform_;
+	Input* input_ = Input::GetInstance();
 
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0;
+
+	// parameters
+	float speed_;
+
+	const Vector3f kMoveLimit = {10.0f, 10.0f, 10.0f};
+
+	WorldTransform worldTransform_;
 
 };

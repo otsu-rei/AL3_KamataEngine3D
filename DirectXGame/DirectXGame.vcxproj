@@ -112,6 +112,7 @@
     <ClCompile Include="Game\Player\Player.cpp" />
     <ClCompile Include="grid\Grid.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="math\MyMath.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +143,7 @@
     <ClInclude Include="grid\Grid.h" />
     <ClInclude Include="input\Input.h" />
     <ClInclude Include="math\Matrix4x4.h" />
+    <ClInclude Include="math\MyMath.h" />
     <ClInclude Include="math\Vector2.h" />
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />

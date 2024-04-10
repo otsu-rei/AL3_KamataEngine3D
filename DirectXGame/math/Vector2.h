@@ -38,3 +38,5 @@ struct Vector2 final {
 	}
 
 };
+
+using Vector2f = Vector2;

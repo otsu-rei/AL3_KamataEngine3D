@@ -54,6 +54,11 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 
+	// camera
+
+	ViewProjection viewProjection_;
+
+	bool isDebugCameraActive_ = false;
 	std::unique_ptr<DebugCamera> debugCamera_;
 
 	/// Game

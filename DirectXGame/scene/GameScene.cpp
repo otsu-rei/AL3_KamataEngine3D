@@ -31,10 +31,12 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
+	viewProjection_.Initialize();
+
 	debugCamera_ = std::make_unique<DebugCamera>(WinApp::kWindowWidth, WinApp::kWindowHeight);
 
 	AxisIndicator::GetInstance()->SetVisible(true);
-	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
 	model_.reset(Model::Create());
 	textureHandle_ = TextureManager::Load("uvChecker.png");
@@ -45,7 +47,27 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
-	debugCamera_->Update();
+#ifdef _DEBUG
+
+	ImGui::Begin("main");
+
+	ImGui::Checkbox("isDebugCameraActive", &isDebugCameraActive_);
+
+	player_->SetOnImGui();
+	ImGui::End();
+
+#endif // _DEBUG
+
+	if (isDebugCameraActive_) {
+		debugCamera_->Update();
+		viewProjection_.matView       = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
+
+	} else {
+		viewProjection_.UpdateMatrix();
+	}
+	
 	player_->Update();
 }
 
@@ -76,7 +98,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	player_->Draw(debugCamera_->GetViewProjection());
+	player_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
