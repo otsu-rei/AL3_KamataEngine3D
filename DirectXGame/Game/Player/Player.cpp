@@ -111,7 +111,7 @@ void Player::Rotate() {
 
 void Player::Attack() { 
 	if (input_->TriggerKey(DIK_SPACE)) {
-		std::unique_ptr<PlayerBullet> newBullet(new PlayerBullet());
+		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 
 		// 弾の進行方向の設定
 		
