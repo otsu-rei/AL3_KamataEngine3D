@@ -11,11 +11,74 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
+//-----------------------------------------------------------------------------------------
+// forward
+//-----------------------------------------------------------------------------------------
+class Enemy;
+
+////////////////////////////////////////////////////////////////////////////////////////////
+// BaseEnemyState base class
+////////////////////////////////////////////////////////////////////////////////////////////
+class BaseEnemyState {
+public:
+
+	//=========================================================================================
+	// public methods
+	//=========================================================================================
+
+	BaseEnemyState(Enemy* enemy) : enemy_(enemy) {}
+
+	virtual ~BaseEnemyState() {}
+
+	virtual void Update() = 0;
+
+protected:
+
+	//=========================================================================================
+	// protected variables
+	//=========================================================================================
+
+	Enemy* enemy_;
+
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////
+// EnemyStateApproach class
+////////////////////////////////////////////////////////////////////////////////////////////
+class EnemyStateApproach
+	: public BaseEnemyState {
+public:
+
+	EnemyStateApproach(Enemy* enemy);
+
+	void Update();
+
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////
+// EnemyStateLeave class
+////////////////////////////////////////////////////////////////////////////////////////////
+class EnemyStateLeave
+	: public BaseEnemyState {
+public:
+
+	EnemyStateLeave(Enemy* enemy);
+
+	void Update();
+};
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Enemy class
 ////////////////////////////////////////////////////////////////////////////////////////////
 class Enemy {
 public:
+
+	//=========================================================================================
+	// public variables
+	//=========================================================================================
+
+	// parameters //
+	const float kMoveSpeed_ = 0.2f;
 
 	//=========================================================================================
 	// public methods
@@ -32,6 +95,15 @@ public:
 
 	//! @brief ImGuiに設定
 	void SetOnImGui();
+
+	//! @brief stateの変更
+	//! 
+	//! @param[in] state 次のstate
+	void ChangeState(std::unique_ptr<BaseEnemyState> state);
+
+	const Vector3f& GetPos() const { return worldTransform_.translation_; }
+
+	void SetPos(const Vector3f& pos) { worldTransform_.translation_ = pos; }
 
 private:
 
@@ -50,23 +122,9 @@ private:
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0;
 
-	// parameters //
-	const float kMoveSpeed_ = 0.2f;
-
-
 	// info //
 	
-	Phase phase_ = Phase::Approach;
+	std::unique_ptr<BaseEnemyState> state_;
 	WorldTransform worldTransform_;
-
-	//=========================================================================================
-	// private methods
-	//=========================================================================================
-
-	static void (Enemy::*Action[])();
-
-	void Approach();
-
-	void Leave();
 
 };

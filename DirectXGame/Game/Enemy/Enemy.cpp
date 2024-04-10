@@ -6,15 +6,6 @@
 #include "imgui.h"
 #include <cassert>
 
-//=========================================================================================
-// static variables
-//=========================================================================================
-
-void (Enemy::*Enemy::Action[])() = {
-	&Enemy::Approach, //!< 接近する
-	&Enemy::Leave,    //!< 離脱する
-};
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Enemy class methods
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,16 +17,17 @@ void Enemy::Init(Model* model, uint32_t textureHandle) {
 	textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = {0.0f, 5.0f, 5.0f}; //!< 初期座標の設定
+	worldTransform_.translation_ = {0.0f, 5.0f, 10.0f}; //!< 初期座標の設定
 
 	worldTransform_.UpdateMatrix();
+
+	ChangeState(std::make_unique<EnemyStateApproach>(this));
 
 }
 
 void Enemy::Update() {
 
-	// 関数ptr
-	(this->*Action[static_cast<size_t>(phase_)])();
+	state_->Update();
 
 	worldTransform_.UpdateMatrix();
 
@@ -51,19 +43,47 @@ void Enemy::SetOnImGui() {
 	}
 }
 
-//=========================================================================================
-// private methods
-//=========================================================================================
+void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state) {
+	state_ = std::move(state);
+}
 
-void Enemy::Approach() {
-	worldTransform_.translation_ += { 0.0f, 0.0f, -kMoveSpeed_ / 2.0f };
+////////////////////////////////////////////////////////////////////////////////////////////
+// EnemyStateApproach class methods
+////////////////////////////////////////////////////////////////////////////////////////////
 
-	// 規定位置に到達したら離脱
-	if (worldTransform_.translation_.z < 0.0f) {
-		phase_ = Phase::Leave;
+EnemyStateApproach::EnemyStateApproach(Enemy* enemy)
+	: BaseEnemyState(enemy) {
+	//
+}
+
+void EnemyStateApproach::Update() {
+	// Approach Update
+	Vector3f enemyPos = enemy_->GetPos();
+
+	enemyPos += {0.0f, 0.0f, -enemy_->kMoveSpeed_ / 2.0f};
+
+	enemy_->SetPos(enemyPos);
+
+	if (enemy_->GetPos().z < 0.0f) {
+		enemy_->ChangeState(std::make_unique<EnemyStateLeave>(enemy_));
 	}
 }
 
-void Enemy::Leave() {
-	worldTransform_.translation_ += { 0.0f, kMoveSpeed_, kMoveSpeed_ };
+////////////////////////////////////////////////////////////////////////////////////////////
+// EnemyStateLeave class methods
+////////////////////////////////////////////////////////////////////////////////////////////
+
+EnemyStateLeave::EnemyStateLeave(Enemy* enemy) 
+	: BaseEnemyState(enemy) {
+	//
+}
+
+void EnemyStateLeave::Update() {
+	// Leave Update
+
+	Vector3f enemyPos = enemy_->GetPos();
+
+	enemyPos += {0.0f, enemy_->kMoveSpeed_, enemy_->kMoveSpeed_};
+
+	enemy_->SetPos(enemyPos);
 }
