@@ -22,43 +22,50 @@ void Player::Init(Model* model, uint32_t textureHandle) {
 
 	worldTransform_.Initialize();
 
-	// parameters
 
 }
 
 void Player::Update() {
 
+	// deathフラグの立った弾の削除
+	bullets_.remove_if([](auto& bullet) {
+		if (bullet->IsDead()) {
+			return true;
+		}
+
+		return false;
+	});
+
 	Move();
 
 	/*Rotate();*/
 
+	worldTransform_.UpdateMatrix();
+
 	Attack();
 
-	for (auto bullet : bullets_) {
+	for (auto& bullet : bullets_) {
 		bullet->Update();
 	}
 
-	worldTransform_.UpdateMatrix();
+	
 }
 
 void Player::Draw(const ViewProjection& viewProj) {
 	model_->Draw(worldTransform_, viewProj, textureHandle_);
 
-	for (auto bullet : bullets_) {
+	for (auto& bullet : bullets_) {
 		bullet->Draw(viewProj);
 	}
 }
 
-void Player::Term() {
-	for (auto bullet : bullets_) {
-		delete bullet;
-	}
-}
+void Player::Term() { bullets_.clear(); }
 
 void Player::SetOnImGui() {
 
 	if (ImGui::CollapsingHeader("player")) {
-		ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.1f);
+		ImGui::DragFloat3("pos",    &worldTransform_.translation_.x, 0.1f);
+		ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x,    0.01f);
 	}
 
 }
@@ -104,9 +111,15 @@ void Player::Rotate() {
 
 void Player::Attack() { 
 	if (input_->TriggerKey(DIK_SPACE)) {
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Init(model_, worldTransform_.translation_);
+		std::unique_ptr<PlayerBullet> newBullet(new PlayerBullet());
 
-		bullets_.push_back(newBullet);
+		// 弾の進行方向の設定
+		
+		Vector3f velocity = {0.0f, 0.0f, kBulletSpeed_};
+		velocity = Matrix::TransformNormal(velocity, worldTransform_.matWorld_); //!< 自機の向きに合わせる
+
+		newBullet->Init(model_, worldTransform_.translation_, velocity);
+
+		bullets_.push_back(std::move(newBullet));
 	}
 }

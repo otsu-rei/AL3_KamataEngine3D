@@ -56,14 +56,19 @@ private:
 
 	// parameters
 	const float kMoveSpeed_ = 0.2f;
-	const float kRotSpeed_  = 0.02f; //!< radian / frame
+	const float kRotSpeed_ = 0.02f; //!< radian / frame
 
 	const Vector3f kMoveLimit = {10.0f, 10.0f, 10.0f};
 
 	WorldTransform worldTransform_;
 
-	// bullet
-	std::list<PlayerBullet*> bullets_;
+	/* bullet */
+	std::list<std::unique_ptr<PlayerBullet>> bullets_;
+
+	// parameters
+	const float kBulletSpeed_ = 1.0f;
+
+	
 
 	//=========================================================================================
 	// private methods

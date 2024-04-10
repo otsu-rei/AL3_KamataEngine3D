@@ -36,6 +36,10 @@ namespace Matrix { // 行列用関数
 	
 	Matrix4x4 Transpose(const Matrix4x4& m);
 
+	Vector3f Transform(const Vector3f& vector, const Matrix4x4& matrix);
+
+	Vector3f TransformNormal(const Vector3f& v, const Matrix4x4& m);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
