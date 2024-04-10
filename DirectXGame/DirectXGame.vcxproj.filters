@@ -58,6 +58,15 @@
     <Filter Include="ヘッダー ファイル\grid">
       <UniqueIdentifier>{8275483a-7949-4219-b960-61ff30bf553c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\3d">
+      <UniqueIdentifier>{7f80c991-65c3-496f-b463-8660edf18bb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{b9e8a66e-8e02-453f-b7c2-7a51ced9540d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Player">
+      <UniqueIdentifier>{671174af-fc35-4e03-9e2e-8bc0050493ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -77,6 +86,18 @@
     </ClCompile>
     <ClCompile Include="grid\Grid.cpp">
       <Filter>ソース ファイル\grid</Filter>
+    </ClCompile>
+    <ClCompile Include="math\MyMath.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="3d\WorldTransform.cpp">
+      <Filter>ソース ファイル\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Player\PlayerBullet.cpp">
+      <Filter>Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Player\Player.cpp">
+      <Filter>Game\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +190,15 @@
     </ClInclude>
     <ClInclude Include="grid\Grid.h">
       <Filter>ヘッダー ファイル\grid</Filter>
+    </ClInclude>
+    <ClInclude Include="math\MyMath.h">
+      <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Player\PlayerBullet.h">
+      <Filter>Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Player\Player.h">
+      <Filter>Game\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
