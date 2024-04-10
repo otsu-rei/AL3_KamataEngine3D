@@ -3,22 +3,15 @@
 //-----------------------------------------------------------------------------------------
 // include
 //-----------------------------------------------------------------------------------------
-// c++
-#include <cstdint>
-
-// engine
-#include "Input.h"
+#include "Vector3.h"
 #include "Model.h"
 #include "WorldTransform.h"
-#include "ViewProjection.h"
 
-// game
-#include "PlayerBullet.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-// Player class
+// PlayerBullet class
 ////////////////////////////////////////////////////////////////////////////////////////////
-class Player {
+class PlayerBullet {
 public:
 
 	//=========================================================================================
@@ -26,7 +19,7 @@ public:
 	//=========================================================================================
 
 	//! @brief 初期化処理
-	void Init(Model* model, uint32_t textureHandle);
+	void Init(Model* model, const Vector3f& position);
 
 	//! @brief 更新処理
 	void Update();
@@ -34,39 +27,15 @@ public:
 	//! @brief 描画処理
 	void Draw(const ViewProjection& viewProj);
 
-	//! @brief ImGuiに設定
-	void SetOnImGui();
-
 private:
 
 	//=========================================================================================
 	// private variables
 	//=========================================================================================
 
-	Input* input_ = Input::GetInstance();
-
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0;
 
-	// parameters
-	const float kMoveSpeed_ = 0.2f;
-	const float kRotSpeed_  = 0.02f; //!< radian / frame
-
-	const Vector3f kMoveLimit = {10.0f, 10.0f, 10.0f};
-
 	WorldTransform worldTransform_;
-
-	// bullet
-	PlayerBullet* bullet_ = nullptr;
-
-	//=========================================================================================
-	// private methods
-	//=========================================================================================
-
-	void Move();
-
-	void Rotate();
-
-	void Attack();
 
 };
