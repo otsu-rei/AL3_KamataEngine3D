@@ -13,6 +13,7 @@
 
 // Game
 #include "Player.h"
+#include "Enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -63,8 +64,12 @@ private: // メンバ変数
 
 	/// Game
 
+	std::unique_ptr<Model> cubeModel_;
+
 	std::unique_ptr<Player> player_;
-	std::unique_ptr<Model> model_;
-	uint32_t textureHandle_;
+	uint32_t playerTextureHandle_;
+
+	std::unique_ptr<Enemy> enemy_;
+	uint32_t enemyTextureHandle_;
 
 };

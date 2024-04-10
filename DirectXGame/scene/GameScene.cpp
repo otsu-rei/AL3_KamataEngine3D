@@ -19,7 +19,9 @@ GameScene::~GameScene() {
 
 	// game 
 	player_.reset();
-	model_.reset();
+	enemy_.reset();
+
+	cubeModel_.reset();
 
 	debugCamera_.reset();
 
@@ -38,11 +40,21 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
-	model_.reset(Model::Create());
-	textureHandle_ = TextureManager::Load("uvChecker.png");
+	cubeModel_.reset(Model::Create());
+
+	// player
+	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
 
 	player_ = std::make_unique<Player>();
-	player_->Init(model_.get(), textureHandle_);
+	player_->Init(cubeModel_.get(), playerTextureHandle_);
+
+	// enemy
+	enemyTextureHandle_ = TextureManager::Load("cube/cube.jpg");
+
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Init(cubeModel_.get(), enemyTextureHandle_);
+	// todo: enemyがnullptrの場合の処理の追加
+
 }
 
 void GameScene::Update() {
@@ -54,6 +66,8 @@ void GameScene::Update() {
 	ImGui::Checkbox("isDebugCameraActive", &isDebugCameraActive_);
 
 	player_->SetOnImGui();
+	enemy_->SetOnImGui();
+
 	ImGui::End();
 
 #endif // _DEBUG
@@ -69,6 +83,7 @@ void GameScene::Update() {
 	}
 	
 	player_->Update();
+	enemy_->Update();
 }
 
 void GameScene::Draw() {
@@ -99,6 +114,7 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->Draw(viewProjection_);
+	enemy_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
