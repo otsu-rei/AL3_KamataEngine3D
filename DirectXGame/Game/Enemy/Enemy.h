@@ -5,11 +5,15 @@
 //-----------------------------------------------------------------------------------------
 // c++
 #include <cstdint>
+#include <list>
 
 // engine
 #include "Model.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+
+// Game
+#include "EnemyBullet.h"
 
 //-----------------------------------------------------------------------------------------
 // forward
@@ -51,7 +55,14 @@ public:
 
 	EnemyStateApproach(Enemy* enemy);
 
+	void Init();
+
 	void Update();
+
+private:
+
+	static const int kFireInterval = 60;
+	int32_t fireTimer_ = 0;
 
 };
 
@@ -78,11 +89,13 @@ public:
 	//=========================================================================================
 
 	// parameters //
-	const float kMoveSpeed_ = 0.2f;
+	const float kMoveSpeed_ = 0.1f;
 
 	//=========================================================================================
 	// public methods
 	//=========================================================================================
+
+	~Enemy() { Term(); }
 
 	//! @brief 初期化処理
 	void Init(Model* model, uint32_t textureHandle);
@@ -92,6 +105,8 @@ public:
 
 	//! @brief 描画処理
 	void Draw(const ViewProjection& viewProj);
+
+	void Term();
 
 	//! @brief ImGuiに設定
 	void SetOnImGui();
@@ -104,6 +119,8 @@ public:
 	const Vector3f& GetPos() const { return worldTransform_.translation_; }
 
 	void SetPos(const Vector3f& pos) { worldTransform_.translation_ = pos; }
+
+	void Fire();
 
 private:
 
@@ -122,9 +139,22 @@ private:
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0;
 
+	// parameter //
+	const float kBulletSpeed_ = 1.0f;
+
 	// info //
-	
 	std::unique_ptr<BaseEnemyState> state_;
 	WorldTransform worldTransform_;
+
+	// Bullet
+	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+
+	//=========================================================================================
+	// private methods
+	//=========================================================================================
+
+	void Action();
+
+	
 
 };

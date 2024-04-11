@@ -111,6 +111,7 @@
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="Game\Enemy\Enemy.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyBullet.cpp" />
     <ClCompile Include="Game\Player\Player.cpp" />
     <ClCompile Include="Game\Player\PlayerBullet.cpp" />
     <ClCompile Include="grid\Grid.cpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="Game\Enemy\Enemy.h" />
+    <ClInclude Include="Game\Enemy\EnemyBullet.h" />
     <ClInclude Include="Game\Player\Player.h" />
     <ClInclude Include="Game\Player\PlayerBullet.h" />
     <ClInclude Include="grid\Grid.h" />

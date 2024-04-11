@@ -29,6 +29,7 @@ void Player::Update() {
 
 	// deathフラグの立った弾の削除
 	bullets_.remove_if([](auto& bullet) {
+
 		if (bullet->IsDead()) {
 			return true;
 		}
