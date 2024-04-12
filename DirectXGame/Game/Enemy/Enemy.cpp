@@ -96,24 +96,19 @@ void Enemy::Fire() {
 
 EnemyStateApproach::EnemyStateApproach(Enemy* enemy) : BaseEnemyState(enemy) { Init(); }
 
-void EnemyStateApproach::Init() {
-	fireTimer_ = kFireInterval;
-	//
-}
+EnemyStateApproach::~EnemyStateApproach() { timeCalls_.clear(); }
+
+void EnemyStateApproach::Init() { SetFire(); }
 
 void EnemyStateApproach::Update() {
 	// Approach Update
 	// 敵機の移動
 	Vector3f enemyPos = enemy_->GetPos();
-
 	enemyPos += {0.0f, 0.0f, -enemy_->kMoveSpeed_ / 2.0f};
-
 	enemy_->SetPos(enemyPos);
 
-	// 弾の発射
-	if (--fireTimer_ <= 0) {
-		enemy_->Fire();
-		Init();
+	for (auto& timedCall : timeCalls_) {
+		timedCall->Update();
 	}
 
 	// 次のstateの遷移条件
@@ -122,6 +117,14 @@ void EnemyStateApproach::Update() {
 	}
 
 	
+}
+
+void EnemyStateApproach::SetFire() {
+	enemy_->Fire();
+	std::unique_ptr<TimedCall> newTimedCall
+		= std::make_unique<TimedCall>(std::bind(&EnemyStateApproach::SetFire, this), kFireInterval);
+
+	timeCalls_.push_back(std::move(newTimedCall));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////

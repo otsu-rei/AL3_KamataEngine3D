@@ -70,6 +70,9 @@
     <Filter Include="Game\Enemy">
       <UniqueIdentifier>{2a7057dc-827a-4539-a317-c796081a8a22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\TimedCall">
+      <UniqueIdentifier>{305fee9d-5161-40d0-b32e-f317bdc067ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -107,6 +110,9 @@
     </ClCompile>
     <ClCompile Include="Game\Enemy\EnemyBullet.cpp">
       <Filter>Game\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\TimedCall\TimedCall.cpp">
+      <Filter>Game\TimedCall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="Game\Enemy\EnemyBullet.h">
       <Filter>Game\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\TimedCall\TimedCall.h">
+      <Filter>Game\TimedCall</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
