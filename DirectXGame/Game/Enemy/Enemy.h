@@ -73,7 +73,7 @@ private:
 	// private variables
 	//=========================================================================================
 
-	static const int kFireInterval = 60;
+	static const int kFireInterval = 50;
 	std::list<std::unique_ptr<TimedCall>> timeCalls_;
 
 	//=========================================================================================
@@ -138,7 +138,7 @@ public:
 	//! @param[in] state 次のstate
 	void ChangeState(std::unique_ptr<BaseEnemyState> state);
 
-	const Vector3f& GetPos() const { return worldTransform_.translation_; }
+	Vector3f GetWorldPosition() const;
 
 	void SetPos(const Vector3f& pos) { worldTransform_.translation_ = pos; }
 
@@ -165,7 +165,7 @@ private:
 	Player* player_ = nullptr;
 
 	// parameter //
-	const float kBulletSpeed_ = 1.0f;
+	const float kBulletSpeed_ = 0.6f;
 
 	// info //
 	std::unique_ptr<BaseEnemyState> state_;

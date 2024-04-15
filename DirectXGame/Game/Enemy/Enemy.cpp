@@ -7,6 +7,7 @@
 #include <cassert>
 
 #include "MyMath.h"
+#include "Player.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Enemy class methods
@@ -19,7 +20,7 @@ void Enemy::Init(Model* model, uint32_t textureHandle) {
 	textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = {0.0f, 5.0f, 10.0f}; //!< 初期座標の設定
+	worldTransform_.translation_ = {0.0f, 5.0f, 20.0f}; //!< 初期座標の設定
 
 	worldTransform_.UpdateMatrix();
 
@@ -65,8 +66,9 @@ void Enemy::Term() {
 }
 
 void Enemy::SetOnImGui() {
-	if (ImGui::CollapsingHeader("Enemy")) {
+	if (ImGui::TreeNode("Enemy")) {
 		ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.1f);
+		ImGui::TreePop();
 	}
 }
 
@@ -75,15 +77,28 @@ void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state) {
 	//
 }
 
+Vector3f Enemy::GetWorldPosition() const {
+	Vector3f result;
+
+	result.x = worldTransform_.matWorld_.m[3][0];
+	result.y = worldTransform_.matWorld_.m[3][1];
+	result.z = worldTransform_.matWorld_.m[3][2];
+
+	return result;
+}
+
 void Enemy::Action() { state_->Update(); }
 
 void Enemy::Fire() {
+
+	assert(player_);
+	
+	Vector3f direction = player_->GetWorldPosition() - GetWorldPosition();
+	direction = Vector::Normalize(direction);
+
+	Vector3f velocity = direction * kBulletSpeed_;
 	
 	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
-
-	// 弾の進行方向の設定
-	Vector3f velocity = {0.0f, 0.0f, -kBulletSpeed_};
-	velocity = Matrix::TransformNormal(velocity, worldTransform_.matWorld_); //!< 向きに合わせる
 
 	newBullet->Init(model_, worldTransform_.translation_, velocity);
 
@@ -103,7 +118,7 @@ void EnemyStateApproach::Init() { SetFire(); }
 void EnemyStateApproach::Update() {
 	// Approach Update
 	// 敵機の移動
-	Vector3f enemyPos = enemy_->GetPos();
+	Vector3f enemyPos = enemy_->GetWorldPosition();
 	enemyPos += {0.0f, 0.0f, -enemy_->kMoveSpeed_ / 2.0f};
 	enemy_->SetPos(enemyPos);
 
@@ -112,7 +127,7 @@ void EnemyStateApproach::Update() {
 	}
 
 	// 次のstateの遷移条件
-	if (enemy_->GetPos().z < 0.0f) {
+	if (enemy_->GetWorldPosition().z < 0.0f) {
 		enemy_->ChangeState(std::make_unique<EnemyStateLeave>(enemy_));
 	}
 
@@ -139,7 +154,7 @@ EnemyStateLeave::EnemyStateLeave(Enemy* enemy)
 void EnemyStateLeave::Update() {
 	// Leave Update
 
-	Vector3f enemyPos = enemy_->GetPos();
+	Vector3f enemyPos = enemy_->GetWorldPosition();
 
 	enemyPos += {0.0f, enemy_->kMoveSpeed_, enemy_->kMoveSpeed_};
 

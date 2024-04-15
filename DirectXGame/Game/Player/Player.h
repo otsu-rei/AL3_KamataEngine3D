@@ -60,7 +60,7 @@ private:
 	const float kMoveSpeed_ = 0.2f;
 	const float kRotSpeed_ = 0.02f; //!< radian / frame
 
-	const Vector3f kMoveLimit = {10.0f, 10.0f, 10.0f};
+	const Vector3f kMoveLimit = {30.0f, 30.0f, 30.0f};
 
 	WorldTransform worldTransform_;
 

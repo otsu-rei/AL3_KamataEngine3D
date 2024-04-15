@@ -52,6 +52,7 @@ void GameScene::Initialize() {
 	enemyTextureHandle_ = TextureManager::Load("cube/cube.jpg");
 
 	enemy_ = std::make_unique<Enemy>();
+	enemy_->SetPlayer(player_.get());
 	enemy_->Init(cubeModel_.get(), enemyTextureHandle_);
 	// todo: enemyがnullptrの場合の処理の追加
 

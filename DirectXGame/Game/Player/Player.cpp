@@ -64,18 +64,19 @@ void Player::Term() { bullets_.clear(); }
 
 void Player::SetOnImGui() {
 
-	if (ImGui::CollapsingHeader("player")) {
+	if (ImGui::TreeNode("player")) {
 		ImGui::DragFloat3("pos",    &worldTransform_.translation_.x, 0.1f);
 		ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x,    0.01f);
+		ImGui::TreePop();
 	}
 
 }
 
 Vector3f Player::GetWorldPosition() const {
 	Vector3f result;
-	result.x = worldTransform_.matWorld_.m[0][3];
-	result.y = worldTransform_.matWorld_.m[1][3];
-	result.z = worldTransform_.matWorld_.m[2][3];
+	result.x = worldTransform_.matWorld_.m[3][0];
+	result.y = worldTransform_.matWorld_.m[3][1];
+	result.z = worldTransform_.matWorld_.m[3][2];
 	
 	return result;
 }
