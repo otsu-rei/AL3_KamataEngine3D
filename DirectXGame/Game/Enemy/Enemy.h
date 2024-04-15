@@ -20,6 +20,7 @@
 // forward
 //-----------------------------------------------------------------------------------------
 class Enemy;
+class Player;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // BaseEnemyState base class
@@ -141,6 +142,8 @@ public:
 
 	void SetPos(const Vector3f& pos) { worldTransform_.translation_ = pos; }
 
+	void SetPlayer(Player* player) { player_ = player; }
+
 	void Fire();
 
 private:
@@ -159,6 +162,7 @@ private:
 
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0;
+	Player* player_ = nullptr;
 
 	// parameter //
 	const float kBulletSpeed_ = 1.0f;

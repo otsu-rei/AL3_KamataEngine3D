@@ -43,6 +43,8 @@ public:
 	//! @brief ImGuiに設定
 	void SetOnImGui();
 
+	Vector3f GetWorldPosition() const;
+
 private:
 
 	//=========================================================================================

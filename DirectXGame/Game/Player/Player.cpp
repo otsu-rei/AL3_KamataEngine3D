@@ -71,6 +71,15 @@ void Player::SetOnImGui() {
 
 }
 
+Vector3f Player::GetWorldPosition() const {
+	Vector3f result;
+	result.x = worldTransform_.matWorld_.m[0][3];
+	result.y = worldTransform_.matWorld_.m[1][3];
+	result.z = worldTransform_.matWorld_.m[2][3];
+	
+	return result;
+}
+
 //=========================================================================================
 // private
 //=========================================================================================
