@@ -12,6 +12,7 @@
 #include <memory>
 
 // Game
+#include "Skydome.h"
 #include "Player.h"
 #include "Enemy.h"
 
@@ -65,6 +66,9 @@ private: // メンバ変数
 	/// Game
 
 	std::unique_ptr<Model> cubeModel_;
+	std::unique_ptr<Model> skydomeModel_;
+
+	std::unique_ptr<Skydome> skydome_;
 
 	std::unique_ptr<Player> player_;
 	uint32_t playerTextureHandle_;

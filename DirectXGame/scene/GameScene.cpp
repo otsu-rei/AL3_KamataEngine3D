@@ -19,10 +19,12 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 
 	// game 
+	skydome_.reset();
 	player_.reset();
 	enemy_.reset();
 
 	cubeModel_.reset();
+	skydomeModel_.reset();
 
 	debugCamera_.reset();
 
@@ -37,11 +39,17 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 
 	debugCamera_ = std::make_unique<DebugCamera>(WinApp::kWindowWidth, WinApp::kWindowHeight);
+	debugCamera_->SetFarZ(200.0f);
 
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
 	cubeModel_.reset(Model::Create());
+	skydomeModel_.reset(Model::CreateFromOBJ("skydome", true));
+
+	// skydome
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Init(skydomeModel_.get());
 
 	// player
 	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
@@ -83,6 +91,8 @@ void GameScene::Update() {
 	} else {
 		viewProjection_.UpdateMatrix();
 	}
+
+	skydome_->Update();
 	
 	player_->Update();
 	enemy_->Update();
@@ -118,6 +128,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
+	skydome_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 	enemy_->Draw(viewProjection_);
 

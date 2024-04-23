@@ -73,6 +73,9 @@
     <Filter Include="Game\TimedCall">
       <UniqueIdentifier>{305fee9d-5161-40d0-b32e-f317bdc067ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Skydome">
+      <UniqueIdentifier>{5931c94b-8a7d-4622-9ceb-6eedee43789b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -113,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="Game\TimedCall\TimedCall.cpp">
       <Filter>Game\TimedCall</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Skydome\Skydome.cpp">
+      <Filter>Game\Skydome</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="Game\TimedCall\TimedCall.h">
       <Filter>Game\TimedCall</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Skydome\Skydome.h">
+      <Filter>Game\Skydome</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
