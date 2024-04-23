@@ -1,4 +1,4 @@
-﻿#include "ImGuiManager.h"
+#include "ImGuiManager.h"
 
 #ifdef _DEBUG
 #include "DirectXCommon.h"

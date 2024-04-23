@@ -85,6 +85,7 @@ void GameScene::Update() {
 	
 	player_->Update();
 	enemy_->Update();
+
 }
 
 void GameScene::Draw() {
