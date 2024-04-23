@@ -138,12 +138,20 @@ public:
 	//! @param[in] state 次のstate
 	void ChangeState(std::unique_ptr<BaseEnemyState> state);
 
+	//! @brief 衝突したら呼び出される関数
+	void OnCollision();
+
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() const { return bullets_; }
+
 	Vector3f GetWorldPosition() const;
+
+	const float GetCollisionRadius() const { return kCollisionRadius_; }
 
 	void SetPos(const Vector3f& pos) { worldTransform_.translation_ = pos; }
 
 	void SetPlayer(Player* player) { player_ = player; }
 
+	//! @brief 弾を発射
 	void Fire();
 
 private:
@@ -166,6 +174,7 @@ private:
 
 	// parameter //
 	const float kBulletSpeed_ = 0.6f;
+	const float kCollisionRadius_ = 1.0f;
 
 	// info //
 	std::unique_ptr<BaseEnemyState> state_;

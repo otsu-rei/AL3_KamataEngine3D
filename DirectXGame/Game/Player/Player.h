@@ -21,7 +21,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 class Player {
 public:
-
 	//=========================================================================================
 	// public methods
 	//=========================================================================================
@@ -43,7 +42,14 @@ public:
 	//! @brief ImGuiに設定
 	void SetOnImGui();
 
+	//! @brief 衝突したら呼び出される関数
+	void OnCollision();
+
+	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() const { return bullets_; }
+
 	Vector3f GetWorldPosition() const;
+
+	const float GetCollisionRadius() const { return kCollisionRadius_; }
 
 private:
 
@@ -59,6 +65,7 @@ private:
 	// parameters
 	const float kMoveSpeed_ = 0.2f;
 	const float kRotSpeed_ = 0.02f; //!< radian / frame
+	const float kCollisionRadius_ = 1.0f;
 
 	const Vector3f kMoveLimit = {30.0f, 30.0f, 30.0f};
 

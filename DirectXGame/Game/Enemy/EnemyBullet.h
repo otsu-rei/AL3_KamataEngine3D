@@ -29,7 +29,14 @@ public:
 
 	void Draw(const ViewProjection& viewProj);
 
+	//! @brief 衝突したら呼び出される関数
+	void OnCollision();
+
 	bool IsDead() const { return isDead_; }
+
+	Vector3f GetWorldPosition() const;
+
+	const float GetCollisionRadius() const { return kCollisionRadius_; }
 
 private:
 
@@ -42,6 +49,7 @@ private:
 
 	// parameter //
 	const int32_t kLifeTime_ = 60 /*_frame*/ * 2 /*_s*/;
+	const float kCollisionRadius_ = 1.0f;
 
 	// info //
 	bool isDead_ = false;

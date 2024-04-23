@@ -72,6 +72,8 @@ void Player::SetOnImGui() {
 
 }
 
+void Player::OnCollision() {}
+
 Vector3f Player::GetWorldPosition() const {
 	Vector3f result;
 	result.x = worldTransform_.matWorld_.m[3][0];

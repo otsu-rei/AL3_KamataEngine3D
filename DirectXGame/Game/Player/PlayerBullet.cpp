@@ -34,3 +34,14 @@ void PlayerBullet::Update() {
 }
 
 void PlayerBullet::Draw(const ViewProjection& viewProj) { model_->Draw(worldTransform_, viewProj, textureHandle_); }
+
+void PlayerBullet::OnCollision() { isDead_ = true; }
+
+Vector3f PlayerBullet::GetWorldPosition() const {
+	Vector3f result;
+	result.x = worldTransform_.matWorld_.m[3][0];
+	result.y = worldTransform_.matWorld_.m[3][1];
+	result.z = worldTransform_.matWorld_.m[3][2];
+
+	return result;
+}

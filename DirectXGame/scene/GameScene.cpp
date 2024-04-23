@@ -11,6 +11,7 @@
 #include "AxisIndicator.h"
 
 #include "Grid.h"
+#include "MyMath.h"
 
 
 GameScene::GameScene() {}
@@ -86,6 +87,8 @@ void GameScene::Update() {
 	player_->Update();
 	enemy_->Update();
 
+	CheckAllCollision();
+
 }
 
 void GameScene::Draw() {
@@ -135,4 +138,65 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::CheckAllCollision() {
+	// 判定対象A, Bの座標
+	Vector3 posA, posB;
+
+	// 弾の取得
+	auto& playerBullets = player_->GetBullets();
+	auto& enemyBullets  = enemy_->GetBullets();
+
+#pragma region 自キャラと敵弾の当たり判定
+
+	posA = player_->GetWorldPosition();
+
+	for (auto& bullet : enemyBullets) {
+		posB = bullet->GetWorldPosition();
+
+		float length = Vector::Length(posA - posB);
+		if (length <= player_->GetCollisionRadius() + enemy_->GetCollisionRadius()) {
+			player_->OnCollision();
+			bullet->OnCollision();
+		}
+	}
+
+#pragma endregion
+
+#pragma region 敵キャラと自弾の当たり判定
+
+	posA = enemy_->GetWorldPosition();
+
+	for (auto& bullet : playerBullets) {
+		posB = bullet->GetWorldPosition();
+
+		float length = Vector::Length(posA - posB);
+		if (length <= player_->GetCollisionRadius() + enemy_->GetCollisionRadius()) {
+			player_->OnCollision();
+			bullet->OnCollision();
+		}
+	}
+
+#pragma endregion
+
+#pragma region 自弾と敵弾の当たり判定
+
+	for (auto& pBullet : playerBullets) {
+		posA = pBullet->GetWorldPosition();
+
+		for (auto& eBullet : enemyBullets) {
+			posB = eBullet->GetWorldPosition();
+
+			float length = Vector::Length(posA - posB);
+			if (length <= pBullet->GetCollisionRadius() + eBullet->GetCollisionRadius()) {
+				pBullet->OnCollision();
+				eBullet->OnCollision();
+			}
+
+		}
+	}
+
+#pragma endregion
+
 }

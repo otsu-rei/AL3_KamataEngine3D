@@ -77,6 +77,8 @@ void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state) {
 	//
 }
 
+void Enemy::OnCollision() {}
+
 Vector3f Enemy::GetWorldPosition() const {
 	Vector3f result;
 
