@@ -14,7 +14,7 @@
 // Player class methods
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void Player::Init(Model* model, uint32_t textureHandle) {
+void Player::Init(Model* model, uint32_t textureHandle, const Vector3f& pos) {
 	assert(model);
 
 	model_ = model;
@@ -22,6 +22,7 @@ void Player::Init(Model* model, uint32_t textureHandle) {
 
 	worldTransform_.Initialize();
 
+	worldTransform_.translation_ = pos;
 
 }
 
@@ -131,7 +132,7 @@ void Player::Attack() {
 		Vector3f velocity = {0.0f, 0.0f, kBulletSpeed_};
 		velocity = Matrix::TransformNormal(velocity, worldTransform_.matWorld_); //!< 自機の向きに合わせる
 
-		newBullet->Init(model_, worldTransform_.translation_, velocity);
+		newBullet->Init(model_, Matrix::Transform(worldTransform_.translation_, worldTransform_.parent_->matWorld_), velocity);
 
 		bullets_.push_back(std::move(newBullet));
 	}

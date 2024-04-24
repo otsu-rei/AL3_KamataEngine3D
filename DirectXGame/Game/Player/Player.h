@@ -28,7 +28,7 @@ public:
 	~Player() { Term(); }
 
 	//! @brief 初期化処理
-	void Init(Model* model, uint32_t textureHandle);
+	void Init(Model* model, uint32_t textureHandle, const Vector3f& pos);
 
 	//! @brief 更新処理
 	void Update();
@@ -50,6 +50,8 @@ public:
 	Vector3f GetWorldPosition() const;
 
 	const float GetCollisionRadius() const { return kCollisionRadius_; }
+
+	void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
 
 private:
 

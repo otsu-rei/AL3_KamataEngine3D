@@ -59,6 +59,8 @@ public:
 	//! @brief 行列の計算 - 転送
 	void UpdateMatrix();
 
+	void SetParent(const WorldTransform* parent) { parent_ = parent; }
+
 private:
 	// 定数バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuffer_;

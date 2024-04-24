@@ -12,14 +12,13 @@
 void DrawGrid(
 	const Vector3f& center,
 	float gridLength, const uint32_t kSubdivision,
-	const Vector4& color, const ViewProjection& viewproj) {
+	const Vector4& color) {
 
 	if (kSubdivision == 0) { return; } //!< 描画しないので早期return
 	// todo: kSubdivision = 1 の時の処理の追加
 
 	// drawerInstanceの取り出し
 	auto drawerIns = PrimitiveDrawer::GetInstance();
-	drawerIns->SetViewProjection(&viewproj);
 
 	// grid一本の長さ
 	float kGridLength = gridLength / static_cast<float>(kSubdivision - 1);

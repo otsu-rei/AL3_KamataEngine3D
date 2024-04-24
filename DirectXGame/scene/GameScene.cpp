@@ -37,9 +37,14 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 
 	viewProjection_.Initialize();
+	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
 
 	debugCamera_ = std::make_unique<DebugCamera>(WinApp::kWindowWidth, WinApp::kWindowHeight);
 	debugCamera_->SetFarZ(200.0f);
+
+	// railCamera
+	railCamera_ = std::make_unique<RailCamera>();
+	railCamera_->Init({0.0f, 0.0f, -20.0f}, {0.0f});
 
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
@@ -55,7 +60,8 @@ void GameScene::Initialize() {
 	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
 
 	player_ = std::make_unique<Player>();
-	player_->Init(cubeModel_.get(), playerTextureHandle_);
+	player_->Init(cubeModel_.get(), playerTextureHandle_, {0.0f, -4.0f, 30.0f});
+	player_->SetParent(&railCamera_->GetWorldTranform());
 
 	// enemy
 	enemyTextureHandle_ = TextureManager::Load("cube/cube.jpg");
@@ -64,6 +70,8 @@ void GameScene::Initialize() {
 	enemy_->SetPlayer(player_.get());
 	enemy_->Init(cubeModel_.get(), enemyTextureHandle_);
 	// todo: enemyがnullptrの場合の処理の追加
+
+
 
 }
 
@@ -74,7 +82,7 @@ void GameScene::Update() {
 	ImGui::Begin("main");
 
 	ImGui::Checkbox("isDebugCameraActive", &isDebugCameraActive_);
-
+	railCamera_->SetOnImGui();
 	player_->SetOnImGui();
 	enemy_->SetOnImGui();
 
@@ -89,7 +97,10 @@ void GameScene::Update() {
 		viewProjection_.TransferMatrix();
 
 	} else {
-		viewProjection_.UpdateMatrix();
+		railCamera_->Update();
+		viewProjection_.matView = railCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
 	}
 
 	skydome_->Update();
@@ -128,6 +139,8 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
+	/*DrawGrid({0.0f}, 10.0f, 6, {1.0f, 1.0f, 1.0f, 1.0f});*/
+	
 	skydome_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 	enemy_->Draw(viewProjection_);

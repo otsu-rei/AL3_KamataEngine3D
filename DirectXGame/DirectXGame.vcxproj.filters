@@ -76,6 +76,9 @@
     <Filter Include="Game\Skydome">
       <UniqueIdentifier>{5931c94b-8a7d-4622-9ceb-6eedee43789b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\RailCamera">
+      <UniqueIdentifier>{3efa98f9-66a6-4e7d-9ba9-39fdc9fccaa6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -119,6 +122,9 @@
     </ClCompile>
     <ClCompile Include="Game\Skydome\Skydome.cpp">
       <Filter>Game\Skydome</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\RailCamera\RailCamera.cpp">
+      <Filter>Game\RailCamera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -232,6 +238,9 @@
     </ClInclude>
     <ClInclude Include="Game\Skydome\Skydome.h">
       <Filter>Game\Skydome</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\RailCamera\RailCamera.h">
+      <Filter>Game\RailCamera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

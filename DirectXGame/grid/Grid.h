@@ -24,9 +24,7 @@
 //! @param[in] gridLength   グリッド線の長さ
 //! @param[in] kSubdivision グリッド線の分割数
 //! @param[in] color        グリッド線の色
-//! @param[in] viewproj     描画するカメラのviewproj
 void DrawGrid(
 	const Vector3f& center,
-	float gridLength, const uint32_t kSubdivision, const Vector4& color,
-	const ViewProjection& viewproj
+	float gridLength, const uint32_t kSubdivision, const Vector4& color
 );

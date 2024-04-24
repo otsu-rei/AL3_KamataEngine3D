@@ -12,6 +12,7 @@
 #include <memory>
 
 // Game
+#include "RailCamera.h"
 #include "Skydome.h"
 #include "Player.h"
 #include "Enemy.h"
@@ -62,9 +63,9 @@ private: // メンバ変数
 
 	bool isDebugCameraActive_ = false;
 	std::unique_ptr<DebugCamera> debugCamera_;
+	std::unique_ptr<RailCamera> railCamera_;
 
 	/// Game
-
 	std::unique_ptr<Model> cubeModel_;
 	std::unique_ptr<Model> skydomeModel_;
 
