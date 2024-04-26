@@ -10,6 +10,7 @@
 #include "DebugCamera.h"
 
 #include <memory>
+#include <sstream>
 
 // Game
 #include "RailCamera.h"
@@ -48,6 +49,12 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	//! @brief 敵弾の追加
+	void AddEnemyBullet(std::unique_ptr<EnemyBullet>& enemyBullet);
+
+	//! @brief 自弾の追加
+	void AddPlayerBullet(std::unique_ptr<PlayerBullet>& playerBullet);
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -58,7 +65,6 @@ private: // メンバ変数
 	/// </summary>
 
 	// camera
-
 	ViewProjection viewProjection_;
 
 	bool isDebugCameraActive_ = false;
@@ -66,17 +72,38 @@ private: // メンバ変数
 	std::unique_ptr<RailCamera> railCamera_;
 
 	/// Game
+	// model
 	std::unique_ptr<Model> cubeModel_;
 	std::unique_ptr<Model> skydomeModel_;
 
+	// skydome
 	std::unique_ptr<Skydome> skydome_;
 
+	// player
 	std::unique_ptr<Player> player_;
 	uint32_t playerTextureHandle_;
 
-	std::unique_ptr<Enemy> enemy_;
+	// enemy
+	std::list<std::unique_ptr<Enemy>> enemys_;
 	uint32_t enemyTextureHandle_;
+
+	// bullets
+	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
+	std::list<std::unique_ptr<PlayerBullet>> playerBullets_;
+
+	// commands
+	std::stringstream enemyPopCommands_;
+	bool isWait_ = false;
+	int32_t waitTime_ = 0;
+
+	void UpdatePlayerBullet();
+	void UpdateEnemyBullet();
+
+	void DrawPlayerBullet(const ViewProjection& viewProj);
+	void DrawEnemyBullet(const ViewProjection& viewProj);
 
 	void CheckAllCollision();
 
+	void LoadEnemyPopData();
+	void UpdateEnemyPopCommands();
 };

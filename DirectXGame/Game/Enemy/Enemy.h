@@ -21,6 +21,7 @@
 //-----------------------------------------------------------------------------------------
 class Enemy;
 class Player;
+class GameScene;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // BaseEnemyState base class
@@ -76,6 +77,8 @@ private:
 	static const int kFireInterval = 50;
 	std::list<std::unique_ptr<TimedCall>> timeCalls_;
 
+	int32_t stateChangeTime_;
+
 	//=========================================================================================
 	// private methods
 	//=========================================================================================
@@ -120,7 +123,7 @@ public:
 	~Enemy() { Term(); }
 
 	//! @brief 初期化処理
-	void Init(Model* model, uint32_t textureHandle);
+	void Init(Model* model, uint32_t textureHandle, const Vector3f& pos);
 
 	//! @brief 更新処理
 	void Update();
@@ -131,7 +134,7 @@ public:
 	void Term();
 
 	//! @brief ImGuiに設定
-	void SetOnImGui();
+	void SetOnImGui(const std::string& id = "##");
 
 	//! @brief stateの変更
 	//! 
@@ -141,7 +144,7 @@ public:
 	//! @brief 衝突したら呼び出される関数
 	void OnCollision();
 
-	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() const { return bullets_; }
+	bool IsDead() const { return isDead_; }
 
 	Vector3f GetWorldPosition() const;
 
@@ -150,6 +153,8 @@ public:
 	void SetPos(const Vector3f& pos) { worldTransform_.translation_ = pos; }
 
 	void SetPlayer(Player* player) { player_ = player; }
+
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
 	//! @brief 弾を発射
 	void Fire();
@@ -170,7 +175,10 @@ private:
 
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0;
+
 	Player* player_ = nullptr;
+
+	GameScene* gameScene_;
 
 	// parameter //
 	const float kBulletSpeed_ = 0.6f;
@@ -180,8 +188,7 @@ private:
 	std::unique_ptr<BaseEnemyState> state_;
 	WorldTransform worldTransform_;
 
-	// Bullet
-	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	bool isDead_ = false;
 
 	//=========================================================================================
 	// private methods

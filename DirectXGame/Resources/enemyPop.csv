@@ -1,0 +1,10 @@
+// enemy Pop Commmands,
+// POP, pos.x, pos.y, pos.z
+// WAIT, waitTime_frame,
+WAIT, 120,
+POP, 6, 8, 10,
+WAIT, 120,
+POP, -6, 8, -5,
+POP, 12, -8, 0,
+WAIT, 120,
+POP, -12, -8, -8,

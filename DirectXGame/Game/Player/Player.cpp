@@ -4,6 +4,7 @@
 // include
 //-----------------------------------------------------------------------------------------
 #include "TextureManager.h"
+#include "GameScene.h"
 #include "imgui.h"
 #include <cassert>
 #include <algorithm>
@@ -28,16 +29,6 @@ void Player::Init(Model* model, uint32_t textureHandle, const Vector3f& pos) {
 
 void Player::Update() {
 
-	// deathフラグの立った弾の削除
-	bullets_.remove_if([](auto& bullet) {
-
-		if (bullet->IsDead()) {
-			return true;
-		}
-
-		return false;
-	});
-
 	Move();
 
 	/*Rotate();*/
@@ -45,23 +36,13 @@ void Player::Update() {
 	worldTransform_.UpdateMatrix();
 
 	Attack();
-
-	for (auto& bullet : bullets_) {
-		bullet->Update();
-	}
-
-	
 }
 
 void Player::Draw(const ViewProjection& viewProj) {
 	model_->Draw(worldTransform_, viewProj, textureHandle_);
-
-	for (auto& bullet : bullets_) {
-		bullet->Draw(viewProj);
-	}
 }
 
-void Player::Term() { bullets_.clear(); }
+void Player::Term() { }
 
 void Player::SetOnImGui() {
 
@@ -134,6 +115,6 @@ void Player::Attack() {
 
 		newBullet->Init(model_, Matrix::Transform(worldTransform_.translation_, worldTransform_.parent_->matWorld_), velocity);
 
-		bullets_.push_back(std::move(newBullet));
+		gameScene_->AddPlayerBullet(newBullet);
 	}
 }

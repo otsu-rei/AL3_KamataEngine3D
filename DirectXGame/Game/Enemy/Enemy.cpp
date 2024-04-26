@@ -4,6 +4,7 @@
 // include
 //-----------------------------------------------------------------------------------------
 #include "imgui.h"
+#include "GameScene.h"
 #include <cassert>
 
 #include "MyMath.h"
@@ -13,14 +14,14 @@
 // Enemy class methods
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void Enemy::Init(Model* model, uint32_t textureHandle) {
+void Enemy::Init(Model* model, uint32_t textureHandle, const Vector3f& pos) {
 	assert(model);
 
 	model_ = model;
 	textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = {0.0f, 5.0f, 20.0f}; //!< 初期座標の設定
+	worldTransform_.translation_ = pos; //!< 初期座標の設定
 
 	worldTransform_.UpdateMatrix();
 
@@ -30,43 +31,23 @@ void Enemy::Init(Model* model, uint32_t textureHandle) {
 
 void Enemy::Update() {
 
-	// deathフラグの立った弾の削除
-	bullets_.remove_if([](auto& bullet) {
-		if (bullet->IsDead()) {
-			return true;
-		}
-
-		return false;
-	});
-
 	Action();
 
 	worldTransform_.UpdateMatrix();
-
-	for (auto& bullet : bullets_) {
-		bullet->Update();
-	}
 
 }
 
 void Enemy::Draw(const ViewProjection& viewProj) {
 	model_->Draw(worldTransform_, viewProj, textureHandle_);
-
-	for (auto& bullet : bullets_) {
-		bullet->Draw(viewProj);
-	}
-
-
-
 }
 
 void Enemy::Term() {
-	bullets_.clear();
-	//
 }
 
-void Enemy::SetOnImGui() {
-	if (ImGui::TreeNode("Enemy")) {
+void Enemy::SetOnImGui(const std::string& id) {
+	std::string label = "Enemy" + id;
+
+	if (ImGui::TreeNode(label.c_str())) {
 		ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.1f);
 		ImGui::TreePop();
 	}
@@ -104,7 +85,7 @@ void Enemy::Fire() {
 
 	newBullet->Init(model_, worldTransform_.translation_, velocity);
 
-	bullets_.push_back(std::move(newBullet));
+	gameScene_->AddEnemyBullet(newBullet);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +96,10 @@ EnemyStateApproach::EnemyStateApproach(Enemy* enemy) : BaseEnemyState(enemy) { I
 
 EnemyStateApproach::~EnemyStateApproach() { timeCalls_.clear(); }
 
-void EnemyStateApproach::Init() { SetFire(); }
+void EnemyStateApproach::Init() {
+	SetFire();
+	stateChangeTime_ = 50;
+}
 
 void EnemyStateApproach::Update() {
 	// Approach Update
@@ -129,11 +113,14 @@ void EnemyStateApproach::Update() {
 	}
 
 	// 次のstateの遷移条件
-	if (enemy_->GetWorldPosition().z < 0.0f) {
+	stateChangeTime_--;
+	if (stateChangeTime_ <= 0) {
 		enemy_->ChangeState(std::make_unique<EnemyStateLeave>(enemy_));
 	}
 
-	
+	/*if (enemy_->GetWorldPosition().z <= 0.0f) {
+		enemy_->ChangeState(std::make_unique<EnemyStateLeave>(enemy_));
+	}*/
 }
 
 void EnemyStateApproach::SetFire() {
