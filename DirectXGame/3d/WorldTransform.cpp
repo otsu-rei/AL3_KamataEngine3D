@@ -18,3 +18,12 @@ void WorldTransform::UpdateMatrix() {
 
 	TransferMatrix();
 }
+
+Vector3f WorldTransform::GetTransform() const {
+	Vector3f result;
+	result.x = matWorld_.m[3][0];
+	result.y = matWorld_.m[3][1];
+	result.z = matWorld_.m[3][2];
+
+	return result;
+}

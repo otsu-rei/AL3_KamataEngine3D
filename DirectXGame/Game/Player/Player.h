@@ -10,6 +10,7 @@
 // engine
 #include "Input.h"
 #include "Model.h"
+#include "Sprite.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 
@@ -36,10 +37,13 @@ public:
 	void Init(Model* model, uint32_t textureHandle, const Vector3f& pos);
 
 	//! @brief 更新処理
-	void Update();
+	void Update(const ViewProjection& viewProj);
 
 	//! @brief 描画処理
 	void Draw(const ViewProjection& viewProj);
+
+	//! @brief UI描画処理
+	void DrawUI();
 
 	//! @brief 終了処理
 	void Term();
@@ -56,7 +60,9 @@ public:
 
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
-	void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
+	void SetParent(const WorldTransform* parent) {
+		worldTransform_.parent_ = parent;
+	}
 
 private:
 
@@ -75,13 +81,16 @@ private:
 	const float kMoveSpeed_ = 0.2f;
 	const float kRotSpeed_ = 0.02f; //!< radian / frame
 	const float kCollisionRadius_ = 1.0f;
+	const float kBulletSpeed_ = 1.0f;
 
 	const Vector3f kMoveLimit = {30.0f, 30.0f, 30.0f};
 
+	// data //
 	WorldTransform worldTransform_;
+	WorldTransform worldTransform3DReticle_;
 
-	// parameters
-	const float kBulletSpeed_ = 1.0f;
+	std::unique_ptr<Sprite> sprite2DReticle_;
+	
 
 	
 
@@ -94,5 +103,7 @@ private:
 	void Rotate();
 
 	void Attack();
+
+	void UpdateReticle();
 
 };

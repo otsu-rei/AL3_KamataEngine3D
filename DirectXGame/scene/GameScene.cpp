@@ -64,6 +64,7 @@ void GameScene::Initialize() {
 
 	// player
 	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
+	TextureManager::Load("reticle.png"); //!< レティクル画像(仮)
 
 	player_ = std::make_unique<Player>();
 	player_->Init(cubeModel_.get(), playerTextureHandle_, {0.0f, -4.0f, 30.0f});
@@ -92,17 +93,17 @@ void GameScene::Update() {
 	railCamera_->SetOnImGui();
 	player_->SetOnImGui();
 
-	//!< ImGuiのstack idへの対策
-	int id = 0;
-	for (const auto& enemy : enemys_) {
-		std::string labelID = "##";
-		labelID += std::to_string(id);
+	////!< ImGuiのstack idへの対策
+	//int id = 0;
+	//for (const auto& enemy : enemys_) {
+	//	std::string labelID = "##";
+	//	labelID += std::to_string(id);
 
-		enemy->SetOnImGui(labelID.c_str());
-		id++;
-	}
+	//	enemy->SetOnImGui(labelID.c_str());
+	//	id++;
+	//}
 
-	ImGui::Text("waitTime: %d", waitTime_);
+	//ImGui::Text("waitTime: %d", waitTime_);
 
 	ImGui::End();
 
@@ -112,19 +113,20 @@ void GameScene::Update() {
 		debugCamera_->Update();
 		viewProjection_.matView       = debugCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
-		viewProjection_.TransferMatrix();
 
 	} else {
 		railCamera_->Update();
 		viewProjection_.matView = railCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
-		viewProjection_.TransferMatrix();
 	}
+
+	viewProjection_.TransferMatrix();
+
 
 	skydome_->Update();
 	
 	//!< 本体の更新処理
-	player_->Update();
+	player_->Update(viewProjection_);
 	UpdatePlayerBullet();
 
 	UpdateEnemyPopCommands();
@@ -197,7 +199,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-
+	player_->DrawUI();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

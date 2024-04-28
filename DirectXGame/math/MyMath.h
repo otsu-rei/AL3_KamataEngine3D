@@ -36,6 +36,12 @@ namespace Matrix { // 行列用関数
 	
 	Matrix4x4 Transpose(const Matrix4x4& m);
 
+	// graphics matrix //
+    Matrix4x4 MakePerspectiveFov(float fovY, float aspectRatio, float nearClip, float farClip);
+    Matrix4x4 MakeOrthographic(float left, float top, float right, float bottom, float nearZ, float farZ);
+
+    Matrix4x4 MakeViewport(float left, float top, float width, float height, float minDepth, float maxDepth);
+
 	Vector3f Transform(const Vector3f& vector, const Matrix4x4& matrix);
 
 	Vector3f TransformNormal(const Vector3f& v, const Matrix4x4& m);

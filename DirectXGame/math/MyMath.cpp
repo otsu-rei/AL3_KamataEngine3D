@@ -152,6 +152,15 @@ Matrix4x4 Matrix::Transpose(const Matrix4x4& m) {
 	return result;
 }
 
+Matrix4x4 Matrix::MakeViewport(float left, float top, float width, float height, float minDepth, float maxDepth) {
+	return {
+		width / 2.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, -height / 2.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, maxDepth - minDepth, 0.0f,
+		left + (width / 2.0f), top + (height / 2.0f), minDepth, 1.0f,
+	};
+}
+
 Vector3f Matrix::Transform(const Vector3f& vector, const Matrix4x4& matrix) {
 	Vector3f result;
 	float w;

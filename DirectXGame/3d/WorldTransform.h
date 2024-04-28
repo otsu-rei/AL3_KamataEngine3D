@@ -61,6 +61,8 @@ public:
 
 	void SetParent(const WorldTransform* parent) { parent_ = parent; }
 
+	Vector3f GetTransform() const;
+
 private:
 	// 定数バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuffer_;

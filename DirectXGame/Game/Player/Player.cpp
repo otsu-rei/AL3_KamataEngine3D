@@ -22,33 +22,58 @@ void Player::Init(Model* model, uint32_t textureHandle, const Vector3f& pos) {
 	textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
+	worldTransform3DReticle_.Initialize();
 
 	worldTransform_.translation_ = pos;
 
+	uint32_t textureReticle = TextureManager::Load("reticle.png");
+	sprite2DReticle_.reset(Sprite::Create(textureReticle, {WinApp::kWindowWidth / 2.0f, WinApp::kWindowHeight / 2.0f}, {0.2f, 0.2f, 1.0f, 1.0f}, {0.5f, 0.5f}));
+
 }
 
-void Player::Update() {
+void Player::Update(const ViewProjection& viewProj) {
 
 	Move();
 
 	/*Rotate();*/
 
+
 	worldTransform_.UpdateMatrix();
 
+	UpdateReticle();
+
 	Attack();
+
+	// 3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
+	{
+		Vector3f position = worldTransform3DReticle_.GetTransform();
+
+		Matrix4x4 viewportMatrix = Matrix::MakeViewport(0.0f, 0.0f, WinApp::kWindowWidth, WinApp::kWindowHeight, 0.0f, 1.0f);
+		
+		Matrix4x4 vpvMatrix = viewProj.matView * viewProj.matProjection * viewportMatrix;
+
+		position = Matrix::Transform(position, vpvMatrix);
+
+		sprite2DReticle_->SetPosition({position.x, position.y});
+	}
 }
 
 void Player::Draw(const ViewProjection& viewProj) {
 	model_->Draw(worldTransform_, viewProj, textureHandle_);
 }
 
-void Player::Term() { }
+void Player::DrawUI() { sprite2DReticle_->Draw(); }
+
+void Player::Term() { sprite2DReticle_.reset(); }
 
 void Player::SetOnImGui() {
 
 	if (ImGui::TreeNode("player")) {
+
 		ImGui::DragFloat3("pos",    &worldTransform_.translation_.x, 0.1f);
 		ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x,    0.01f);
+		ImGui::DragFloat3("reticle", &worldTransform3DReticle_.translation_.x, 0.0f);
+
 		ImGui::TreePop();
 	}
 
@@ -110,11 +135,20 @@ void Player::Attack() {
 
 		// 弾の進行方向の設定
 		
-		Vector3f velocity = {0.0f, 0.0f, kBulletSpeed_};
-		velocity = Matrix::TransformNormal(velocity, worldTransform_.matWorld_); //!< 自機の向きに合わせる
+		Vector3f velocity = worldTransform3DReticle_.translation_ - GetWorldPosition();
+		velocity = Vector::Normalize(velocity) * kBulletSpeed_;
 
 		newBullet->Init(model_, Matrix::Transform(worldTransform_.translation_, worldTransform_.parent_->matWorld_), velocity);
 
 		gameScene_->AddPlayerBullet(newBullet);
 	}
+}
+
+void Player::UpdateReticle() {
+
+	Vector3f offset = Matrix::TransformNormal({0.0f, 0.0f, 1.0f}, worldTransform_.parent_->matWorld_);
+	offset = Vector::Normalize(offset) * 50.0f;
+
+	worldTransform3DReticle_.translation_ = Matrix::Transform(offset, worldTransform_.matWorld_);
+	worldTransform3DReticle_.UpdateMatrix();
 }
