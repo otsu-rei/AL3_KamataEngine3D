@@ -33,47 +33,23 @@ void Player::Init(Model* model, uint32_t textureHandle, const Vector3f& pos) {
 
 void Player::Update(const ViewProjection& viewProj) {
 
-	Move();
+	/*Move();*/
+
+	MoveController();
 
 	/*Rotate();*/
-
 
 	worldTransform_.UpdateMatrix();
 
 	/*UpdateReticle();*/
 
-	// 2Dマウス座標から3D空間に弾を発射
-	{
-		POINT mousePosition;
-		// マウス座標を取得
-		GetCursorPos(&mousePosition);
+	/*UpdateReticleMouse(viewProj);*/
 
-		// クライアント領域に変換
-		ScreenToClient(WinApp::GetInstance()->WinApp::GetHwnd(), &mousePosition);
+	UpdateReticleController(viewProj);
 
-		sprite2DReticle_->SetPosition({static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)});
+	/*Attack();*/
 
-		Matrix4x4 matVPV
-			= viewProj.matView * viewProj.matProjection
-			* Matrix::MakeViewport(0.0f, 0.0f, static_cast<float>(WinApp::kWindowWidth), static_cast<float>(WinApp::kWindowHeight), 0.0f, 1.0f);
-
-		Matrix4x4 matInverseVPV = Matrix::Inverse(matVPV);
-
-		nearPos = {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 0.0f};
-		farPos  = {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 1.0f};
-
-		nearPos = Matrix::Transform(nearPos, matInverseVPV);
-		farPos = Matrix::Transform(farPos, matInverseVPV);
-
-		Vector3f mouseDirection = farPos - nearPos;
-		mouseDirection = Vector::Normalize(mouseDirection);
-
-		worldTransform3DReticle_.translation_ = nearPos + mouseDirection * distanceReticleObject_;
-		worldTransform3DReticle_.UpdateMatrix();
-
-	}
-
-	Attack();
+	AttackController();
 }
 
 void Player::Draw(const ViewProjection& viewProj) {
@@ -151,7 +127,22 @@ void Player::Move() {
 	}
 
 	worldTransform_.translation_ += velocity;
+	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit * -1, kMoveLimit);
+}
 
+void Player::MoveController() {
+	XINPUT_STATE joyState;
+	Vector3f velocity = {0.0f, 0.0f, 0.0f};
+
+	if (input_->GetJoystickState(0, joyState)) {
+		velocity.x += static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX * kMoveSpeed_;
+		velocity.y += static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX * kMoveSpeed_;
+
+	} else {
+		return; //!< コントローラーが接続されてない場合, retrun;
+	}
+
+	worldTransform_.translation_ += velocity;
 	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit * -1, kMoveLimit);
 }
 
@@ -180,11 +171,99 @@ void Player::Attack() {
 	}
 }
 
+void Player::AttackController() {
+	XINPUT_STATE joyState;
+
+	if (!input_->GetJoystickState(0, joyState)) {
+		return; //!< コントローラーが接続されてない場合, retrun;
+	}
+
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
+		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+
+		// 弾の進行方向の設定
+
+		Vector3f velocity = worldTransform3DReticle_.translation_ - GetWorldPosition();
+		velocity = Vector::Normalize(velocity) * kBulletSpeed_;
+
+		newBullet->Init(model_, Matrix::Transform(worldTransform_.translation_, worldTransform_.parent_->matWorld_), velocity);
+
+		gameScene_->AddPlayerBullet(newBullet);
+	}
+}
+
 void Player::UpdateReticle() {
 
 	Vector3f offset = Matrix::TransformNormal({0.0f, 0.0f, 1.0f}, worldTransform_.parent_->matWorld_);
 	offset = Vector::Normalize(offset) * 50.0f;
 
 	worldTransform3DReticle_.translation_ = Matrix::Transform(offset, worldTransform_.matWorld_);
+	worldTransform3DReticle_.UpdateMatrix();
+}
+
+void Player::UpdateReticleMouse(const ViewProjection& viewProj) {
+	// 2Dマウス座標から3D空間にレティクルを更新
+	
+	POINT mousePosition;
+	// マウス座標を取得
+	GetCursorPos(&mousePosition);
+
+	// クライアント領域に変換
+	ScreenToClient(WinApp::GetInstance()->WinApp::GetHwnd(), &mousePosition);
+
+	sprite2DReticle_->SetPosition({static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)});
+
+	Matrix4x4 matVPV =
+		viewProj.matView * viewProj.matProjection * Matrix::MakeViewport(0.0f, 0.0f, static_cast<float>(WinApp::kWindowWidth), static_cast<float>(WinApp::kWindowHeight), 0.0f, 1.0f);
+
+	Matrix4x4 matInverseVPV = Matrix::Inverse(matVPV);
+
+	nearPos = {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 0.0f};
+	farPos = {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 1.0f};
+
+	nearPos = Matrix::Transform(nearPos, matInverseVPV);
+	farPos = Matrix::Transform(farPos, matInverseVPV);
+
+	Vector3f mouseDirection = farPos - nearPos;
+	mouseDirection = Vector::Normalize(mouseDirection);
+
+	worldTransform3DReticle_.translation_ = nearPos + mouseDirection * distanceReticleObject_;
+	worldTransform3DReticle_.UpdateMatrix();
+	
+}
+
+void Player::UpdateReticleController(const ViewProjection& viewProj) {
+	// コントローラーRight入力から3D空間に弾を発射
+
+	XINPUT_STATE joyState;
+
+	if (!input_->GetJoystickState(0, joyState)) {
+		return; //!< コントローラーが接続されてない場合, retrun;
+	}
+
+	// parameter < TODO: hに移動
+	const float reticleSpeed = 5.0f;
+
+	Vector2f spritePosition = sprite2DReticle_->GetPosition();
+
+	spritePosition.x += static_cast<float>(joyState.Gamepad.sThumbRX) / SHRT_MAX * reticleSpeed;
+	spritePosition.y -= static_cast<float>(joyState.Gamepad.sThumbRY) / SHRT_MAX * reticleSpeed;
+	sprite2DReticle_->SetPosition(spritePosition);
+
+	Matrix4x4 matVPV
+		= viewProj.matView * viewProj.matProjection * Matrix::MakeViewport(0.0f, 0.0f, static_cast<float>(WinApp::kWindowWidth), static_cast<float>(WinApp::kWindowHeight), 0.0f, 1.0f);
+
+	Matrix4x4 matInverseVPV = Matrix::Inverse(matVPV);
+
+	nearPos = {static_cast<float>(spritePosition.x), static_cast<float>(spritePosition.y), 0.0f};
+	farPos = {static_cast<float>(spritePosition.x), static_cast<float>(spritePosition.y), 1.0f};
+
+	nearPos = Matrix::Transform(nearPos, matInverseVPV);
+	farPos = Matrix::Transform(farPos, matInverseVPV);
+
+	Vector3f mouseDirection = farPos - nearPos;
+	mouseDirection = Vector::Normalize(mouseDirection);
+
+	worldTransform3DReticle_.translation_ = nearPos + mouseDirection * distanceReticleObject_;
 	worldTransform3DReticle_.UpdateMatrix();
 }

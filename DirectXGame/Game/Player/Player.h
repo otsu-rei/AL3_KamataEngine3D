@@ -106,10 +106,18 @@ private:
 
 	void Move();
 
+	void MoveController();
+
 	void Rotate();
 
 	void Attack();
 
+	void AttackController();
+
 	void UpdateReticle();
+
+	void UpdateReticleMouse(const ViewProjection& viewProj);
+
+	void UpdateReticleController(const ViewProjection& viewProj);
 
 };
