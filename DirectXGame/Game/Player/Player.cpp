@@ -40,22 +40,40 @@ void Player::Update(const ViewProjection& viewProj) {
 
 	worldTransform_.UpdateMatrix();
 
-	UpdateReticle();
+	/*UpdateReticle();*/
+
+	// 2Dマウス座標から3D空間に弾を発射
+	{
+		POINT mousePosition;
+		// マウス座標を取得
+		GetCursorPos(&mousePosition);
+
+		// クライアント領域に変換
+		ScreenToClient(WinApp::GetInstance()->WinApp::GetHwnd(), &mousePosition);
+
+		sprite2DReticle_->SetPosition({static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)});
+
+		Matrix4x4 matVPV
+			= viewProj.matView * viewProj.matProjection
+			* Matrix::MakeViewport(0.0f, 0.0f, static_cast<float>(WinApp::kWindowWidth), static_cast<float>(WinApp::kWindowHeight), 0.0f, 1.0f);
+
+		Matrix4x4 matInverseVPV = Matrix::Inverse(matVPV);
+
+		nearPos = {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 0.0f};
+		farPos  = {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 1.0f};
+
+		nearPos = Matrix::Transform(nearPos, matInverseVPV);
+		farPos = Matrix::Transform(farPos, matInverseVPV);
+
+		Vector3f mouseDirection = farPos - nearPos;
+		mouseDirection = Vector::Normalize(mouseDirection);
+
+		worldTransform3DReticle_.translation_ = nearPos + mouseDirection * distanceReticleObject_;
+		worldTransform3DReticle_.UpdateMatrix();
+
+	}
 
 	Attack();
-
-	// 3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
-	{
-		Vector3f position = worldTransform3DReticle_.GetTransform();
-
-		Matrix4x4 viewportMatrix = Matrix::MakeViewport(0.0f, 0.0f, WinApp::kWindowWidth, WinApp::kWindowHeight, 0.0f, 1.0f);
-		
-		Matrix4x4 vpvMatrix = viewProj.matView * viewProj.matProjection * viewportMatrix;
-
-		position = Matrix::Transform(position, vpvMatrix);
-
-		sprite2DReticle_->SetPosition({position.x, position.y});
-	}
 }
 
 void Player::Draw(const ViewProjection& viewProj) {
@@ -74,9 +92,27 @@ void Player::SetOnImGui() {
 		ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x,    0.01f);
 		ImGui::DragFloat3("reticle", &worldTransform3DReticle_.translation_.x, 0.0f);
 
+		ImGui::Spacing();
+
+		ImGui::DragFloat("distanceReticleObject", &distanceReticleObject_, 1.0f);
+
 		ImGui::TreePop();
 	}
 
+}
+
+void Player::SetOnDebugImGui() {
+	if (ImGui::TreeNode("player")) {
+
+		ImGui::Text("2DReticle: %.2f, %.2f", sprite2DReticle_->GetPosition().x, sprite2DReticle_->GetPosition().y);
+		ImGui::Text("Near:      %.2f, %.2f, %.2f", nearPos.x, nearPos.y, nearPos.z);
+		ImGui::Text("Far:       %.2f, %.2f, %.2f", farPos.x, farPos.y, farPos.z);
+		ImGui::Text("3DReticle: %.2f, %.2f, %.2f",
+			worldTransform3DReticle_.translation_.x, worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z
+		);
+
+		ImGui::TreePop();
+	}
 }
 
 void Player::OnCollision() {}

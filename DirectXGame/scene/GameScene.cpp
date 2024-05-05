@@ -148,6 +148,14 @@ void GameScene::Update() {
 
 	CheckAllCollision();
 
+	#ifdef _DEBUG
+
+	ImGui::Begin("debug");
+	player_->SetOnDebugImGui();
+	ImGui::End();
+
+#endif // _DEBUG
+
 }
 
 void GameScene::Draw() {

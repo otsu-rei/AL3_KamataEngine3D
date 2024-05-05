@@ -51,6 +51,8 @@ public:
 	//! @brief ImGuiに設定
 	void SetOnImGui();
 
+	void SetOnDebugImGui();
+
 	//! @brief 衝突したら呼び出される関数
 	void OnCollision();
 
@@ -88,6 +90,10 @@ private:
 	// data //
 	WorldTransform worldTransform_;
 	WorldTransform worldTransform3DReticle_;
+
+	float distanceReticleObject_ = 50.0f;
+
+	Vector3f nearPos, farPos;
 
 	std::unique_ptr<Sprite> sprite2DReticle_;
 	
