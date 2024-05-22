@@ -298,8 +298,8 @@ void GameScene::CheckAllCollision() {
 			posB = bullet->GetWorldPosition();
 
 			float length = Vector::Length(posA - posB);
-			if (length <= player_->GetCollisionRadius() + enemy->GetCollisionRadius()) {
-				player_->OnCollision();
+			if (length <= bullet->GetCollisionRadius() + enemy->GetCollisionRadius()) {
+				enemy->OnCollision();
 				bullet->OnCollision();
 			}
 		}

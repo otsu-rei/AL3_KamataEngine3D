@@ -23,7 +23,8 @@ void RailCamera::Term() {
 
 void RailCamera::Update() {
 
-	worldTransform_.translation_.z -= 0.1f;
+	worldTransform_.translation_ += velocity_;
+	worldTransform_.rotation_ += addRotate_;
 	/*worldTransform_.rotation_.y += 0.001f;*/
 
 	worldTransform_.matWorld_ = Matrix::MakeAffine(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
@@ -36,6 +37,11 @@ void RailCamera::SetOnImGui() {
 
 		ImGui::DragFloat3("translate", &worldTransform_.translation_.x, 0.01f);
 		ImGui::DragFloat3("rotate",    &worldTransform_.rotation_.x,    0.01f);
+
+		ImGui::Spacing();
+
+		ImGui::DragFloat3("velocity",  &velocity_.x,  0.002f);
+		ImGui::DragFloat3("addRotate", &addRotate_.x, 0.002f);
 
 		ImGui::TreePop();
 	}

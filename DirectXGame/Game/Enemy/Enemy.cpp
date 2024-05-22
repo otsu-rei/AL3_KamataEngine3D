@@ -58,7 +58,7 @@ void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state) {
 	//
 }
 
-void Enemy::OnCollision() {}
+void Enemy::OnCollision() { isDead_ = true; }
 
 Vector3f Enemy::GetWorldPosition() const {
 	Vector3f result;
@@ -84,6 +84,7 @@ void Enemy::Fire() {
 	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
 
 	newBullet->Init(model_, worldTransform_.translation_, velocity);
+	newBullet->SetPlayer(player_);
 
 	gameScene_->AddEnemyBullet(newBullet);
 }

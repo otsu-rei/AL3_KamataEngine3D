@@ -6,6 +6,11 @@
 #include "Model.h"
 #include "WorldTransform.h"
 
+//-----------------------------------------------------------------------------------------
+// forward
+//-----------------------------------------------------------------------------------------
+class Player;
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // EnemyBullet class
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,6 +43,8 @@ public:
 
 	const float GetCollisionRadius() const { return kCollisionRadius_; }
 
+	void SetPlayer(Player* player) { player_ = player; }
+
 private:
 
 	//=========================================================================================
@@ -47,9 +54,14 @@ private:
 	Model* model_           = nullptr;
 	uint32_t textureHandle_ = 0;
 
+	Player* player_ = nullptr;
+
 	// parameter //
-	const int32_t kLifeTime_ = 60 /*_frame*/ * 2 /*_s*/;
+	const int32_t kLifeTime_ = 60 /*_frame*/ * 10 /*_s*/;
 	const float kCollisionRadius_ = 1.0f;
+
+	const float kBulletSpeed_ = 0.6f;
+	const float kHomingRaito_ = 0.02f; // 1 ~ 0
 
 	// info //
 	bool isDead_ = false;

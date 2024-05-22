@@ -217,6 +217,26 @@ Vector3f Vector::Reflect(const Vector3f& i, const Vector3f& n) {
 
 Vector3f Vector::Lerp(const Vector3f& x, const Vector3f& y, float s) { return {x.x + s * (y.x - x.x), x.y + s * (y.y - x.y), x.z + s * (y.z - x.z)}; }
 
+Vector3f Vector::Slerp(const Vector3f& x, const Vector3f& y, float s) {
+
+	float dot = Vector::Dot(x, y);
+	dot = std::clamp(dot, -1.0f, 1.0f);
+
+	float theta = std::acos(dot);
+	float sinTheta = std::sin(theta);
+
+	if (sinTheta == 0.0f) { //!< 0除算避け
+		return x * (1.0f - s) + y * s;
+	}
+
+	float w1 = std::sin((1.0f - s) * theta) / sinTheta;
+	float w2 = std::sin(s * theta) / sinTheta;
+
+	Vector3f result = x * w1 + y * w2;
+
+	return result;
+}
+
 Vector3f Vector::Clamp(const Vector3f& v, const Vector3f& min, const Vector3f& max) {
 
 	Vector3f result = {

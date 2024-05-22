@@ -85,7 +85,7 @@ private:
 	const float kCollisionRadius_ = 1.0f;
 	const float kBulletSpeed_ = 1.0f;
 
-	const Vector3f kMoveLimit = {30.0f, 30.0f, 30.0f};
+	const Vector3f kMoveLimit = {20.0f, 10.0f, 30.0f};
 
 	// data //
 	WorldTransform worldTransform_;

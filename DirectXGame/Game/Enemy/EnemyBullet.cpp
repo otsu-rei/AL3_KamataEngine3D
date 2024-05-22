@@ -7,6 +7,8 @@
 #include "MyMath.h"
 #include <cassert>
 
+#include "Player.h"
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // EnemyBullet class methods
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,6 +30,14 @@ void EnemyBullet::Update() {
 	if (--deathTimer_ < 0) {
 		isDead_ = true;
 	}
+
+	Vector3f toPlayer = player_->GetWorldPosition() - worldTransform_.translation_;
+
+	toPlayer = Vector::Normalize(toPlayer);
+	velocity_ = Vector::Normalize(velocity_);
+
+
+	velocity_ = Vector::Slerp(velocity_, toPlayer, kHomingRaito_) * kBulletSpeed_;
 
 	worldTransform_.translation_ += velocity_;
 

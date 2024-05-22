@@ -66,6 +66,8 @@ namespace Vector {
 	
 	Vector3f Lerp(const Vector3f& x, const Vector3f& y, float s);
 
+	Vector3f Slerp(const Vector3f& x, const Vector3f& y, float s);
+
 	Vector3f Clamp(const Vector3f& v, const Vector3f& min, const Vector3f& max);
 
 }

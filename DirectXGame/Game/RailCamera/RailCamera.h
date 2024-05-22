@@ -43,4 +43,7 @@ private:
 	WorldTransform worldTransform_;
 	ViewProjection viewProj_;
 
+	Vector3f velocity_ = {0.0f, 0.0f, -0.06f};
+	Vector3f addRotate_ = {0.0f, 0.0f, 0.0f};
+
 };

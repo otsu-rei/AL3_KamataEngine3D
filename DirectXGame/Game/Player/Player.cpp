@@ -33,23 +33,25 @@ void Player::Init(Model* model, uint32_t textureHandle, const Vector3f& pos) {
 
 void Player::Update(const ViewProjection& viewProj) {
 
-	/*Move();*/
+	Move();
 
-	MoveController();
+	/*MoveController();*/
 
 	/*Rotate();*/
+
+	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit * -1, kMoveLimit);
 
 	worldTransform_.UpdateMatrix();
 
 	/*UpdateReticle();*/
 
-	/*UpdateReticleMouse(viewProj);*/
+	UpdateReticleMouse(viewProj);
 
-	UpdateReticleController(viewProj);
+	/*UpdateReticleController(viewProj);*/
 
-	/*Attack();*/
+	Attack();
 
-	AttackController();
+	/*AttackController();*/
 }
 
 void Player::Draw(const ViewProjection& viewProj) {
@@ -126,8 +128,8 @@ void Player::Move() {
 		velocity.x += kMoveSpeed_;
 	}
 
-	worldTransform_.translation_ += velocity;
-	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit * -1, kMoveLimit);
+	worldTransform_.translation_ += velocity; 
+	
 }
 
 void Player::MoveController() {
@@ -139,11 +141,10 @@ void Player::MoveController() {
 		velocity.y += static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX * kMoveSpeed_;
 
 	} else {
-		return; //!< コントローラーが接続されてない場合, retrun;
+		return; //!< コントローラーが接続されてない場合
 	}
 
 	worldTransform_.translation_ += velocity;
-	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit * -1, kMoveLimit);
 }
 
 void Player::Rotate() {
