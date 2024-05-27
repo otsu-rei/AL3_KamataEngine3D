@@ -20,6 +20,10 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
+	enemies_.clear();
+	playerBullets_.clear();
+	enemyBullets_.clear();
+	
 }
 
 void GameScene::Initialize() {
