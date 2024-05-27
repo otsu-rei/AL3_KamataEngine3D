@@ -17,6 +17,7 @@
 #include "Skydome.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "CollisionManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -91,6 +92,9 @@ private: // メンバ変数
 	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
 	std::list<std::unique_ptr<PlayerBullet>> playerBullets_;
 
+	// collisionManager
+	std::unique_ptr<CollisionManager> collisionManager_;
+
 	// commands
 	std::stringstream enemyPopCommands_;
 	bool isWait_ = false;
@@ -106,6 +110,4 @@ private: // メンバ変数
 
 	void LoadEnemyPopData();
 	void UpdateEnemyPopCommands();
-
-	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
 };

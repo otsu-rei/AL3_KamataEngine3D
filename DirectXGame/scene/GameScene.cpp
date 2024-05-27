@@ -71,6 +71,10 @@ void GameScene::Initialize() {
 	newEnemy_->Init(cubeModel_.get(), enemyTextureHandle_, {0.0f, 5.0f, 20.0f});
 	
 	enemies_.push_back(std::move(newEnemy_));
+
+	// collisionManager
+	collisionManager_ = std::make_unique<CollisionManager>();
+
 }
 
 void GameScene::Update() {
@@ -260,39 +264,27 @@ void GameScene::DrawEnemyBullet(const ViewProjection& viewProj) {
 }
 
 void GameScene::CheckAllCollision() {
-	std::list<Collider*> colliders_;
 	// コライダーをリストに登録
 	// 自キャラ
-	colliders_.push_back(player_.get());
+	collisionManager_->AddCollider(player_.get());
 	
 	// 敵キャラすべて
 	for (auto& enemy : enemies_) {
-		colliders_.push_back(enemy.get());
+		collisionManager_->AddCollider(enemy.get());
 	}
 
 	// 自弾すべて
 	for (auto& bullet : playerBullets_) {
-		colliders_.push_back(bullet.get());
+		collisionManager_->AddCollider(bullet.get());
 	}
 
 	// 敵弾すべて
 	for (auto& bullet : enemyBullets_) {
-		colliders_.push_back(bullet.get());
+		collisionManager_->AddCollider(bullet.get());
 	}
 
 	// リスト内のペアの総当たり
-	auto itrA = colliders_.begin();
-	for (; itrA != colliders_.end(); ++itrA) {
-		
-		auto itrB = itrA; //!< 自身に当たることを避けるため
-		itrB++;
-		for (; itrB != colliders_.end(); ++itrB) {
-
-			CheckCollisionPair(*itrA, *itrB);
-		}
-	}
-
-	colliders_.clear();
+	collisionManager_->CheckAllCollision();
 }
 
 void GameScene::LoadEnemyPopData() {
@@ -364,19 +356,4 @@ void GameScene::UpdateEnemyPopCommands() {
 		}
 	}
 
-}
-
-void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
-
-	if (!(colliderA->GetCollisionAttribute() & colliderB->GetCollisionMask())
-		|| !(colliderB->GetCollisionAttribute() & colliderA->GetCollisionMask())) {
-		return; //!< 属性(自分)とマスク(判定先)が一致しない場合
-	}
-
-	float lenght = Vector::Length(colliderA->GetWorldPosition() - colliderB->GetWorldPosition());
-
-	if (lenght <= colliderA->GetRadius() + colliderB->GetRadius()) {
-		colliderA->OnCollision();
-		colliderB->OnCollision();
-	}
 }

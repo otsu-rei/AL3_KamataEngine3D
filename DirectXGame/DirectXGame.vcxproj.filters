@@ -132,6 +132,9 @@
     <ClCompile Include="Game\Collider\Collider.cpp">
       <Filter>Game\Collider</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Collider\CollisionManager.cpp">
+      <Filter>Game\Collider</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3d\ViewProjection.h">
@@ -249,6 +252,9 @@
       <Filter>Game\RailCamera</Filter>
     </ClInclude>
     <ClInclude Include="Game\Collider\Collider.h">
+      <Filter>Game\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Collider\CollisionManager.h">
       <Filter>Game\Collider</Filter>
     </ClInclude>
   </ItemGroup>
