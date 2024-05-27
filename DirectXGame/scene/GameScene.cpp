@@ -23,6 +23,7 @@ GameScene::~GameScene() {
 	enemies_.clear();
 	playerBullets_.clear();
 	enemyBullets_.clear();
+	controllPoints_.clear();
 	
 }
 
@@ -42,8 +43,19 @@ void GameScene::Initialize() {
 	railCamera_ = std::make_unique<RailCamera>();
 	railCamera_->Init({0.0f, 0.0f, -20.0f}, {0.0f});
 
+	controllPoints_ = {
+	    {0,  0,  0},
+        {10, 10, 0},
+        {10, 15, 0},
+        {20, 15, 0},
+        {20, 0,  0},
+        {30, 0,  0},
+	};
+
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+
+	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
 
 	cubeModel_.reset(Model::Create());
 	skydomeModel_.reset(Model::CreateFromOBJ("skydome", true));
@@ -178,8 +190,6 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-
-	/*DrawGrid({0.0f}, 10.0f, 6, {1.0f, 1.0f, 1.0f, 1.0f});*/
 	
 	skydome_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
@@ -189,6 +199,10 @@ void GameScene::Draw() {
 		enemy->Draw(viewProjection_);
 	}
 	DrawEnemyBullet(viewProjection_);
+
+	/*DrawGrid({0.0f}, 10.0f, 6, {1.0f, 1.0f, 1.0f, 1.0f});*/
+
+	DrawRail({1.0f, 0.1f, 0.1f, 1.0f});
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -356,4 +370,26 @@ void GameScene::UpdateEnemyPopCommands() {
 		}
 	}
 
+}
+
+void GameScene::DrawRail(const Vector4f& color) {
+	std::vector<Vector3f> pointDrawing;
+
+	// 線分数
+	const size_t segmentCount = 100;
+
+	for (size_t i = 0; i < segmentCount + 1; ++i) {
+		float t = 1.0f / segmentCount * i;
+		Vector3f pos = CatmullRomPosition(controllPoints_, t);
+
+		pointDrawing.push_back(pos);
+	}
+
+	auto drawer = PrimitiveDrawer::GetInstance();
+
+	for (size_t i = 1; i < segmentCount; ++i) {
+		drawer->DrawLine3d(
+			pointDrawing[i - 1], pointDrawing[i], color
+		);
+	}
 }

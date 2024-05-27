@@ -72,6 +72,9 @@ private: // メンバ変数
 	std::unique_ptr<DebugCamera> debugCamera_;
 	std::unique_ptr<RailCamera> railCamera_;
 
+	// railCamera
+	std::vector<Vector3f> controllPoints_;
+
 	/// Game
 	// model
 	std::unique_ptr<Model> cubeModel_;
@@ -110,4 +113,6 @@ private: // メンバ変数
 
 	void LoadEnemyPopData();
 	void UpdateEnemyPopCommands();
+
+	void DrawRail(const Vector4f& color);
 };
