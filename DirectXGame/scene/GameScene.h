@@ -84,7 +84,7 @@ private: // メンバ変数
 	uint32_t playerTextureHandle_;
 
 	// enemy
-	std::list<std::unique_ptr<Enemy>> enemys_;
+	std::list<std::unique_ptr<Enemy>> enemies_;
 	uint32_t enemyTextureHandle_;
 
 	// bullets

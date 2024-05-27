@@ -66,7 +66,7 @@ void GameScene::Initialize() {
 	newEnemy_->SetGameScene(this);
 	newEnemy_->Init(cubeModel_.get(), enemyTextureHandle_, {0.0f, 5.0f, 20.0f});
 	
-	enemys_.push_back(std::move(newEnemy_));
+	enemies_.push_back(std::move(newEnemy_));
 }
 
 void GameScene::Update() {
@@ -81,7 +81,7 @@ void GameScene::Update() {
 
 	////!< ImGuiのstack idへの対策
 	//int id = 0;
-	//for (const auto& enemy : enemys_) {
+	//for (const auto& enemy : enemies_) {
 	//	std::string labelID = "##";
 	//	labelID += std::to_string(id);
 
@@ -118,7 +118,7 @@ void GameScene::Update() {
 	UpdateEnemyPopCommands();
 
 	// 死んだ敵機の削除
-	enemys_.remove_if([](auto& enemy) {
+	enemies_.remove_if([](auto& enemy) {
 		if (enemy->IsDead()) {
 			return true;
 		}
@@ -126,7 +126,7 @@ void GameScene::Update() {
 		return false;
 	});
 
-	for (auto& enemy : enemys_) {
+	for (auto& enemy : enemies_) {
 		enemy->Update();
 	}
 
@@ -177,7 +177,7 @@ void GameScene::Draw() {
 	player_->Draw(viewProjection_);
 	DrawPlayerBullet(viewProjection_);
 
-	for (auto& enemy : enemys_) {
+	for (auto& enemy : enemies_) {
 		enemy->Draw(viewProjection_);
 	}
 	DrawEnemyBullet(viewProjection_);
@@ -256,33 +256,39 @@ void GameScene::DrawEnemyBullet(const ViewProjection& viewProj) {
 }
 
 void GameScene::CheckAllCollision() {
-#pragma region 自キャラと敵弾の当たり判定
+	std::list<Collider*> colliders_;
+	// コライダーをリストに登録
+	// 自キャラ
+	colliders_.push_back(player_.get());
+	
+	// 敵キャラすべて
+	for (auto& enemy : enemies_) {
+		colliders_.push_back(enemy.get());
+	}
 
+	// 自弾すべて
+	for (auto& bullet : playerBullets_) {
+		colliders_.push_back(bullet.get());
+	}
+
+	// 敵弾すべて
 	for (auto& bullet : enemyBullets_) {
-		CheckCollisionPair(player_.get(), bullet.get());
+		colliders_.push_back(bullet.get());
 	}
 
-#pragma endregion
+	// リスト内のペアの総当たり
+	auto itrA = colliders_.begin();
+	for (; itrA != colliders_.end(); ++itrA) {
+		
+		auto itrB = itrA; //!< 自身に当たることを避けるため
+		itrB++;
+		for (; itrB != colliders_.end(); ++itrB) {
 
-#pragma region 敵キャラと自弾の当たり判定
-
-	for (auto& enemy : enemys_) {
-		for (auto& bullet : playerBullets_) {
-			CheckCollisionPair(enemy.get(), bullet.get());
+			CheckCollisionPair(*itrA, *itrB);
 		}
 	}
 
-#pragma endregion
-
-#pragma region 自弾と敵弾の当たり判定
-
-	for (auto& pBullet : playerBullets_) {
-		for (auto& eBullet : enemyBullets_) {
-			CheckCollisionPair(pBullet.get(), eBullet.get());
-		}
-	}
-
-#pragma endregion
+	colliders_.clear();
 }
 
 void GameScene::LoadEnemyPopData() {
@@ -340,7 +346,7 @@ void GameScene::UpdateEnemyPopCommands() {
 			newEnemy_->SetGameScene(this);
 			newEnemy_->Init(cubeModel_.get(), enemyTextureHandle_, pos);
 
-			enemys_.push_back(std::move(newEnemy_));
+			enemies_.push_back(std::move(newEnemy_));
 
 		} else if (word.find("WAIT") == 0) { //!< 待機コマンド
 			std::getline(line_stream, word, ',');
@@ -357,6 +363,11 @@ void GameScene::UpdateEnemyPopCommands() {
 }
 
 void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+
+	if (!(colliderA->GetCollisionAttribute() & colliderB->GetCollisionMask())
+		|| !(colliderB->GetCollisionAttribute() & colliderA->GetCollisionMask())) {
+		return; //!< 属性(自分)とマスク(判定先)が一致しない場合
+	}
 
 	float lenght = Vector::Length(colliderA->GetWorldPosition() - colliderB->GetWorldPosition());
 

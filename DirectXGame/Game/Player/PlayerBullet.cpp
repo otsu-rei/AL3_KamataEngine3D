@@ -21,7 +21,10 @@ void PlayerBullet::Init(Model* model, const Vector3f& position, const Vector3f& 
 
 	velocity_ = velocity;
 
+	// collider
 	SetRadius(kCollisionRadius_);
+	SetCollisionAttribute(PLAYER_BULLET);
+	SetCollisionMask(ENEMY | ENEMY_BULLET);
 }
 
 void PlayerBullet::Update() {

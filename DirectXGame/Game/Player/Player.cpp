@@ -29,7 +29,10 @@ void Player::Init(Model* model, uint32_t textureHandle, const Vector3f& pos) {
 	uint32_t textureReticle = TextureManager::Load("reticle.png");
 	sprite2DReticle_.reset(Sprite::Create(textureReticle, {WinApp::kWindowWidth / 2.0f, WinApp::kWindowHeight / 2.0f}, {0.2f, 0.2f, 1.0f, 1.0f}, {0.5f, 0.5f}));
 
+	// collider
 	SetRadius(kCollisionRadius_);
+	SetCollisionAttribute(PLAYER);
+	SetCollisionMask(ENEMY_BULLET);
 
 }
 
