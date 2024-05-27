@@ -20,20 +20,6 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-
-	// game 
-	skydome_.reset();
-	player_.reset();
-	enemys_.clear();
-
-	enemyBullets_.clear();
-	playerBullets_.clear();
-
-	cubeModel_.reset();
-	skydomeModel_.reset();
-
-	debugCamera_.reset();
-
 }
 
 void GameScene::Initialize() {
@@ -270,21 +256,10 @@ void GameScene::DrawEnemyBullet(const ViewProjection& viewProj) {
 }
 
 void GameScene::CheckAllCollision() {
-	// 判定対象A, Bの座標
-	Vector3 posA, posB;
-
 #pragma region 自キャラと敵弾の当たり判定
 
-	posA = player_->GetWorldPosition();
-
 	for (auto& bullet : enemyBullets_) {
-		posB = bullet->GetWorldPosition();
-
-		float length = Vector::Length(posA - posB);
-		if (length <= player_->GetCollisionRadius() + bullet->GetCollisionRadius()) {
-			player_->OnCollision();
-			bullet->OnCollision();
-		}
+		CheckCollisionPair(player_.get(), bullet.get());
 	}
 
 #pragma endregion
@@ -292,16 +267,8 @@ void GameScene::CheckAllCollision() {
 #pragma region 敵キャラと自弾の当たり判定
 
 	for (auto& enemy : enemys_) {
-		posA = enemy->GetWorldPosition();
-
 		for (auto& bullet : playerBullets_) {
-			posB = bullet->GetWorldPosition();
-
-			float length = Vector::Length(posA - posB);
-			if (length <= bullet->GetCollisionRadius() + enemy->GetCollisionRadius()) {
-				enemy->OnCollision();
-				bullet->OnCollision();
-			}
+			CheckCollisionPair(enemy.get(), bullet.get());
 		}
 	}
 
@@ -310,16 +277,8 @@ void GameScene::CheckAllCollision() {
 #pragma region 自弾と敵弾の当たり判定
 
 	for (auto& pBullet : playerBullets_) {
-		posA = pBullet->GetWorldPosition();
-
 		for (auto& eBullet : enemyBullets_) {
-			posB = eBullet->GetWorldPosition();
-
-			float length = Vector::Length(posA - posB);
-			if (length <= pBullet->GetCollisionRadius() + eBullet->GetCollisionRadius()) {
-				pBullet->OnCollision();
-				eBullet->OnCollision();
-			}
+			CheckCollisionPair(pBullet.get(), eBullet.get());
 		}
 	}
 
@@ -395,4 +354,14 @@ void GameScene::UpdateEnemyPopCommands() {
 		}
 	}
 
+}
+
+void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+
+	float lenght = Vector::Length(colliderA->GetWorldPosition() - colliderB->GetWorldPosition());
+
+	if (lenght <= colliderA->GetRadius() + colliderB->GetRadius()) {
+		colliderA->OnCollision();
+		colliderB->OnCollision();
+	}
 }

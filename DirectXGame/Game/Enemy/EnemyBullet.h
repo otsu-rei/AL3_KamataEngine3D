@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------------------------
 #include "Model.h"
 #include "WorldTransform.h"
+#include "Collider.h"
 
 //-----------------------------------------------------------------------------------------
 // forward
@@ -14,7 +15,8 @@ class Player;
 ////////////////////////////////////////////////////////////////////////////////////////////
 // EnemyBullet class
 ////////////////////////////////////////////////////////////////////////////////////////////
-class EnemyBullet {
+class EnemyBullet
+	: public Collider {
 public:
 
 	//=========================================================================================
@@ -35,13 +37,11 @@ public:
 	void Draw(const ViewProjection& viewProj);
 
 	//! @brief 衝突したら呼び出される関数
-	void OnCollision();
+	void OnCollision() override;
 
 	bool IsDead() const { return isDead_; }
 
-	Vector3f GetWorldPosition() const;
-
-	const float GetCollisionRadius() const { return kCollisionRadius_; }
+	Vector3f GetWorldPosition() const override;
 
 	void SetPlayer(Player* player) { player_ = player; }
 

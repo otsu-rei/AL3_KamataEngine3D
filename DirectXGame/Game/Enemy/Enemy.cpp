@@ -27,6 +27,8 @@ void Enemy::Init(Model* model, uint32_t textureHandle, const Vector3f& pos) {
 
 	ChangeState(std::make_unique<EnemyStateApproach>(this));
 
+	SetRadius(kCollisionRadius_);
+
 }
 
 void Enemy::Update() {

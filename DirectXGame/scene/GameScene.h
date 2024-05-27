@@ -106,4 +106,6 @@ private: // メンバ変数
 
 	void LoadEnemyPopData();
 	void UpdateEnemyPopCommands();
+
+	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
 };

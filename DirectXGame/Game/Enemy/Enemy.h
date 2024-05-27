@@ -15,6 +15,7 @@
 // Game
 #include "EnemyBullet.h"
 #include "TimedCall.h"
+#include "Collider.h"
 
 //-----------------------------------------------------------------------------------------
 // forward
@@ -106,7 +107,8 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Enemy class
 ////////////////////////////////////////////////////////////////////////////////////////////
-class Enemy {
+class Enemy
+	: public Collider {
 public:
 
 	//=========================================================================================
@@ -142,13 +144,11 @@ public:
 	void ChangeState(std::unique_ptr<BaseEnemyState> state);
 
 	//! @brief 衝突したら呼び出される関数
-	void OnCollision();
+	void OnCollision() override;
 
 	bool IsDead() const { return isDead_; }
 
-	Vector3f GetWorldPosition() const;
-
-	const float GetCollisionRadius() const { return kCollisionRadius_; }
+	Vector3f GetWorldPosition() const override;
 
 	void SetPos(const Vector3f& pos) { worldTransform_.translation_ = pos; }
 

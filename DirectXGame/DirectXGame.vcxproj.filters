@@ -79,6 +79,9 @@
     <Filter Include="Game\RailCamera">
       <UniqueIdentifier>{3efa98f9-66a6-4e7d-9ba9-39fdc9fccaa6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Collider">
+      <UniqueIdentifier>{7fd1be45-5785-4e48-af13-9be1d6a1faf2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -125,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="Game\RailCamera\RailCamera.cpp">
       <Filter>Game\RailCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Collider\Collider.cpp">
+      <Filter>Game\Collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -241,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="Game\RailCamera\RailCamera.h">
       <Filter>Game\RailCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Collider\Collider.h">
+      <Filter>Game\Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

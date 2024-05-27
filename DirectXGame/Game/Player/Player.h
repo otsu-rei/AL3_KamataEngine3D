@@ -16,6 +16,7 @@
 
 // game
 #include "PlayerBullet.h"
+#include "Collider.h"
 
 //-----------------------------------------------------------------------------------------
 // forward
@@ -25,7 +26,8 @@ class GameScene;
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Player class
 ////////////////////////////////////////////////////////////////////////////////////////////
-class Player {
+class Player
+	: public Collider {
 public:
 	//=========================================================================================
 	// public methods
@@ -54,11 +56,9 @@ public:
 	void SetOnDebugImGui();
 
 	//! @brief 衝突したら呼び出される関数
-	void OnCollision();
+	void OnCollision() override;
 
-	Vector3f GetWorldPosition() const;
-
-	const float GetCollisionRadius() const { return kCollisionRadius_; }
+	Vector3f GetWorldPosition() const override;
 
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 

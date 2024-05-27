@@ -24,6 +24,8 @@ void EnemyBullet::Init(Model* model, const Vector3f& position, const Vector3f& v
 	worldTransform_.scale_ = {0.5f, 0.5f, 3.0f};
 
 	velocity_ = velocity;
+
+	SetRadius(kCollisionRadius_);
 }
 
 void EnemyBullet::Update() {

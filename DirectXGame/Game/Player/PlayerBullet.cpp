@@ -20,6 +20,8 @@ void PlayerBullet::Init(Model* model, const Vector3f& position, const Vector3f& 
 	worldTransform_.translation_ = position;
 
 	velocity_ = velocity;
+
+	SetRadius(kCollisionRadius_);
 }
 
 void PlayerBullet::Update() {
