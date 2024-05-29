@@ -6,6 +6,9 @@
 #include <WorldTransform.h>
 #include <ViewProjection.h>
 
+#include <vector>
+#include <Vector3.h>
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // RailCamera class
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,8 +22,7 @@ public:
 	//! @brief デストラクタ
 	~RailCamera() { Term(); }
 
-	//! @brief 初期化処理
-	void Init(const Vector3f& pos, const Vector3f& rotate);
+	void Init();
 
 	//! @brief 終了処理
 	void Term();
@@ -30,9 +32,11 @@ public:
 
 	void SetOnImGui();
 
-	const ViewProjection& GetViewProjection() { return viewProj_; }
+	const ViewProjection& GetViewProjection() const { return viewProj_; }
 
-	const WorldTransform& GetWorldTranform() { return worldTransform_; }
+	const WorldTransform& GetWorldTranform() const { return worldTransform_; }
+
+	const std::vector<Vector3f>& GetControllPoints() const { return controllPoints_; }
 
 private:
 
@@ -43,7 +47,21 @@ private:
 	WorldTransform worldTransform_;
 	ViewProjection viewProj_;
 
-	Vector3f velocity_ = {0.0f, 0.0f, -0.06f};
-	Vector3f addRotate_ = {0.0f, 0.0f, 0.0f};
+	// railCamera
+	std::vector<Vector3f> controllPoints_;
+
+	float t_ = 0.0f;
+	const float eyeToTargetDistance_ = 0.02f;
+
+	// debug
+
+	Vector3f eye_;
+	Vector3f target_;
+
+	//=========================================================================================
+	// private methods
+	//=========================================================================================
+
+	void CalculateMatrix();
 
 };
