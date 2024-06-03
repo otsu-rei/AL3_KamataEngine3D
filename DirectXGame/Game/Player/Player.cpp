@@ -45,14 +45,9 @@ void Player::Update(const ViewProjection& viewProj) {
 	/*Rotate();*/
 
 	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit * -1, kMoveLimit);
-
 	worldTransform_.UpdateMatrix();
 
-	/*UpdateReticle();*/
-
-	UpdateReticleMouse(viewProj);
-
-	/*UpdateReticleController(viewProj);*/
+	UpdateReticle(viewProj);
 
 	Attack();
 
@@ -198,7 +193,17 @@ void Player::AttackController() {
 	}
 }
 
-void Player::UpdateReticle() {
+void Player::UpdateReticle(const ViewProjection& viewProj) {
+	/*UpdateReticleDirection();*/
+
+	UpdateReticleMouse(viewProj);
+
+	/*UpdateReticleController(viewProj);*/
+
+	UpdateReticleLockOn(viewProj);
+}
+
+void Player::UpdateReticleDirection() {
 
 	Vector3f offset = Matrix::TransformNormal({0.0f, 0.0f, 1.0f}, worldTransform_.parent_->matWorld_);
 	offset = Vector::Normalize(offset) * 50.0f;
@@ -219,23 +224,8 @@ void Player::UpdateReticleMouse(const ViewProjection& viewProj) {
 
 	sprite2DReticle_->SetPosition({static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)});
 
-	Matrix4x4 matVPV =
-		viewProj.matView * viewProj.matProjection * Matrix::MakeViewport(0.0f, 0.0f, static_cast<float>(WinApp::kWindowWidth), static_cast<float>(WinApp::kWindowHeight), 0.0f, 1.0f);
-
-	Matrix4x4 matInverseVPV = Matrix::Inverse(matVPV);
-
-	nearPos = {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 0.0f};
-	farPos = {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 1.0f};
-
-	nearPos = Matrix::Transform(nearPos, matInverseVPV);
-	farPos = Matrix::Transform(farPos, matInverseVPV);
-
-	Vector3f mouseDirection = farPos - nearPos;
-	mouseDirection = Vector::Normalize(mouseDirection);
-
-	worldTransform3DReticle_.translation_ = nearPos + mouseDirection * distanceReticleObject_;
+	worldTransform3DReticle_.translation_ = ScreenToWorld(viewProj, sprite2DReticle_->GetPosition(), distanceReticleObject_);
 	worldTransform3DReticle_.UpdateMatrix();
-	
 }
 
 void Player::UpdateReticleController(const ViewProjection& viewProj) {
@@ -256,20 +246,82 @@ void Player::UpdateReticleController(const ViewProjection& viewProj) {
 	spritePosition.y -= static_cast<float>(joyState.Gamepad.sThumbRY) / SHRT_MAX * reticleSpeed;
 	sprite2DReticle_->SetPosition(spritePosition);
 
+	worldTransform3DReticle_.translation_ = ScreenToWorld(viewProj, sprite2DReticle_->GetPosition(), distanceReticleObject_);
+	worldTransform3DReticle_.UpdateMatrix();
+}
+
+void Player::UpdateReticleLockOn(const ViewProjection& viewProj) {
+	static Vector2f preLockEnemyScreenPos;
+
+	// 現在のreticleの座標の取得
+	Vector2f reticlePos = sprite2DReticle_->GetPosition();
+
+	// screen座標変換用のmatrixの設定
+	Matrix4x4 vpvMatrix
+	    = viewProj.matView * viewProj.matProjection * Matrix::MakeViewport(0.0f, 0.0f, static_cast<float>(WinApp::kWindowWidth), static_cast<float>(WinApp::kWindowHeight), 0.0f, 1.0f);
+
+	// enemiesとの参照
+	for (const auto& enemy : gameScene_->GetEnemies()) {
+
+		// lockon範囲内かどうかの計算
+		float distance = Vector::Length(enemy->GetWorldPosition() - worldTransform_.parent_->GetTransform());
+
+		if (distance >= kLockOnRange_) {
+			continue; //!< 範囲外なので
+		}
+
+		// enemyPosをスクリーン上の座標に変換
+		Vector3f enemyScreenPos = Matrix::Transform(enemy->GetWorldPosition(), vpvMatrix); //!< zは使わないこと
+
+		// hack: Vector2 length function
+		float length = Vector::Length({reticlePos.x - enemyScreenPos.x, reticlePos.y - enemyScreenPos.y, 0.0f});
+
+		if (length <= sprite2DReticle_->GetSize().x) { //!< x, yのsize同じなのでxをradiusとして利用
+			// spriteを敵に合わせる
+			sprite2DReticle_->SetPosition({enemyScreenPos.x, enemyScreenPos.y});
+
+			// targetを敵に合わせる
+			worldTransform3DReticle_.translation_ = enemy->GetWorldPosition();
+			worldTransform3DReticle_.UpdateMatrix();
+
+			preLockEnemyScreenPos = {enemyScreenPos.x, enemyScreenPos.y};
+			unlockT_ = 1.0f;
+			
+			return; //!< ロックオンしてるので早期return
+		}
+	}
+
+	// TODO: world3DReticleの設定. lockOnが外れた際, lerpでmousePositionまで戻す
+
+	// 外れた際, unlockTの減少
+	unlockT_ -= 1.0f / 4.0f;
+	unlockT_ = std::clamp(unlockT_, 0.0f, 1.0f);
+
+	// reticleのpositionを元のpositionに戻す
+	sprite2DReticle_->SetPosition({
+	    std::lerp(reticlePos.x, preLockEnemyScreenPos.x, unlockT_),
+	    std::lerp(reticlePos.y, preLockEnemyScreenPos.y, unlockT_),
+	});
+
+	worldTransform3DReticle_.translation_ = ScreenToWorld(viewProj, sprite2DReticle_->GetPosition(),distanceReticleObject_);
+	worldTransform3DReticle_.UpdateMatrix();
+}
+
+Vector3f Player::ScreenToWorld(const ViewProjection& viewProj, const Vector2f& screenPosition, float distance) {
+
 	Matrix4x4 matVPV
 		= viewProj.matView * viewProj.matProjection * Matrix::MakeViewport(0.0f, 0.0f, static_cast<float>(WinApp::kWindowWidth), static_cast<float>(WinApp::kWindowHeight), 0.0f, 1.0f);
 
 	Matrix4x4 matInverseVPV = Matrix::Inverse(matVPV);
 
-	nearPos = {static_cast<float>(spritePosition.x), static_cast<float>(spritePosition.y), 0.0f};
-	farPos = {static_cast<float>(spritePosition.x), static_cast<float>(spritePosition.y), 1.0f};
+	nearPos = {static_cast<float>(screenPosition.x), static_cast<float>(screenPosition.y), 0.0f};
+	farPos = {static_cast<float>(screenPosition.x), static_cast<float>(screenPosition.y), 1.0f};
 
 	nearPos = Matrix::Transform(nearPos, matInverseVPV);
 	farPos = Matrix::Transform(farPos, matInverseVPV);
 
-	Vector3f mouseDirection = farPos - nearPos;
-	mouseDirection = Vector::Normalize(mouseDirection);
+	Vector3f direction = farPos - nearPos;
+	direction = Vector::Normalize(direction);
 
-	worldTransform3DReticle_.translation_ = nearPos + mouseDirection * distanceReticleObject_;
-	worldTransform3DReticle_.UpdateMatrix();
+	return nearPos + direction * distance;
 }

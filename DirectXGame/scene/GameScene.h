@@ -56,6 +56,9 @@ public: // メンバ関数
 	//! @brief 自弾の追加
 	void AddPlayerBullet(std::unique_ptr<PlayerBullet>& playerBullet);
 
+	//! @brief 敵配列の返却
+	const std::list<std::unique_ptr<Enemy>>& GetEnemies() const { return enemies_; }
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;

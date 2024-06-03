@@ -21,13 +21,20 @@
 //}
 
 void RailCamera::Init() {
-	controllPoints_ = {
+	/*controllPoints_ = {
 		{0,  0,  20},
 		{10, 10, 5},
 		{10, 15, 10},
 		{20, 15, 0},
 		{20, 0,  10},
 		{30, 0,  10},
+	};*/
+
+	controllPoints_ = {
+	    {0, 0, -20},
+	    {0, 2, -10},
+	    {0, 4, 0},
+	    {0, 8, 10},
 	};
 
 	viewProj_.Initialize();

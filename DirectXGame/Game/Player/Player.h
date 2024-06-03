@@ -83,21 +83,23 @@ private:
 	const float kMoveSpeed_ = 0.2f;
 	const float kRotSpeed_ = 0.02f; //!< radian / frame
 	const float kCollisionRadius_ = 1.0f;
-	const float kBulletSpeed_ = 1.0f;
+	const float kBulletSpeed_ = 2.0f;
 
 	const Vector3f kMoveLimit = {20.0f, 10.0f, 30.0f};
+
+	// reticle parameter
+	float distanceReticleObject_ = 50.0f;
+	const float kLockOnRange_    = 100.0f; //!< 3Dworld coordinate
 
 	// data //
 	WorldTransform worldTransform_;
 	WorldTransform worldTransform3DReticle_;
 
-	float distanceReticleObject_ = 50.0f;
-
 	Vector3f nearPos, farPos;
 
 	std::unique_ptr<Sprite> sprite2DReticle_;
-	
 
+	float unlockT_;
 	
 
 	//=========================================================================================
@@ -114,10 +116,13 @@ private:
 
 	void AttackController();
 
-	void UpdateReticle();
+	void UpdateReticle(const ViewProjection& viewProj);
 
+	void UpdateReticleDirection();
 	void UpdateReticleMouse(const ViewProjection& viewProj);
-
 	void UpdateReticleController(const ViewProjection& viewProj);
+	void UpdateReticleLockOn(const ViewProjection& viewProj);
+
+	Vector3f ScreenToWorld(const ViewProjection& viewProj, const Vector2f& screenPosition, float distance);
 
 };
