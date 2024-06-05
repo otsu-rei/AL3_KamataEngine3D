@@ -6,6 +6,7 @@
 // c++
 #include <cstdint>
 #include <list>
+#include <unordered_set>
 
 // engine
 #include "Input.h"
@@ -22,6 +23,7 @@
 // forward
 //-----------------------------------------------------------------------------------------
 class GameScene;
+class Enemy;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Player class
@@ -45,7 +47,7 @@ public:
 	void Draw(const ViewProjection& viewProj);
 
 	//! @brief UI描画処理
-	void DrawUI();
+	void DrawUI(const ViewProjection& viewProj);
 
 	//! @brief 終了処理
 	void Term();
@@ -98,8 +100,14 @@ private:
 	Vector3f nearPos, farPos;
 
 	std::unique_ptr<Sprite> sprite2DReticle_;
-
+	
 	float unlockT_;
+
+	// multi lockOn //
+	std::unordered_set<Enemy*> lockOnEnemies_;
+
+	uint32_t lockOnTexture_;
+	std::vector<std::unique_ptr<Sprite>> lockOnSprites_;
 	
 
 	//=========================================================================================

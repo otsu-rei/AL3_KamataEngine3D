@@ -26,8 +26,10 @@ void Player::Init(Model* model, uint32_t textureHandle, const Vector3f& pos) {
 
 	worldTransform_.translation_ = pos;
 
-	uint32_t textureReticle = TextureManager::Load("reticle.png");
-	sprite2DReticle_.reset(Sprite::Create(textureReticle, {WinApp::kWindowWidth / 2.0f, WinApp::kWindowHeight / 2.0f}, {0.2f, 0.2f, 1.0f, 1.0f}, {0.5f, 0.5f}));
+	uint32_t reticleTexture = TextureManager::Load("reticle.png");
+	sprite2DReticle_.reset(Sprite::Create(reticleTexture, {WinApp::kWindowWidth / 2.0f, WinApp::kWindowHeight / 2.0f}, {0.2f, 0.2f, 1.0f, 1.0f}, {0.5f, 0.5f}));
+
+	lockOnTexture_ = TextureManager::Load("lockOn.png");
 
 	// collider
 	SetRadius(kCollisionRadius_);
@@ -58,7 +60,31 @@ void Player::Draw(const ViewProjection& viewProj) {
 	model_->Draw(worldTransform_, viewProj, textureHandle_);
 }
 
-void Player::DrawUI() { sprite2DReticle_->Draw(); }
+void Player::DrawUI(const ViewProjection& viewProj) {
+	sprite2DReticle_->Draw();
+
+	// 前フレームの描画情報の削除
+	lockOnSprites_.clear();
+
+	// screen座標変換用のmatrixの設定
+	Matrix4x4 vpvMatrix
+		= viewProj.matView * viewProj.matProjection * Matrix::MakeViewport(0.0f, 0.0f, static_cast<float>(WinApp::kWindowWidth), static_cast<float>(WinApp::kWindowHeight), 0.0f, 1.0f);
+
+	for (const auto& enemy : lockOnEnemies_) {
+		// screen座標に変換
+		Vector3f enemyScreenPos = Matrix::Transform(enemy->GetWorldPosition(), vpvMatrix);
+
+		std::unique_ptr<Sprite> newSprite;
+		newSprite.reset(Sprite::Create(lockOnTexture_, {enemyScreenPos.x, enemyScreenPos.y}, {1.0f, 0.05f, 0.05f, 1.0f}, {0.5f, 0.5f}));
+		newSprite->SetSize({128.0f, 128.0f});
+		newSprite->Draw();
+
+		// コマンド終了まで情報の保持
+		lockOnSprites_.push_back(
+			std::move(newSprite)
+		);
+	}
+}
 
 void Player::Term() { sprite2DReticle_.reset(); }
 
@@ -159,16 +185,36 @@ void Player::Rotate() {
 
 void Player::Attack() { 
 	if (input_->TriggerKey(DIK_SPACE)) {
-		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+		if (lockOnEnemies_.empty()) { //!< lockOnした標的がいない場合
 
-		// 弾の進行方向の設定
+			std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+
+			// 弾の進行方向の設定
+			Vector3f velocity = worldTransform3DReticle_.translation_ - GetWorldPosition();
+			velocity = Vector::Normalize(velocity) * kBulletSpeed_;
+
+			newBullet->Init(model_, Matrix::Transform(worldTransform_.translation_, worldTransform_.parent_->matWorld_), velocity);
+
+			gameScene_->AddPlayerBullet(newBullet);
+
+		} else { //!< lockOnした標的がいる場合
+			for (const auto& enemy : lockOnEnemies_) {
+				
+				std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+
+				// 弾の進行方向の設定
+				Vector3f velocity = enemy->GetWorldPosition() - GetWorldPosition();
+				velocity = Vector::Normalize(velocity) * kBulletSpeed_;
+
+				newBullet->Init(model_, Matrix::Transform(worldTransform_.translation_, worldTransform_.parent_->matWorld_), velocity);
+
+				gameScene_->AddPlayerBullet(newBullet);
+			}
+			
+			// 発射したのでlistから除外
+			lockOnEnemies_.clear();
+		}
 		
-		Vector3f velocity = worldTransform3DReticle_.translation_ - GetWorldPosition();
-		velocity = Vector::Normalize(velocity) * kBulletSpeed_;
-
-		newBullet->Init(model_, Matrix::Transform(worldTransform_.translation_, worldTransform_.parent_->matWorld_), velocity);
-
-		gameScene_->AddPlayerBullet(newBullet);
 	}
 }
 
@@ -183,7 +229,6 @@ void Player::AttackController() {
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 
 		// 弾の進行方向の設定
-
 		Vector3f velocity = worldTransform3DReticle_.translation_ - GetWorldPosition();
 		velocity = Vector::Normalize(velocity) * kBulletSpeed_;
 
@@ -286,6 +331,11 @@ void Player::UpdateReticleLockOn(const ViewProjection& viewProj) {
 
 			preLockEnemyScreenPos = {enemyScreenPos.x, enemyScreenPos.y};
 			unlockT_ = 1.0f;
+
+			// lockOnしたのでlistにptrを追加
+			lockOnEnemies_.insert(enemy.get());
+
+			// todo: lockOnした敵にレティクルを出す
 			
 			return; //!< ロックオンしてるので早期return
 		}
