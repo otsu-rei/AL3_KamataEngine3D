@@ -127,6 +127,14 @@ void GameScene::Update() {
 
 	UpdateEnemyPopCommands();
 
+	for (auto& enemy : enemies_) {
+		enemy->Update();
+	}
+
+	UpdateEnemyBullet();
+
+	CheckAllCollision();
+
 	// 死んだ敵機の削除
 	enemies_.remove_if([](auto& enemy) {
 		if (enemy->IsDead()) {
@@ -135,14 +143,6 @@ void GameScene::Update() {
 
 		return false;
 	});
-
-	for (auto& enemy : enemies_) {
-		enemy->Update();
-	}
-
-	UpdateEnemyBullet();
-
-	CheckAllCollision();
 
 	#ifdef _DEBUG
 

@@ -71,6 +71,11 @@ void Player::DrawUI(const ViewProjection& viewProj) {
 		= viewProj.matView * viewProj.matProjection * Matrix::MakeViewport(0.0f, 0.0f, static_cast<float>(WinApp::kWindowWidth), static_cast<float>(WinApp::kWindowHeight), 0.0f, 1.0f);
 
 	for (const auto& enemy : lockOnEnemies_) {
+
+		if (enemy->IsDead()) {
+			continue;
+		}
+
 		// screen座標に変換
 		Vector3f enemyScreenPos = Matrix::Transform(enemy->GetWorldPosition(), vpvMatrix);
 
@@ -199,6 +204,10 @@ void Player::Attack() {
 
 		} else { //!< lockOnした標的がいる場合
 			for (const auto& enemy : lockOnEnemies_) {
+
+				if (enemy->IsDead()) {
+					continue;
+				}
 				
 				std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 
