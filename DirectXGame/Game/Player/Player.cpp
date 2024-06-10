@@ -40,7 +40,7 @@ void Player::Init(Model* model, uint32_t textureHandle, const Vector3f& pos) {
 
 }
 
-void Player::Update(const ViewProjection& viewProj) {
+void Player::Update() {
 
 	Move();
 
@@ -51,9 +51,10 @@ void Player::Update(const ViewProjection& viewProj) {
 	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit * -1, kMoveLimit);
 	worldTransform_.UpdateMatrix();
 
+	// fps用のviewProjectionの更新
 	viewProj_.matView = Matrix::Inverse(worldTransform_.matWorld_);
 
-	UpdateReticle(viewProj);
+	UpdateReticle(viewProj_);
 
 	Attack();
 
@@ -372,7 +373,7 @@ void Player::UpdateReticleLockOn(const ViewProjection& viewProj) {
 	worldTransform3DReticle_.UpdateMatrix();
 }
 
-bool Player::isAliveEnemy(Enemy* target) { 
+bool Player::isAliveEnemy(Enemy* target) { // 処理順番の関係上, 必要に
 
 	auto it = std::find_if(gameScene_->GetEnemies().begin(), gameScene_->GetEnemies().end(), [target](const std::unique_ptr<Enemy>& enemyPtr) { return target == enemyPtr.get(); });
 

@@ -122,7 +122,12 @@ void GameScene::Update() {
 	skydome_->Update();
 	
 	//!< 本体の更新処理
-	player_->Update(viewProjection_);
+	player_->Update();
+	if (!isDebugCameraActive_) { //!< FPSなのでplayerを参照
+		viewProjection_.matView = player_->GetViewProjection().matView;
+		viewProjection_.TransferMatrix();
+	}
+
 	UpdatePlayerBullet();
 
 	UpdateEnemyPopCommands();

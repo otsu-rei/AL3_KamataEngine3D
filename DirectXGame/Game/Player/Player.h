@@ -41,7 +41,7 @@ public:
 	void Init(Model* model, uint32_t textureHandle, const Vector3f& pos);
 
 	//! @brief 更新処理
-	void Update(const ViewProjection& viewProj);
+	void Update();
 
 	//! @brief 描画処理
 	void Draw(const ViewProjection& viewProj);
@@ -67,6 +67,8 @@ public:
 	void SetParent(const WorldTransform* parent) {
 		worldTransform_.parent_ = parent;
 	}
+
+	const ViewProjection& GetViewProjection() const { return viewProj_; }
 
 private:
 
