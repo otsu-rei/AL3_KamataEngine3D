@@ -108,6 +108,9 @@ private:
 
 	uint32_t lockOnTexture_;
 	std::vector<std::unique_ptr<Sprite>> lockOnSprites_;
+
+	// fps //
+	ViewProjection viewProj_;
 	
 
 	//=========================================================================================
@@ -130,6 +133,8 @@ private:
 	void UpdateReticleMouse(const ViewProjection& viewProj);
 	void UpdateReticleController(const ViewProjection& viewProj);
 	void UpdateReticleLockOn(const ViewProjection& viewProj);
+
+	bool isAliveEnemy(Enemy* target);
 
 	Vector3f ScreenToWorld(const ViewProjection& viewProj, const Vector2f& screenPosition, float distance);
 

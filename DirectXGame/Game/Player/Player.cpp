@@ -31,6 +31,8 @@ void Player::Init(Model* model, uint32_t textureHandle, const Vector3f& pos) {
 
 	lockOnTexture_ = TextureManager::Load("lockOn.png");
 
+	viewProj_.Initialize();
+
 	// collider
 	SetRadius(kCollisionRadius_);
 	SetCollisionAttribute(PLAYER);
@@ -48,6 +50,8 @@ void Player::Update(const ViewProjection& viewProj) {
 
 	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit * -1, kMoveLimit);
 	worldTransform_.UpdateMatrix();
+
+	viewProj_.matView = Matrix::Inverse(worldTransform_.matWorld_);
 
 	UpdateReticle(viewProj);
 
@@ -72,7 +76,8 @@ void Player::DrawUI(const ViewProjection& viewProj) {
 
 	for (const auto& enemy : lockOnEnemies_) {
 
-		if (enemy->IsDead()) {
+		// 生きているかどうかの確認
+		if (!isAliveEnemy(enemy)) {
 			continue;
 		}
 
@@ -205,7 +210,8 @@ void Player::Attack() {
 		} else { //!< lockOnした標的がいる場合
 			for (const auto& enemy : lockOnEnemies_) {
 
-				if (enemy->IsDead()) {
+				// 生きているかどうかの確認
+				if (!isAliveEnemy(enemy)) {
 					continue;
 				}
 				
@@ -364,6 +370,17 @@ void Player::UpdateReticleLockOn(const ViewProjection& viewProj) {
 
 	worldTransform3DReticle_.translation_ = ScreenToWorld(viewProj, sprite2DReticle_->GetPosition(),distanceReticleObject_);
 	worldTransform3DReticle_.UpdateMatrix();
+}
+
+bool Player::isAliveEnemy(Enemy* target) { 
+
+	auto it = std::find_if(gameScene_->GetEnemies().begin(), gameScene_->GetEnemies().end(), [target](const std::unique_ptr<Enemy>& enemyPtr) { return target == enemyPtr.get(); });
+
+	if (it == gameScene_->GetEnemies().end()) {
+		return false; //!< 存在してない
+	}
+
+	return true;
 }
 
 Vector3f Player::ScreenToWorld(const ViewProjection& viewProj, const Vector2f& screenPosition, float distance) {
