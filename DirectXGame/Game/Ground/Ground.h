@@ -3,23 +3,26 @@
 //-----------------------------------------------------------------------------------------
 // include
 //-----------------------------------------------------------------------------------------
-#include <functional>
+#include "WorldTransform.h"
+#include "Model.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-// TimedCall class
+// Ground class
 ////////////////////////////////////////////////////////////////////////////////////////////
-class TimedCall {
+class Ground {
 public:
 
 	//=========================================================================================
 	// public methods
 	//=========================================================================================
 
-	TimedCall(const std::function<void(void)>& function, uint32_t time);
+	~Ground() { Term(); }
 
-	void Update();
+	void Init(Model* model);
 
-	bool IsFinished() const { return isFinished_; }
+	void Term();
+
+	void Draw(const ViewProjection& viewProj);
 
 
 private:
@@ -28,10 +31,8 @@ private:
 	// private variables
 	//=========================================================================================
 
-	uint32_t time_;
-	std::function<void(void)> function_;
-	// time_経過後, function_を実行
+	Model* model_ = nullptr;
 
-	bool isFinished_ = false;
+	WorldTransform worldTransform_;
 
 };

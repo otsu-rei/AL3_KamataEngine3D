@@ -67,20 +67,11 @@
     <Filter Include="Game\Player">
       <UniqueIdentifier>{671174af-fc35-4e03-9e2e-8bc0050493ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Enemy">
-      <UniqueIdentifier>{2a7057dc-827a-4539-a317-c796081a8a22}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\TimedCall">
-      <UniqueIdentifier>{305fee9d-5161-40d0-b32e-f317bdc067ec}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Skydome">
       <UniqueIdentifier>{5931c94b-8a7d-4622-9ceb-6eedee43789b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\RailCamera">
-      <UniqueIdentifier>{3efa98f9-66a6-4e7d-9ba9-39fdc9fccaa6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Collider">
-      <UniqueIdentifier>{7fd1be45-5785-4e48-af13-9be1d6a1faf2}</UniqueIdentifier>
+    <Filter Include="Game\Ground">
+      <UniqueIdentifier>{178f9c9c-3392-4f8c-90f3-09e67f7fc2ab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -108,20 +99,14 @@
     <ClCompile Include="3d\WorldTransform.cpp">
       <Filter>ソース ファイル\3d</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Player\PlayerBullet.cpp">
-      <Filter>Game\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Player\Player.cpp">
       <Filter>Game\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\TimedCall\TimedCall.cpp">
-      <Filter>Game\TimedCall</Filter>
     </ClCompile>
     <ClCompile Include="Game\Skydome\Skydome.cpp">
       <Filter>Game\Skydome</Filter>
     </ClCompile>
-    <ClCompile Include="Game\RailCamera\RailCamera.cpp">
-      <Filter>Game\RailCamera</Filter>
+    <ClCompile Include="Game\Ground\Ground.cpp">
+      <Filter>Game\Ground</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -218,20 +203,14 @@
     <ClInclude Include="math\MyMath.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Player\PlayerBullet.h">
-      <Filter>Game\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Player\Player.h">
       <Filter>Game\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\TimedCall\TimedCall.h">
-      <Filter>Game\TimedCall</Filter>
     </ClInclude>
     <ClInclude Include="Game\Skydome\Skydome.h">
       <Filter>Game\Skydome</Filter>
     </ClInclude>
-    <ClInclude Include="Game\RailCamera\RailCamera.h">
-      <Filter>Game\RailCamera</Filter>
+    <ClInclude Include="Game\Ground\Ground.h">
+      <Filter>Game\Ground</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

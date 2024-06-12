@@ -40,7 +40,7 @@ void Player::Update() {
 }
 
 void Player::Draw(const ViewProjection& viewProj) {
-	model_->Draw(worldTransform_, viewProj, textureHandle_);
+	model_->Draw(worldTransform_, viewProj);
 }
 
 void Player::Term() {  }

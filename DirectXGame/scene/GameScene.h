@@ -13,11 +13,9 @@
 #include <sstream>
 
 // Game
-#include "RailCamera.h"
 #include "Skydome.h"
+#include "Ground.h"
 #include "Player.h"
-#include "Enemy.h"
-#include "CollisionManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -69,9 +67,17 @@ private: // メンバ変数
 	// model
 	std::unique_ptr<Model> cubeModel_;
 	std::unique_ptr<Model> skydomeModel_;
+	std::unique_ptr<Model> groundModel_;
+	std::unique_ptr<Model> playerModel_;
 
 	// player
 	std::unique_ptr<Player> player_;
 	uint32_t playerTextureHandle_;
+
+	// skydome
+	std::unique_ptr<Skydome> skydome_;
+
+	// ground
+	std::unique_ptr<Ground> ground_;
 
 };

@@ -40,17 +40,27 @@ void GameScene::Initialize() {
 
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
 
+	// models
 	cubeModel_.reset(Model::Create());
 	skydomeModel_.reset(Model::CreateFromOBJ("skydome", true));
+	groundModel_.reset(Model::CreateFromOBJ("ground"));
+	playerModel_.reset(Model::CreateFromOBJ("player"));
 
 	// player
 	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
 	TextureManager::Load("reticle.png"); //!< レティクル画像(仮)
 
 	player_ = std::make_unique<Player>();
-	player_->Init(cubeModel_.get(), playerTextureHandle_, {0.0f, -4.0f, 30.0f});
+	player_->Init(playerModel_.get(), playerTextureHandle_, {0.0f, 0.0f, 30.0f});
 	player_->SetGameScene(this);
 
+	// skydome
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Init(skydomeModel_.get());
+
+	// ground
+	ground_ = std::make_unique<Ground>();
+	ground_->Init(groundModel_.get());
 }
 
 void GameScene::Update() {
@@ -114,8 +124,9 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	
 	player_->Draw(viewProjection_);
+	skydome_->Draw(viewProjection_);
+	ground_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
