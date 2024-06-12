@@ -114,12 +114,6 @@
     <ClCompile Include="Game\Player\Player.cpp">
       <Filter>Game\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Enemy\Enemy.cpp">
-      <Filter>Game\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Enemy\EnemyBullet.cpp">
-      <Filter>Game\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Game\TimedCall\TimedCall.cpp">
       <Filter>Game\TimedCall</Filter>
     </ClCompile>
@@ -128,12 +122,6 @@
     </ClCompile>
     <ClCompile Include="Game\RailCamera\RailCamera.cpp">
       <Filter>Game\RailCamera</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Collider\Collider.cpp">
-      <Filter>Game\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Collider\CollisionManager.cpp">
-      <Filter>Game\Collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -236,12 +224,6 @@
     <ClInclude Include="Game\Player\Player.h">
       <Filter>Game\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Enemy\Enemy.h">
-      <Filter>Game\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Enemy\EnemyBullet.h">
-      <Filter>Game\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Game\TimedCall\TimedCall.h">
       <Filter>Game\TimedCall</Filter>
     </ClInclude>
@@ -250,12 +232,6 @@
     </ClInclude>
     <ClInclude Include="Game\RailCamera\RailCamera.h">
       <Filter>Game\RailCamera</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Collider\Collider.h">
-      <Filter>Game\Collider</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Collider\CollisionManager.h">
-      <Filter>Game\Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
