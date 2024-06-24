@@ -305,3 +305,22 @@ Vector3f CatmullRomPosition(const std::vector<Vector3f>& points, float t) {
 	return CatmullRomInterpolation(p0, p1, p2, p3, t_2);
 
 }
+
+float LerpShortAngle(float a, float b, float t) {
+
+	float diff = b - a;
+
+	// clamp -2pi ~ 2pi
+	diff = std::fmod(diff, pi_v * 2.0f);
+
+	// clamp -pi ~ pi
+	if (diff < -pi_v) {
+		diff += pi_v * 2.0f;
+
+	} else if (diff > pi_v) {
+		diff -= pi_v * 2.0f;
+	}
+
+	return a + diff * t;
+
+}

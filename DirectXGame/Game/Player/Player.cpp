@@ -64,32 +64,27 @@ void Player::Move() {
 	XINPUT_STATE joyState;
 
 	// コントローラーでの移動
-	if (!input_->GetJoystickState(0, joyState)) { //!< コントローラーが接続されてない場合
-		return;
+	if (input_->GetJoystickState(0, joyState)) { //!< コントローラーが接続されている場合
+		// Stickの移動量を取得
+		Vector3f move = {
+			static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX,
+			0.0f,
+			static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX
+		};
+
+		// デッドゾーンの確認
+		if (Vector::Length(move) > kDeadZone_) {
+			// 移動処理
+			Vector3f velocity = Vector::Normalize(move) * kMoveSpeed_;
+			velocity = Matrix::TransformNormal(velocity, Matrix::MakeRotate(viewProj_->rotation_.y, kRotateBaseY));
+			worldTransform_.translation_ += velocity;
+
+			targetAngle_ = std::atan2(move.x, move.z);
+		}
 	}
 
-	// Stickの移動量を取得
-	Vector3f move = {
-		static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX,
-		0.0f,
-		static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX
-	};
 	
-	Vector3f velocity = Vector::Normalize(move) * kMoveSpeed_;
-
-	velocity = Matrix::TransformNormal(velocity, Matrix::MakeRotate(viewProj_->rotation_.y, kRotateBaseY));
-
-	worldTransform_.translation_ += velocity;
-
-	// 進行方向に自機を回転
-	if (velocity.x == 0.0f && velocity.z == 0.0f) { //!< 移動してなかった場合
-		return;
-	}
-
-	worldTransform_.rotation_.y = std::atan2(velocity.x, velocity.z);
-
-	float length = Vector::Length({velocity.x, 0.0f, velocity.z});
-	worldTransform_.rotation_.x = std::atan2(-velocity.y, length);
+	worldTransform_.rotation_.y = LerpShortAngle(worldTransform_.rotation_.y, targetAngle_, kRotateRate_);
 	
 }
 
