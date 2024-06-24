@@ -13,6 +13,7 @@
 #include <sstream>
 
 // Game
+#include "FollowCamera.h"
 #include "Skydome.h"
 #include "Ground.h"
 #include "Player.h"
@@ -62,6 +63,8 @@ private: // メンバ変数
 
 	bool isDebugCameraActive_ = false;
 	std::unique_ptr<DebugCamera> debugCamera_;
+
+	std::unique_ptr<FollowCamera> followCamera_;
 
 	/// Game
 	// model

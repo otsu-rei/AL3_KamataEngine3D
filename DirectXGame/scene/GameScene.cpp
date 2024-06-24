@@ -29,16 +29,20 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
+	// viewProjection
 	viewProjection_.Initialize();
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
-
-	debugCamera_ = std::make_unique<DebugCamera>(WinApp::kWindowWidth, WinApp::kWindowHeight);
-	debugCamera_->SetFarZ(200.0f);
 
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
+
+	debugCamera_ = std::make_unique<DebugCamera>(WinApp::kWindowWidth, WinApp::kWindowHeight);
+	debugCamera_->SetFarZ(200.0f);
+
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Init();
 
 	// models
 	cubeModel_.reset(Model::Create());
@@ -51,8 +55,12 @@ void GameScene::Initialize() {
 	TextureManager::Load("reticle.png"); //!< レティクル画像(仮)
 
 	player_ = std::make_unique<Player>();
-	player_->Init(playerModel_.get(), playerTextureHandle_, {0.0f, 0.0f, 30.0f});
+	player_->Init(playerModel_.get(), {0.0f, 0.0f, 30.0f});
 	player_->SetGameScene(this);
+	player_->SetViewProj(&followCamera_->GetViewProjection());
+
+	// 追従対象の設定
+	followCamera_->SetTarget(&player_->GetWorldTransform());
 
 	// skydome
 	skydome_ = std::make_unique<Skydome>();
@@ -76,18 +84,24 @@ void GameScene::Update() {
 
 #endif // _DEBUG
 
+	//!< カメラの更新処理
 	if (isDebugCameraActive_) {
 		debugCamera_->Update();
 		viewProjection_.matView       = debugCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
 
+	} else { //!< GameCamera
+		followCamera_->Update();
+		viewProjection_.matView       = followCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+
+		// FIXME: 自機の更新処理がカメラの更新処理よりしたにいるので1frameずれる
 	}
 
 	viewProjection_.TransferMatrix();
 	
-	//!< 本体の更新処理
+	//!< 自機の更新処理
 	player_->Update();
-	
 
 #ifdef _DEBUG
 

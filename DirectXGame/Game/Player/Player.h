@@ -32,7 +32,7 @@ public:
 	~Player() { Term(); }
 
 	//! @brief 初期化処理
-	void Init(Model* model, uint32_t textureHandle, const Vector3f& pos);
+	void Init(Model* model, const Vector3f& pos);
 
 	//! @brief 更新処理
 	void Update();
@@ -43,13 +43,21 @@ public:
 	//! @brief 終了処理
 	void Term();
 
+	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+
 	//! @brief ImGuiに設定
 	void SetOnImGui();
+
+	/* setter */
 
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
 	void SetParent(const WorldTransform* parent) {
 		worldTransform_.parent_ = parent;
+	}
+
+	void SetViewProj(const ViewProjection* viewProj) {
+		viewProj_ = viewProj;
 	}
 
 private:
@@ -58,19 +66,18 @@ private:
 	// private variables
 	//=========================================================================================
 
+	/* externals */
 	Input* input_ = Input::GetInstance();
-
 	Model* model_ = nullptr;
-	uint32_t textureHandle_ = 0;
-
 	GameScene* gameScene_ = nullptr;
+	const ViewProjection* viewProj_ = nullptr;
 
-	// parameters
+
+	/* parameters */
 	const float kMoveSpeed_ = 0.2f;
-	const float kRotSpeed_ = 0.02f; //!< radian / frame
-	const Vector3f kMoveLimit_ = {10.0f, 10.0f, 10.0f};
+	const Vector3f kMoveLimit_ = {100.0f, 100.0f, 100.0f};
 
-	// data //
+	/* data */
 	WorldTransform worldTransform_;
 	
 
@@ -81,7 +88,5 @@ private:
 	void Move();
 
 	void MoveController();
-
-	void Rotate();
 
 };

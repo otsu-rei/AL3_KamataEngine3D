@@ -15,14 +15,12 @@
 // Player class methods
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void Player::Init(Model* model, uint32_t textureHandle, const Vector3f& pos) {
+void Player::Init(Model* model, const Vector3f& pos) {
 	assert(model);
 
 	model_ = model;
-	textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
-
 	worldTransform_.translation_ = pos;
 
 }
@@ -62,26 +60,36 @@ void Player::SetOnImGui() {
 //=========================================================================================
 
 void Player::Move() {
-	Vector3f velocity = {0.0f, 0.0f, 0.0f};
 
-	// キー入力によるplayerの移動
-	if (input_->PushKey(DIK_W)) {
-		velocity.y += kMoveSpeed_;
+	XINPUT_STATE joyState;
+
+	// コントローラーでの移動
+	if (!input_->GetJoystickState(0, joyState)) { //!< コントローラーが接続されてない場合
+		return;
 	}
 
-	if (input_->PushKey(DIK_S)) {
-		velocity.y -= kMoveSpeed_;
+	// Stickの移動量を取得
+	Vector3f move = {
+		static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX,
+		0.0f,
+		static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX
+	};
+	
+	Vector3f velocity = Vector::Normalize(move) * kMoveSpeed_;
+
+	velocity = Matrix::TransformNormal(velocity, Matrix::MakeRotate(viewProj_->rotation_.y, kRotateBaseY));
+
+	worldTransform_.translation_ += velocity;
+
+	// 進行方向に自機を回転
+	if (velocity.x == 0.0f && velocity.z == 0.0f) { //!< 移動してなかった場合
+		return;
 	}
 
-	if (input_->PushKey(DIK_A)) {
-		velocity.x -= kMoveSpeed_;
-	}
+	worldTransform_.rotation_.y = std::atan2(velocity.x, velocity.z);
 
-	if (input_->PushKey(DIK_D)) {
-		velocity.x += kMoveSpeed_;
-	}
-
-	worldTransform_.translation_ += velocity; 
+	float length = Vector::Length({velocity.x, 0.0f, velocity.z});
+	worldTransform_.rotation_.x = std::atan2(-velocity.y, length);
 	
 }
 
@@ -98,14 +106,4 @@ void Player::MoveController() {
 	}
 
 	worldTransform_.translation_ += velocity;
-}
-
-void Player::Rotate() {
-	if (input_->PushKey(DIK_A)) {
-		worldTransform_.rotation_.y -= kRotSpeed_;
-	}
-
-	if (input_->PushKey(DIK_D)) {
-		worldTransform_.rotation_.y += kRotSpeed_;
-	}
 }
