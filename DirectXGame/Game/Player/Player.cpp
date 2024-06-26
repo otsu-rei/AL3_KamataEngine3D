@@ -15,14 +15,20 @@
 // Player class methods
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void Player::Init(Model* model, const Vector3f& pos) {
-	assert(model);
+void Player::Init(Model* head, Model* body, Model* lArm, Model* rArm, const Vector3f& pos) {
+	assert(head && body && lArm && rArm);
 
-	model_ = model;
+	parts_.head = head;
+	parts_.body = body;
+	parts_.lArm = lArm;
+	parts_.rArm = rArm;
 
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = pos;
 
+	parts_.InitWorldTranform(worldTransform_);
+
+	InitFloatingGimmick();
 }
 
 void Player::Update() {
@@ -35,10 +41,12 @@ void Player::Update() {
 
 	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit_ * -1, kMoveLimit_);
 	worldTransform_.UpdateMatrix();
+
+	UpdateFloatingGimmick();
 }
 
 void Player::Draw(const ViewProjection& viewProj) {
-	model_->Draw(worldTransform_, viewProj);
+	parts_.Draw(viewProj);
 }
 
 void Player::Term() {  }
@@ -49,6 +57,10 @@ void Player::SetOnImGui() {
 
 		ImGui::DragFloat3("pos",    &worldTransform_.translation_.x, 0.1f);
 		ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x,    0.01f);
+
+		ImGui::Text("parts parmeter");
+		ImGui::DragFloat3("lArm translation", &parts_.lArmTransform.translation_.x, 0.01f);
+		ImGui::DragFloat3("rArm translation", &parts_.rArmTransform.translation_.x, 0.01f);
 
 		ImGui::TreePop();
 	}
@@ -79,7 +91,7 @@ void Player::Move() {
 			velocity = Matrix::TransformNormal(velocity, Matrix::MakeRotate(viewProj_->rotation_.y, kRotateBaseY));
 			worldTransform_.translation_ += velocity;
 
-			targetAngle_ = std::atan2(move.x, move.z);
+			targetAngle_ = std::atan2(velocity.x, velocity.z);
 		}
 	}
 
@@ -101,4 +113,28 @@ void Player::MoveController() {
 	}
 
 	worldTransform_.translation_ += velocity;
+}
+
+void Player::InitFloatingGimmick() {
+
+	floatingParameter_ = 0.0f;
+
+}
+
+void Player::UpdateFloatingGimmick() {
+	// パラメーター分増加
+	floatingParameter_ += floatingStep_;
+
+	// 0 ~ 2pi範囲内で抑える
+	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * pi_v);
+
+	// 浮遊させる
+	parts_.bodyTransform.translation_.y = std::sin(floatingParameter_) * floatingRange_;
+
+	// 手の動き
+	parts_.lArmTransform.rotation_.x = std::sin(floatingParameter_) * 0.1f;
+	parts_.rArmTransform.rotation_.x = std::sin(floatingParameter_) * 0.1f;
+
+	parts_.UpdateMatrix();
+
 }

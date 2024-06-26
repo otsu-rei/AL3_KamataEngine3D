@@ -71,7 +71,12 @@ private: // メンバ変数
 	std::unique_ptr<Model> cubeModel_;
 	std::unique_ptr<Model> skydomeModel_;
 	std::unique_ptr<Model> groundModel_;
-	std::unique_ptr<Model> playerModel_;
+
+	// chara
+	std::unique_ptr<Model> bodyModel_;
+	std::unique_ptr<Model> headModel_;
+	std::unique_ptr<Model> lArmModel_;
+	std::unique_ptr<Model> rArmModel_;
 
 	// player
 	std::unique_ptr<Player> player_;

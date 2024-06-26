@@ -48,14 +48,19 @@ void GameScene::Initialize() {
 	cubeModel_.reset(Model::Create());
 	skydomeModel_.reset(Model::CreateFromOBJ("skydome", true));
 	groundModel_.reset(Model::CreateFromOBJ("ground"));
-	playerModel_.reset(Model::CreateFromOBJ("player"));
+
+	headModel_.reset(Model::CreateFromOBJ("chara_head"));
+	bodyModel_.reset(Model::CreateFromOBJ("chara_body"));
+	lArmModel_.reset(Model::CreateFromOBJ("chara_lArm"));
+	rArmModel_.reset(Model::CreateFromOBJ("chara_rArm"));
 
 	// player
 	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
 	TextureManager::Load("reticle.png"); //!< レティクル画像(仮)
 
 	player_ = std::make_unique<Player>();
-	player_->Init(playerModel_.get(), {0.0f, 0.0f, 30.0f});
+	/*player_->Init(playerModel_.get(), {0.0f, 0.0f, 30.0f});*/
+	player_->Init(headModel_.get(), bodyModel_.get(), lArmModel_.get(), rArmModel_.get(), {0.0f, 0.0f, 30.0f});
 	player_->SetGameScene(this);
 	player_->SetViewProj(&followCamera_->GetViewProjection());
 
