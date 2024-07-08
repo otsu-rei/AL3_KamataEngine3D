@@ -281,7 +281,7 @@ Vector3f CatmullRomPosition(const std::vector<Vector3f>& points, float t) {
 
 	// 区間番号
 	size_t index = static_cast<size_t>(t / areaWidth);
-	size_t zero = 0; //!< size_tの0表記がわからなかった
+	size_t zero = 0; //!< size_tの0表記がわからなかったので変数に0を持たせる
 	index = std::clamp(index, zero, points.size() - 2);
 
 	size_t index0 = index - 1;
@@ -323,4 +323,16 @@ float LerpShortAngle(float a, float b, float t) {
 
 	return a + diff * t;
 
+}
+
+Vector3f CalculateDireciton(const Vector3f& velocity) {
+	Vector3f result = {0.0f};
+
+	// ロール, ピッチ, ロー回転
+	result.y = std::atan2(velocity.x, velocity.z);
+
+	float length = Vector::Length({velocity.x, 0.0f, velocity.z});
+	result.x = std::atan2(-velocity.y, length);
+
+	return result;
 }

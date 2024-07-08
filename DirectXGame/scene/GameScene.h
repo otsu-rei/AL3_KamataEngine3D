@@ -17,6 +17,7 @@
 #include "Skydome.h"
 #include "Ground.h"
 #include "Player.h"
+#include "Enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -78,9 +79,15 @@ private: // メンバ変数
 	std::unique_ptr<Model> lArmModel_;
 	std::unique_ptr<Model> rArmModel_;
 
+	// enemymodel
+	std::unique_ptr<Model> enemyBodyModel_;
+
 	// player
 	std::unique_ptr<Player> player_;
 	uint32_t playerTextureHandle_;
+
+	// enemy
+	std::unique_ptr<Enemy> enemy_;
 
 	// skydome
 	std::unique_ptr<Skydome> skydome_;

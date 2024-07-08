@@ -6,7 +6,6 @@
 // c++
 #include <cstdint>
 #include <list>
-#include <unordered_set>
 
 // engine
 #include "Input.h"
@@ -18,6 +17,9 @@
 // mylib
 #include <MyMath.h>
 
+// character
+#include "BaseCharacter.h"
+
 //-----------------------------------------------------------------------------------------
 // forward
 //-----------------------------------------------------------------------------------------
@@ -26,8 +28,10 @@ class GameScene;
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Player class
 ////////////////////////////////////////////////////////////////////////////////////////////
-class Player {
+class Player
+	: public BaseCharacter {
 public:
+
 	//=========================================================================================
 	// public methods
 	//=========================================================================================
@@ -35,18 +39,16 @@ public:
 	~Player() { Term(); }
 
 	//! @brief 初期化処理
-	void Init(Model* head, Model* body, Model* lArm, Model* rArm, const Vector3f& pos);
+	void Init(const std::vector<Model*>& models) override;
 
 	//! @brief 更新処理
-	void Update();
+	void Update() override;
 
 	//! @brief 描画処理
-	void Draw(const ViewProjection& viewProj);
+	void Draw(const ViewProjection& viewProj) override;
 
 	//! @brief 終了処理
-	void Term();
-
-	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+	void Term() override;
 
 	//! @brief ImGuiに設定
 	void SetOnImGui();
@@ -66,54 +68,15 @@ public:
 private:
 
 	////////////////////////////////////////////////////////////////////////////////////////////
-	//  structure
+	// ModelType enum
 	////////////////////////////////////////////////////////////////////////////////////////////
-	struct Parts {
-		/* models */
-		Model* head = nullptr;
-		Model* body = nullptr;
-		Model* lArm = nullptr;
-		Model* rArm = nullptr;
+	enum ModelType {
+		MODEL_HEAD,
+		MODEL_BODY,
+		MODEL_LARM,
+		MODEL_RARM,
 
-		/* worldTransforms */
-		WorldTransform headTransform;
-		WorldTransform bodyTransform;
-		WorldTransform lArmTransform;
-		WorldTransform rArmTransform;
-
-		void InitWorldTranform(const WorldTransform& parent) {
-			// parent -> this
-			bodyTransform.Initialize();
-			bodyTransform.SetParent(&parent);
-
-			// patent -> body -> this
-			headTransform.Initialize();
-			headTransform.SetParent(&bodyTransform);
-
-			// patent -> body -> this
-			lArmTransform.Initialize();
-			lArmTransform.SetParent(&bodyTransform);
-			lArmTransform.translation_ = {-1.4f, 2.5f, 0.0f};
-
-			// patent -> body -> this
-			rArmTransform.Initialize();
-			rArmTransform.SetParent(&bodyTransform);
-			rArmTransform.translation_ = {1.4f, 2.5f, 0.0f};
-		}
-
-		void UpdateMatrix() {
-			bodyTransform.UpdateMatrix();
-			headTransform.UpdateMatrix();
-			lArmTransform.UpdateMatrix();
-			rArmTransform.UpdateMatrix();
-		}
-
-		void Draw(const ViewProjection& viewProj) {
-			head->Draw(headTransform, viewProj);
-			body->Draw(bodyTransform, viewProj);
-			lArm->Draw(lArmTransform, viewProj);
-			rArm->Draw(rArmTransform, viewProj);
-		}
+		kCountOfModelType
 	};
 
 	//=========================================================================================
@@ -135,13 +98,10 @@ private:
 	const float floatingRange_ = 0.2f;
 
 	/* data */
-	WorldTransform worldTransform_;
-	Parts parts_;
-
 	float targetAngle_ = 0.0f;
 	float floatingParameter_ = 0.0f;
 
-
+	WorldTransform modelTransforms_[kCountOfModelType];
 
 	//=========================================================================================
 	// private methods

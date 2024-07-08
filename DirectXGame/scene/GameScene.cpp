@@ -54,18 +54,24 @@ void GameScene::Initialize() {
 	lArmModel_.reset(Model::CreateFromOBJ("chara_lArm"));
 	rArmModel_.reset(Model::CreateFromOBJ("chara_rArm"));
 
-	// player
+	enemyBodyModel_.reset(Model::CreateFromOBJ("enemy_body"));
+
+	//* player *//
 	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
 	TextureManager::Load("reticle.png"); //!< レティクル画像(仮)
 
 	player_ = std::make_unique<Player>();
 	/*player_->Init(playerModel_.get(), {0.0f, 0.0f, 30.0f});*/
-	player_->Init(headModel_.get(), bodyModel_.get(), lArmModel_.get(), rArmModel_.get(), {0.0f, 0.0f, 30.0f});
+	player_->Init({headModel_.get(), bodyModel_.get(), lArmModel_.get(), rArmModel_.get()});
 	player_->SetGameScene(this);
 	player_->SetViewProj(&followCamera_->GetViewProjection());
 
 	// 追従対象の設定
 	followCamera_->SetTarget(&player_->GetWorldTransform());
+
+	//* enemy *//
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Init({enemyBodyModel_.get()});
 
 	// skydome
 	skydome_ = std::make_unique<Skydome>();
@@ -107,6 +113,7 @@ void GameScene::Update() {
 	
 	//!< 自機の更新処理
 	player_->Update();
+	enemy_->Update();
 
 #ifdef _DEBUG
 
@@ -144,6 +151,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	player_->Draw(viewProjection_);
+	enemy_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
 

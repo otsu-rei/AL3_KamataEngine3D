@@ -64,9 +64,6 @@
     <Filter Include="Game">
       <UniqueIdentifier>{b9e8a66e-8e02-453f-b7c2-7a51ced9540d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Player">
-      <UniqueIdentifier>{671174af-fc35-4e03-9e2e-8bc0050493ee}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Skydome">
       <UniqueIdentifier>{5931c94b-8a7d-4622-9ceb-6eedee43789b}</UniqueIdentifier>
     </Filter>
@@ -75,6 +72,9 @@
     </Filter>
     <Filter Include="Game\Camera">
       <UniqueIdentifier>{e9325d7c-13dd-466f-bcbb-47c5ef9354a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Characters">
+      <UniqueIdentifier>{fa5c80e3-e68c-4311-84c1-e0a229c4aaa2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -102,9 +102,6 @@
     <ClCompile Include="3d\WorldTransform.cpp">
       <Filter>ソース ファイル\3d</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Player\Player.cpp">
-      <Filter>Game\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Skydome\Skydome.cpp">
       <Filter>Game\Skydome</Filter>
     </ClCompile>
@@ -113,6 +110,15 @@
     </ClCompile>
     <ClCompile Include="Game\Camera\FollowCamera.cpp">
       <Filter>Game\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Characters\BaseCharacter.cpp">
+      <Filter>Game\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Characters\Player.cpp">
+      <Filter>Game\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Characters\Enemy.cpp">
+      <Filter>Game\Characters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -209,9 +215,6 @@
     <ClInclude Include="math\MyMath.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Player\Player.h">
-      <Filter>Game\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Skydome\Skydome.h">
       <Filter>Game\Skydome</Filter>
     </ClInclude>
@@ -220,6 +223,15 @@
     </ClInclude>
     <ClInclude Include="Game\Camera\FollowCamera.h">
       <Filter>Game\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Characters\BaseCharacter.h">
+      <Filter>Game\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Characters\Player.h">
+      <Filter>Game\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Characters\Enemy.h">
+      <Filter>Game\Characters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

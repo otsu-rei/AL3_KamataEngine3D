@@ -15,18 +15,31 @@
 // Player class methods
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void Player::Init(Model* head, Model* body, Model* lArm, Model* rArm, const Vector3f& pos) {
-	assert(head && body && lArm && rArm);
+void Player::Init(const std::vector<Model*>& models) {
 
-	parts_.head = head;
-	parts_.body = body;
-	parts_.lArm = lArm;
-	parts_.rArm = rArm;
+	assert(models.size() == kCountOfModelType);
 
+	// worldTransformの初期化
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = pos;
+	worldTransform_.translation_ = {0.0f, 0.0f, 30.0f};
 
-	parts_.InitWorldTranform(worldTransform_);
+	models_ = models;
+
+	
+	for (int i = 0; i < kCountOfModelType; ++i) {
+		modelTransforms_[i].Initialize();
+	}
+
+	// parts位置調整
+	modelTransforms_[MODEL_BODY].SetParent(&worldTransform_); //!< world -> this
+
+	modelTransforms_[MODEL_HEAD].SetParent(&modelTransforms_[MODEL_BODY]); //!< world -> body -> this
+
+	modelTransforms_[MODEL_LARM].SetParent(&modelTransforms_[MODEL_BODY]); //!< world -> body -> this
+	modelTransforms_[MODEL_LARM].translation_ = {-1.4f, 2.5f, 0.0f};
+
+	modelTransforms_[MODEL_RARM].SetParent(&modelTransforms_[MODEL_BODY]); //!< world -> body -> this
+	modelTransforms_[MODEL_RARM].translation_ = {1.4f, 2.5f, 0.0f};
 
 	InitFloatingGimmick();
 }
@@ -35,10 +48,6 @@ void Player::Update() {
 
 	Move();
 
-	/*MoveController();*/
-
-	/*Rotate();*/
-
 	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit_ * -1, kMoveLimit_);
 	worldTransform_.UpdateMatrix();
 
@@ -46,7 +55,9 @@ void Player::Update() {
 }
 
 void Player::Draw(const ViewProjection& viewProj) {
-	parts_.Draw(viewProj);
+	for (int i = 0; i < kCountOfModelType; ++i) {
+		models_[i]->Draw(modelTransforms_[i], viewProj);
+	}
 }
 
 void Player::Term() {  }
@@ -59,8 +70,8 @@ void Player::SetOnImGui() {
 		ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x,    0.01f);
 
 		ImGui::Text("parts parmeter");
-		ImGui::DragFloat3("lArm translation", &parts_.lArmTransform.translation_.x, 0.01f);
-		ImGui::DragFloat3("rArm translation", &parts_.rArmTransform.translation_.x, 0.01f);
+		ImGui::DragFloat3("lArm translation", &modelTransforms_[MODEL_LARM].translation_.x, 0.01f);
+		ImGui::DragFloat3("rArm translation", &modelTransforms_[MODEL_RARM].translation_.x, 0.01f);
 
 		ImGui::TreePop();
 	}
@@ -129,12 +140,13 @@ void Player::UpdateFloatingGimmick() {
 	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * pi_v);
 
 	// 浮遊させる
-	parts_.bodyTransform.translation_.y = std::sin(floatingParameter_) * floatingRange_;
+	modelTransforms_[MODEL_BODY].translation_.y = std::sin(floatingParameter_) * floatingRange_;
 
 	// 手の動き
-	parts_.lArmTransform.rotation_.x = std::sin(floatingParameter_) * 0.1f;
-	parts_.rArmTransform.rotation_.x = std::sin(floatingParameter_) * 0.1f;
+	modelTransforms_[MODEL_LARM].rotation_.x = std::sin(floatingParameter_) * 0.1f;
+	modelTransforms_[MODEL_RARM].rotation_.x = std::sin(floatingParameter_) * 0.1f;
 
-	parts_.UpdateMatrix();
-
+	for (int i = 0; i < kCountOfModelType; ++i) {
+		modelTransforms_[i].UpdateMatrix();
+	}
 }
