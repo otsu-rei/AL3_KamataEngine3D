@@ -63,7 +63,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Game\Characters;$(ProjectDir)Game\Camera;$(ProjectDir)Game\Ground;$(ProjectDir)Game\Skydome;$(ProjectDir)Game\Player;$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene;$(ProjectDir)math;$(ProjectDir)grid;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Game\GlobalVariables;$(ProjectDir)Game\Characters;$(ProjectDir)Game\Camera;$(ProjectDir)Game\Ground;$(ProjectDir)Game\Skydome;$(ProjectDir)Game\Player;$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene;$(ProjectDir)math;$(ProjectDir)grid;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -114,6 +114,7 @@
     <ClCompile Include="Game\Characters\BaseCharacter.cpp" />
     <ClCompile Include="Game\Characters\Enemy.cpp" />
     <ClCompile Include="Game\Characters\Player.cpp" />
+    <ClCompile Include="Game\GlobalVariables\GlobalVariables.cpp" />
     <ClCompile Include="Game\Ground\Ground.cpp" />
     <ClCompile Include="Game\Skydome\Skydome.cpp" />
     <ClCompile Include="grid\Grid.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="Game\Characters\BaseCharacter.h" />
     <ClInclude Include="Game\Characters\Enemy.h" />
     <ClInclude Include="Game\Characters\Player.h" />
+    <ClInclude Include="Game\GlobalVariables\GlobalVariables.h" />
     <ClInclude Include="Game\Ground\Ground.h" />
     <ClInclude Include="Game\Skydome\Skydome.h" />
     <ClInclude Include="grid\Grid.h" />

@@ -12,6 +12,8 @@
 #include "MyMath.h"
 #include "Easing.h"
 
+#include "GlobalVariables.h"
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Player class methods
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,6 +21,10 @@
 void Player::Init(const std::vector<Model*>& models) {
 
 	assert(models.size() == kCountOfModelType);
+
+	// グループの追加
+	globalVariables->CreateGroup("Player");
+	globalVariables->SetValue("Player", "Test", 90);
 
 	// worldTransformの初期化
 	worldTransform_.Initialize();
@@ -146,7 +152,7 @@ void Player::Move() {
 		// hack: 別関数に分けたらよくなる...?
 		// コントローラーでの攻撃
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) { //!< Bが押された場合
-			behaviorRequest_ = Behavior::kAttack;
+			behaviorRequest_ = Behavior::kAttack; //!< 攻撃状態へのリクエスト
 		}
 	}
 	

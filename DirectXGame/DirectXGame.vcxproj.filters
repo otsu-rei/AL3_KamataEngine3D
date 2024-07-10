@@ -76,6 +76,9 @@
     <Filter Include="Game\Characters">
       <UniqueIdentifier>{fa5c80e3-e68c-4311-84c1-e0a229c4aaa2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\GlobalVariables">
+      <UniqueIdentifier>{d2dd8a00-5261-4add-ba5d-eb226cd8c372}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -122,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="math\Easing.cpp">
       <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GlobalVariables\GlobalVariables.cpp">
+      <Filter>Game\GlobalVariables</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -238,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="math\Easing.h">
       <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GlobalVariables\GlobalVariables.h">
+      <Filter>Game\GlobalVariables</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
