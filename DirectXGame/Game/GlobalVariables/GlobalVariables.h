@@ -37,6 +37,10 @@ public:
 	//! @brief 値の設定(Vector3f)
 	void SetValue(const std::string& groupName, const std::string& key, const Vector3f& value);
 
+	//* output *//
+	//! @brief ファイルに書き出し
+	void SaveFile(const std::string& groupName);
+
 	static GlobalVariables* GetInstance();
 
 private:
@@ -58,7 +62,9 @@ private:
 	//=========================================================================================
 
 	std::map<std::string, Group> datas_;
-
+	//!< hash mapに変えてもいいかなと思う...
+	
+	const std::string kDirectoryPath_ = "Resources/GlobalVariables/";
 
 	//=========================================================================================
 	// private methods

@@ -4,6 +4,14 @@
 // include
 //-----------------------------------------------------------------------------------------
 #include <imgui.h>
+#include <json.hpp>
+#include <fstream>
+#include <windows.h>
+
+//-----------------------------------------------------------------------------------------
+// using
+//-----------------------------------------------------------------------------------------
+using json = nlohmann::json;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // GlobalVariables class methods
@@ -58,6 +66,14 @@ void GlobalVariables::Update() {
 			}
 		}
 
+		ImGui::Separator();
+
+		if (ImGui::Button("Save")) {
+			SaveFile(groupName);
+			std::string msg = std::format("{}.json saved.", groupName);
+			MessageBoxA(nullptr, msg.c_str(), "GrobalVariables class", 0);
+		}
+
 		ImGui::EndMenu();
 	}
 
@@ -91,6 +107,63 @@ void GlobalVariables::SetValue(const std::string& groupName, const std::string& 
 
 	// 項目のデータ設定
 	group.items[key] = value;
+}
+
+void GlobalVariables::SaveFile(const std::string& groupName) {
+	
+	auto it = datas_.find(groupName);
+	assert(it != datas_.end()); //!< グループの未登録
+
+	json root;
+	root = json::object();
+
+	// jsonオブジェクトの登録
+	root[groupName] = json::object();
+
+	for (auto& itItem : it->second.items) {
+
+		// 項目名を取得
+		const std::string& itemName = itItem.first;
+
+		// 項目の参照
+		Item& item = itItem.second;
+
+		if (std::holds_alternative<int32_t>(item)) { //!< int32_tの場合
+			root[groupName][itemName] = std::get<int32_t>(item);
+
+		} else if (std::holds_alternative<float>(item)) { //!< floatの場合
+			root[groupName][itemName] = std::get<float>(item);
+
+		} else if (std::holds_alternative<Vector3f>(item)) { //!< Vector3fの場合
+			Vector3f value = std::get<Vector3f>(item);
+			root[groupName][itemName] = json::array({value.x, value.y, value.z});
+		}
+	}
+
+	// ファイルに書き込む
+	std::filesystem::path dir(kDirectoryPath_);
+
+	if (!std::filesystem::exists(kDirectoryPath_)) { //!< ディレクトリが無ければ作成
+		std::filesystem::create_directories(kDirectoryPath_);
+	}
+
+	// 書き込むjsonの生成
+	std::string filePath = kDirectoryPath_ + groupName + ".json";
+	
+	std::ofstream ofs;
+	ofs.open(filePath);
+
+	if (ofs.fail()) { //!< ファイルが開けなかった場合
+		// ログwindowを出す
+		std::string msg = "Failed: open data file for write.";
+		MessageBoxA(nullptr, msg.c_str(), "GlobalVariables class", 0);
+		assert(false);
+		return;
+	}
+
+	// ファイルにjson文字列を書き込む
+	ofs << std::setw(4) << root << std::endl;
+	ofs.close();
 }
 
 GlobalVariables* GlobalVariables::GetInstance() { 
