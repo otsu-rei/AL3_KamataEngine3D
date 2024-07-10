@@ -10,6 +10,7 @@
 #include <algorithm>
 
 #include "MyMath.h"
+#include "Easing.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Player class methods
@@ -41,21 +42,56 @@ void Player::Init(const std::vector<Model*>& models) {
 	modelTransforms_[MODEL_RARM].SetParent(&modelTransforms_[MODEL_BODY]); //!< world -> body -> this
 	modelTransforms_[MODEL_RARM].translation_ = {1.4f, 2.5f, 0.0f};
 
+	modelTransforms_[MODEL_WEAPON].SetParent(&worldTransform_); //!< world -> this
+	modelTransforms_[MODEL_WEAPON].translation_ = {0.0f, 2.4f, 0.0f};
+
 	InitFloatingGimmick();
 }
 
 void Player::Update() {
 
-	Move();
+	if (behaviorRequest_) { //!< 次行動へのリクエストがある場合
+		// ふるまいの変更
+		behavior_ = behaviorRequest_.value();
 
-	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit_ * -1, kMoveLimit_);
-	worldTransform_.UpdateMatrix();
+		// ふるまいが変わるので一度初期化
+		switch (behavior_) {
+		    case Behavior::kRoot:
+			default:
+			    BehaviorRootInit();
+			    break;
 
-	UpdateFloatingGimmick();
+			case Behavior::kAttack:
+			    BehaviorAttackInit();
+			    break;
+		}
+
+		behaviorRequest_ = std::nullopt;
+	}
+	
+	switch (behavior_) {
+		case Behavior::kRoot:
+		default:
+			BehaviorRootUpdate();
+			break;
+
+		case Behavior::kAttack:
+			BehaviorAttackUpdate();
+			break;
+	}
+	
+
+	for (int i = 0; i < kCountOfModelType; ++i) {
+		modelTransforms_[i].UpdateMatrix();
+	}
 }
 
 void Player::Draw(const ViewProjection& viewProj) {
 	for (int i = 0; i < kCountOfModelType; ++i) {
+		if (i == MODEL_WEAPON && behavior_ != Behavior::kAttack) { //!< 攻撃中でしか描画しない
+			continue;
+		}
+
 		models_[i]->Draw(modelTransforms_[i], viewProj);
 	}
 }
@@ -72,6 +108,8 @@ void Player::SetOnImGui() {
 		ImGui::Text("parts parmeter");
 		ImGui::DragFloat3("lArm translation", &modelTransforms_[MODEL_LARM].translation_.x, 0.01f);
 		ImGui::DragFloat3("rArm translation", &modelTransforms_[MODEL_RARM].translation_.x, 0.01f);
+
+		ImGui::DragFloat3("weapon translate", &modelTransforms_[MODEL_WEAPON].translation_.x, 0.01f);
 
 		ImGui::TreePop();
 	}
@@ -104,8 +142,13 @@ void Player::Move() {
 
 			targetAngle_ = std::atan2(velocity.x, velocity.z);
 		}
-	}
 
+		// hack: 別関数に分けたらよくなる...?
+		// コントローラーでの攻撃
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) { //!< Bが押された場合
+			behaviorRequest_ = Behavior::kAttack;
+		}
+	}
 	
 	worldTransform_.rotation_.y = LerpShortAngle(worldTransform_.rotation_.y, targetAngle_, kRotateRate_);
 	
@@ -146,7 +189,42 @@ void Player::UpdateFloatingGimmick() {
 	modelTransforms_[MODEL_LARM].rotation_.x = std::sin(floatingParameter_) * 0.1f;
 	modelTransforms_[MODEL_RARM].rotation_.x = std::sin(floatingParameter_) * 0.1f;
 
-	for (int i = 0; i < kCountOfModelType; ++i) {
-		modelTransforms_[i].UpdateMatrix();
+}
+
+void Player::BehaviorRootInit() {
+	
+}
+
+void Player::BehaviorRootUpdate() {
+
+	Move();
+
+	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit_ * -1, kMoveLimit_);
+	worldTransform_.UpdateMatrix();
+
+	UpdateFloatingGimmick();
+}
+
+void Player::BehaviorAttackInit() {
+	attackParameter_ = 0.0f;
+}
+
+void Player::BehaviorAttackUpdate() {
+
+	attackParameter_++;
+
+	if (attackParameter_ >= kAttackTime_) { //!< 攻撃の挙動が終了した時の処理
+		behaviorRequest_ = Behavior::kRoot; //!< 元の状態に戻る
+		return;
 	}
+
+	float t = attackParameter_ / kAttackTime_; //!< 媒介変数化
+	float easeT = EaseOutBounce(t);
+	//!< todo: easingを入れてそれっぽく見せる
+
+	modelTransforms_[MODEL_WEAPON].rotation_.x = std::lerp(0.0f, pi_v / 2.0f, easeT);
+
+	modelTransforms_[MODEL_LARM].rotation_.x = pi_v + std::lerp(0.0f, pi_v / 2.0f, easeT);
+	modelTransforms_[MODEL_RARM].rotation_.x = pi_v + std::lerp(0.0f, pi_v / 2.0f, easeT);
+
 }

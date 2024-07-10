@@ -68,7 +68,7 @@ private: // メンバ変数
 	std::unique_ptr<FollowCamera> followCamera_;
 
 	/// Game
-	// model
+	//* model *//
 	std::unique_ptr<Model> cubeModel_;
 	std::unique_ptr<Model> skydomeModel_;
 	std::unique_ptr<Model> groundModel_;
@@ -81,6 +81,9 @@ private: // メンバ変数
 
 	// enemymodel
 	std::unique_ptr<Model> enemyBodyModel_;
+
+	// weapon
+	std::unique_ptr<Model> weapon_;
 
 	// player
 	std::unique_ptr<Player> player_;

@@ -118,6 +118,7 @@
     <ClCompile Include="Game\Skydome\Skydome.cpp" />
     <ClCompile Include="grid\Grid.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="math\Easing.cpp" />
     <ClCompile Include="math\MyMath.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
   </ItemGroup>
@@ -153,6 +154,7 @@
     <ClInclude Include="Game\Skydome\Skydome.h" />
     <ClInclude Include="grid\Grid.h" />
     <ClInclude Include="input\Input.h" />
+    <ClInclude Include="math\Easing.h" />
     <ClInclude Include="math\Matrix4x4.h" />
     <ClInclude Include="math\MyMath.h" />
     <ClInclude Include="math\Vector2.h" />

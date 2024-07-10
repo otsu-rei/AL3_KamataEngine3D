@@ -56,13 +56,15 @@ void GameScene::Initialize() {
 
 	enemyBodyModel_.reset(Model::CreateFromOBJ("enemy_body"));
 
+	weapon_.reset(Model::CreateFromOBJ("weapon"));
+
 	//* player *//
 	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
 	TextureManager::Load("reticle.png"); //!< レティクル画像(仮)
 
 	player_ = std::make_unique<Player>();
 	/*player_->Init(playerModel_.get(), {0.0f, 0.0f, 30.0f});*/
-	player_->Init({headModel_.get(), bodyModel_.get(), lArmModel_.get(), rArmModel_.get()});
+	player_->Init({headModel_.get(), bodyModel_.get(), lArmModel_.get(), rArmModel_.get(), weapon_.get()});
 	player_->SetGameScene(this);
 	player_->SetViewProj(&followCamera_->GetViewProjection());
 

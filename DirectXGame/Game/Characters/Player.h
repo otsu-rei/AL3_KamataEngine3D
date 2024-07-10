@@ -6,6 +6,7 @@
 // c++
 #include <cstdint>
 #include <list>
+#include <optional>
 
 // engine
 #include "Input.h"
@@ -24,6 +25,14 @@
 // forward
 //-----------------------------------------------------------------------------------------
 class GameScene;
+
+////////////////////////////////////////////////////////////////////////////////////////////
+// Behavior enum class
+////////////////////////////////////////////////////////////////////////////////////////////
+enum class Behavior {
+	kRoot,   //!< 通常状態
+	kAttack, //!< 攻撃状態
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Player class
@@ -71,10 +80,11 @@ private:
 	// ModelType enum
 	////////////////////////////////////////////////////////////////////////////////////////////
 	enum ModelType {
-		MODEL_HEAD,
 		MODEL_BODY,
+		MODEL_HEAD,
 		MODEL_LARM,
 		MODEL_RARM,
+		MODEL_WEAPON,
 
 		kCountOfModelType
 	};
@@ -97,9 +107,16 @@ private:
 	const float floatingStep_ = 2.0f * pi_v / period_;
 	const float floatingRange_ = 0.2f;
 
+	const uint16_t kAttackTime_ = 60 /*frame*/ * 1 /*sec*/;
+
+
 	/* data */
 	float targetAngle_ = 0.0f;
 	float floatingParameter_ = 0.0f;
+	float attackParameter_ = 0;
+
+	Behavior behavior_ = Behavior::kRoot;
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
 	WorldTransform modelTransforms_[kCountOfModelType];
 
@@ -114,5 +131,11 @@ private:
 	void InitFloatingGimmick();
 
 	void UpdateFloatingGimmick();
+
+	void BehaviorRootInit();
+	void BehaviorRootUpdate();
+
+	void BehaviorAttackInit();
+	void BehaviorAttackUpdate();
 
 };
