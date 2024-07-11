@@ -32,6 +32,7 @@ class GameScene;
 enum class Behavior {
 	kRoot,   //!< 通常状態
 	kAttack, //!< 攻撃状態
+	kJump,   //!< ジャンプ状態
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,6 +115,8 @@ private:
 	float targetAngle_ = 0.0f;
 	float floatingParameter_ = 0.0f;
 	float attackParameter_ = 0;
+	Vector3f velocity_ = {0.0f};
+	Vector3f moveDirection_ = {0.0f};
 
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
@@ -128,8 +131,6 @@ private:
 
 	void Move();
 
-	void MoveController();
-
 	void InitFloatingGimmick();
 
 	void UpdateFloatingGimmick();
@@ -139,5 +140,8 @@ private:
 
 	void BehaviorAttackInit();
 	void BehaviorAttackUpdate();
+
+	void BehaviorJumpInit();
+	void BehaviorJampUpdate();
 
 };

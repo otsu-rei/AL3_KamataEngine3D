@@ -56,11 +56,15 @@ void Player::Init(const std::vector<Model*>& models) {
 	globalVariables->AddItem(groupName, "move speed", moveSpeed_);
 
 	InitFloatingGimmick();
-
-	ApplyGlobalVariables();
 }
 
 void Player::Update() {
+
+	ApplyGlobalVariables();
+
+	// 移動方向へのvelocityのリセット
+	velocity_.x = 0.0f;
+	velocity_.z = 0.0f;
 
 	if (behaviorRequest_) { //!< 次行動へのリクエストがある場合
 		// ふるまいの変更
@@ -76,6 +80,10 @@ void Player::Update() {
 			case Behavior::kAttack:
 			    BehaviorAttackInit();
 			    break;
+
+			case Behavior::kJump:
+			    BehaviorJumpInit();
+			    break;
 		}
 
 		behaviorRequest_ = std::nullopt;
@@ -90,8 +98,22 @@ void Player::Update() {
 		case Behavior::kAttack:
 			BehaviorAttackUpdate();
 			break;
+
+		case Behavior::kJump:
+		    BehaviorJampUpdate();
+		    break;
 	}
-	
+
+	// 移動
+	worldTransform_.translation_ += velocity_;
+
+	// プレイヤーの視点を移動方向に
+	targetAngle_ = std::atan2(moveDirection_.x, moveDirection_.z);
+	worldTransform_.rotation_.y = LerpShortAngle(worldTransform_.rotation_.y, targetAngle_, kRotateRate_);
+
+	// transformの更新
+	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit_ * -1, kMoveLimit_);
+	worldTransform_.UpdateMatrix();
 
 	for (int i = 0; i < kCountOfModelType; ++i) {
 		modelTransforms_[i].UpdateMatrix();
@@ -140,6 +162,7 @@ void Player::ApplyGlobalVariables() {
 	modelTransforms_[MODEL_RARM].translation_ = globalVariables->GetValue<Vector3f>(groupName, "rArm translation");
 	modelTransforms_[MODEL_WEAPON].translation_ = globalVariables->GetValue<Vector3f>(groupName, "weapon translation");
 	moveSpeed_ = globalVariables->GetValue<float>(groupName, "move speed");
+
 }
 
 void Player::Move() {
@@ -148,7 +171,7 @@ void Player::Move() {
 
 	// コントローラーでの移動
 	if (input_->GetJoystickState(0, joyState)) { //!< コントローラーが接続されている場合
-		// Stickの移動量を取得
+
 		Vector3f move = {
 			static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX,
 			0.0f,
@@ -157,12 +180,13 @@ void Player::Move() {
 
 		// デッドゾーンの確認
 		if (Vector::Length(move) > kDeadZone_) {
-			// 移動処理
-			Vector3f velocity = Vector::Normalize(move) * moveSpeed_;
-			velocity = Matrix::TransformNormal(velocity, Matrix::MakeRotate(viewProj_->rotation_.y, kRotateBaseY));
-			worldTransform_.translation_ += velocity;
 
-			targetAngle_ = std::atan2(velocity.x, velocity.z);
+			// 移動方向を代入
+			moveDirection_ = move;
+
+			// 移動処理
+			velocity_ = Vector::Normalize(moveDirection_) * moveSpeed_;
+			velocity_ = Matrix::TransformNormal(velocity_, Matrix::MakeRotate(viewProj_->rotation_.y, kRotateBaseY));
 		}
 
 		// hack: 別関数に分けたらよくなる...?
@@ -170,25 +194,13 @@ void Player::Move() {
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) { //!< Bが押された場合
 			behaviorRequest_ = Behavior::kAttack; //!< 攻撃状態へのリクエスト
 		}
+
+		// コントローラーでのジャンプ
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) { //!< Aが押されたとき
+			behaviorRequest_ = Behavior::kJump; //!< ジャンプ状態へのリクエスト
+		}
 	}
 	
-	worldTransform_.rotation_.y = LerpShortAngle(worldTransform_.rotation_.y, targetAngle_, kRotateRate_);
-	
-}
-
-void Player::MoveController() {
-	XINPUT_STATE joyState;
-	Vector3f velocity = {0.0f, 0.0f, 0.0f};
-
-	if (input_->GetJoystickState(0, joyState)) {
-		velocity.x += static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX * moveSpeed_;
-		velocity.y += static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX * moveSpeed_;
-
-	} else {
-		return; //!< コントローラーが接続されてない場合
-	}
-
-	worldTransform_.translation_ += velocity;
 }
 
 void Player::InitFloatingGimmick() {
@@ -221,9 +233,6 @@ void Player::BehaviorRootUpdate() {
 
 	Move();
 
-	worldTransform_.translation_ = Vector::Clamp(worldTransform_.translation_, kMoveLimit_ * -1, kMoveLimit_);
-	worldTransform_.UpdateMatrix();
-
 	UpdateFloatingGimmick();
 }
 
@@ -249,4 +258,40 @@ void Player::BehaviorAttackUpdate() {
 	modelTransforms_[MODEL_LARM].rotation_.x = pi_v + std::lerp(0.0f, pi_v / 2.0f, easeT);
 	modelTransforms_[MODEL_RARM].rotation_.x = pi_v + std::lerp(0.0f, pi_v / 2.0f, easeT);
 
+}
+
+void Player::BehaviorJumpInit() {
+
+	modelTransforms_[MODEL_BODY].translation_.y = 0.0f;
+	modelTransforms_[MODEL_LARM].rotation_.x    = 0.0f;
+	modelTransforms_[MODEL_RARM].rotation_.x    = 0.0f;
+
+	// ジャンプの初速
+	const float kJumpFirstSpeed = 1.0f;
+
+	// ジャンプの初速を与える
+	velocity_.y = kJumpFirstSpeed;
+}
+
+void Player::BehaviorJampUpdate() {
+
+	// todo: ジャンプ中の移動を入れる
+
+	// 移動
+	worldTransform_.translation_ += velocity_;
+
+	if (worldTransform_.translation_.y <= 0.0f) { //!< 地面(y = 0)地点についたらジャンプの終了
+		worldTransform_.translation_.y = 0.0f;
+		velocity_.y = 0.0f;
+		behaviorRequest_ = Behavior::kRoot; //!< ジャンプの終了
+		return;
+	}
+
+	// 重力加速度
+	const float kGravityAcceleration = 0.05f;
+
+	// 加速度ベクトル
+	Vector3f acceleration = {0.0f, -kGravityAcceleration, 0.0f};
+
+	velocity_ += acceleration;
 }

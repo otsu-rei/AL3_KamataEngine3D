@@ -97,6 +97,9 @@ void GameScene::Update() {
 
 #endif // _DEBUG
 
+	//!< 自機の更新処理
+	player_->Update();
+
 	//!< カメラの更新処理
 	if (isDebugCameraActive_) {
 		debugCamera_->Update();
@@ -107,14 +110,11 @@ void GameScene::Update() {
 		followCamera_->Update();
 		viewProjection_.matView       = followCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
-
-		// FIXME: 自機の更新処理がカメラの更新処理よりしたにいるので1frameずれる
 	}
 
 	viewProjection_.TransferMatrix();
 	
-	//!< 自機の更新処理
-	player_->Update();
+	//!< 敵の更新処理
 	enemy_->Update();
 
 #ifdef _DEBUG
