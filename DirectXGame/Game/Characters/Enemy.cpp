@@ -50,3 +50,14 @@ void Enemy::Draw(const ViewProjection& viewProj) {
 }
 
 void Enemy::Term() {}
+
+Vector3f Enemy::GetWorldCenterPosition() const { 
+	//!< todo: offsetを使って中心座標にそろえる
+	Vector3f result;
+
+	result.x = modelTransforms_[MODEL_BODY].matWorld_.m[3][0];
+	result.y = modelTransforms_[MODEL_BODY].matWorld_.m[3][1];
+	result.z = modelTransforms_[MODEL_BODY].matWorld_.m[3][2];
+
+	return result;
+}

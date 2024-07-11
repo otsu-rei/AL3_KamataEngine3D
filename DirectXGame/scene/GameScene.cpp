@@ -60,7 +60,6 @@ void GameScene::Initialize() {
 
 	//* player *//
 	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
-	TextureManager::Load("reticle.png"); //!< レティクル画像(仮)
 
 	player_ = std::make_unique<Player>();
 	/*player_->Init(playerModel_.get(), {0.0f, 0.0f, 30.0f});*/
@@ -72,8 +71,16 @@ void GameScene::Initialize() {
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 
 	//* enemy *//
-	enemy_ = std::make_unique<Enemy>();
-	enemy_->Init({enemyBodyModel_.get()});
+	// 敵の追加
+	std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
+	enemy->Init({enemyBodyModel_.get()});
+
+	// listに追加
+	enemies_.push_back(std::move(enemy));
+
+	// lockOn
+	lockOn_ = std::make_unique<LockOn>();
+	lockOn_->Init();
 
 	// skydome
 	skydome_ = std::make_unique<Skydome>();
@@ -115,7 +122,11 @@ void GameScene::Update() {
 	viewProjection_.TransferMatrix();
 	
 	//!< 敵の更新処理
-	enemy_->Update();
+	for (auto& enemy : enemies_) {
+		enemy->Update();
+	}
+
+	lockOn_->Update(enemies_, viewProjection_);
 
 #ifdef _DEBUG
 
@@ -153,7 +164,11 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	player_->Draw(viewProjection_);
-	enemy_->Draw(viewProjection_);
+	
+	for (auto& enemy : enemies_) {
+		enemy->Draw(viewProjection_);
+	}
+
 	skydome_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
 
@@ -168,6 +183,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+	lockOn_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

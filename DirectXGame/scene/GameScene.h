@@ -18,6 +18,7 @@
 #include "Ground.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "LockOn.h"
 
 /// <summary>
 /// ゲームシーン
@@ -90,7 +91,10 @@ private: // メンバ変数
 	uint32_t playerTextureHandle_;
 
 	// enemy
-	std::unique_ptr<Enemy> enemy_;
+	std::list<std::unique_ptr<Enemy>> enemies_;
+
+	// lockOn
+	std::unique_ptr<LockOn> lockOn_;
 
 	// skydome
 	std::unique_ptr<Skydome> skydome_;

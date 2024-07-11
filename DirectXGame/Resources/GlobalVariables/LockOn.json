@@ -1,0 +1,7 @@
+{
+    "LockOn": {
+        "digree angle": 180.0,
+        "max distance": 50.0,
+        "min distance": 10.0
+    }
+}

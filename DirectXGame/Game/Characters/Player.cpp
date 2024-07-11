@@ -181,12 +181,13 @@ void Player::Move() {
 		// デッドゾーンの確認
 		if (Vector::Length(move) > kDeadZone_) {
 
-			// 移動方向を代入
-			moveDirection_ = move;
+			move = Vector::Normalize(move) * moveSpeed_;
 
 			// 移動処理
-			velocity_ = Vector::Normalize(moveDirection_) * moveSpeed_;
-			velocity_ = Matrix::TransformNormal(velocity_, Matrix::MakeRotate(viewProj_->rotation_.y, kRotateBaseY));
+			velocity_ = Matrix::TransformNormal(move, Matrix::MakeRotate(viewProj_->rotation_.y, kRotateBaseY));
+
+			// 移動方向を代入
+			moveDirection_ = velocity_;
 		}
 
 		// hack: 別関数に分けたらよくなる...?
