@@ -116,6 +116,7 @@
     <ClCompile Include="Game\Characters\Player.cpp" />
     <ClCompile Include="Game\GlobalVariables\GlobalVariables.cpp" />
     <ClCompile Include="Game\Ground\Ground.cpp" />
+    <ClCompile Include="Game\LockOn\LockOn.cpp" />
     <ClCompile Include="Game\Skydome\Skydome.cpp" />
     <ClCompile Include="grid\Grid.cpp" />
     <ClCompile Include="main.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="Game\Characters\Player.h" />
     <ClInclude Include="Game\GlobalVariables\GlobalVariables.h" />
     <ClInclude Include="Game\Ground\Ground.h" />
+    <ClInclude Include="Game\LockOn\LockOn.h" />
     <ClInclude Include="Game\Skydome\Skydome.h" />
     <ClInclude Include="grid\Grid.h" />
     <ClInclude Include="input\Input.h" />

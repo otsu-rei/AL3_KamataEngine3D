@@ -79,6 +79,9 @@
     <Filter Include="Game\GlobalVariables">
       <UniqueIdentifier>{d2dd8a00-5261-4add-ba5d-eb226cd8c372}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\LockOn">
+      <UniqueIdentifier>{3fbfb0b8-c025-42ec-a67b-135923f46925}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -128,6 +131,9 @@
     </ClCompile>
     <ClCompile Include="Game\GlobalVariables\GlobalVariables.cpp">
       <Filter>Game\GlobalVariables</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\LockOn\LockOn.cpp">
+      <Filter>Game\LockOn</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +253,9 @@
     </ClInclude>
     <ClInclude Include="Game\GlobalVariables\GlobalVariables.h">
       <Filter>Game\GlobalVariables</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\LockOn\LockOn.h">
+      <Filter>Game\LockOn</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

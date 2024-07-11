@@ -44,6 +44,9 @@ void ImGuiManager::Initialize(
 	ImGuiIO& io = ImGui::GetIO();
 	// 標準フォントを追加する
 	io.Fonts->AddFontDefault();
+
+	//!< dockingを有効にする
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 #endif
 }
 
