@@ -1,5 +1,20 @@
 {
     "Player": {
-        "Test": 67
+        "lArm translation": [
+            -1.399999976158142,
+            2.5,
+            0.0
+        ],
+        "move speed": 2.0,
+        "rArm translation": [
+            1.399999976158142,
+            2.5,
+            0.0
+        ],
+        "weapon translation": [
+            0.0,
+            2.4000000953674316,
+            0.0
+        ]
     }
 }

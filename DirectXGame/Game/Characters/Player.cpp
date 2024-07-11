@@ -22,10 +22,6 @@ void Player::Init(const std::vector<Model*>& models) {
 
 	assert(models.size() == kCountOfModelType);
 
-	// グループの追加
-	globalVariables->CreateGroup("Player");
-	globalVariables->SetValue("Player", "Test", 90);
-
 	// worldTransformの初期化
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = {0.0f, 0.0f, 30.0f};
@@ -51,7 +47,17 @@ void Player::Init(const std::vector<Model*>& models) {
 	modelTransforms_[MODEL_WEAPON].SetParent(&worldTransform_); //!< world -> this
 	modelTransforms_[MODEL_WEAPON].translation_ = {0.0f, 2.4f, 0.0f};
 
+	// グループの追加
+	const std::string groupName = "Player";
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "lArm translation", modelTransforms_[MODEL_LARM].translation_);
+	globalVariables->AddItem(groupName, "rArm translation", modelTransforms_[MODEL_RARM].translation_);
+	globalVariables->AddItem(groupName, "weapon translation", modelTransforms_[MODEL_WEAPON].translation_);
+	globalVariables->AddItem(groupName, "move speed", moveSpeed_);
+
 	InitFloatingGimmick();
+
+	ApplyGlobalVariables();
 }
 
 void Player::Update() {
@@ -126,6 +132,16 @@ void Player::SetOnImGui() {
 // private
 //=========================================================================================
 
+void Player::ApplyGlobalVariables() {
+
+	const std::string groupName = "Player";
+
+	modelTransforms_[MODEL_LARM].translation_ = globalVariables->GetValue<Vector3f>(groupName, "lArm translation");
+	modelTransforms_[MODEL_RARM].translation_ = globalVariables->GetValue<Vector3f>(groupName, "rArm translation");
+	modelTransforms_[MODEL_WEAPON].translation_ = globalVariables->GetValue<Vector3f>(groupName, "weapon translation");
+	moveSpeed_ = globalVariables->GetValue<float>(groupName, "move speed");
+}
+
 void Player::Move() {
 
 	XINPUT_STATE joyState;
@@ -142,7 +158,7 @@ void Player::Move() {
 		// デッドゾーンの確認
 		if (Vector::Length(move) > kDeadZone_) {
 			// 移動処理
-			Vector3f velocity = Vector::Normalize(move) * kMoveSpeed_;
+			Vector3f velocity = Vector::Normalize(move) * moveSpeed_;
 			velocity = Matrix::TransformNormal(velocity, Matrix::MakeRotate(viewProj_->rotation_.y, kRotateBaseY));
 			worldTransform_.translation_ += velocity;
 
@@ -165,8 +181,8 @@ void Player::MoveController() {
 	Vector3f velocity = {0.0f, 0.0f, 0.0f};
 
 	if (input_->GetJoystickState(0, joyState)) {
-		velocity.x += static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX * kMoveSpeed_;
-		velocity.y += static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX * kMoveSpeed_;
+		velocity.x += static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX * moveSpeed_;
+		velocity.y += static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX * moveSpeed_;
 
 	} else {
 		return; //!< コントローラーが接続されてない場合

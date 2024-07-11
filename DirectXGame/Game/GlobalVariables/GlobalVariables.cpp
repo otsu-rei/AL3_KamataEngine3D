@@ -42,8 +42,7 @@ void GlobalVariables::Update() {
 		}
 
 		//!< 各itemの取得
-		for (auto& itItem : group.items) {
-			
+		for (auto& itItem : group) {
 			// 項目名の取得
 			const std::string& itemName = itItem.first;
 
@@ -61,7 +60,7 @@ void GlobalVariables::Update() {
 
 			} else if (std::holds_alternative<Vector3f>(item)) { //!< Vector3fの場合
 				Vector3f* ptr = std::get_if<Vector3f>(&item);
-				ImGui::DragFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), 0.02f); //!< 仮で設定
+				ImGui::DragFloat3(itemName.c_str(), &ptr->x, 0.02f); //!< 仮で設定
 				
 			}
 		}
@@ -85,30 +84,6 @@ void GlobalVariables::CreateGroup(const std::string& groupName) {
 	datas_[groupName]; //!< 要素の追加
 }
 
-void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, int value) {
-	// datasの中身の参照
-	Group& group = datas_[groupName];
-
-	// 項目のデータ設定
-	group.items[key] = value;
-}
-
-void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, float value) {
-	// datasの中身の参照
-	Group& group = datas_[groupName];
-
-	// 項目のデータ設定
-	group.items[key] = value;
-}
-
-void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, const Vector3f& value) {
-	// datasの中身の参照
-	Group& group = datas_[groupName];
-
-	// 項目のデータ設定
-	group.items[key] = value;
-}
-
 void GlobalVariables::SaveFile(const std::string& groupName) {
 	
 	auto it = datas_.find(groupName);
@@ -120,8 +95,7 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 	// jsonオブジェクトの登録
 	root[groupName] = json::object();
 
-	for (auto& itItem : it->second.items) {
-
+	for (auto& itItem : it->second) {
 		// 項目名を取得
 		const std::string& itemName = itItem.first;
 
@@ -164,6 +138,77 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 	// ファイルにjson文字列を書き込む
 	ofs << std::setw(4) << root << std::endl;
 	ofs.close();
+}
+
+void GlobalVariables::LoadFiles() {
+	// ディレクトリの確認
+	std::filesystem::path dir(kDirectoryPath_);
+	if (!std::filesystem::exists(kDirectoryPath_)) { //!< ディレクトリが無ければ早期リターン
+		return;
+	}
+
+	// ディレクトリの中にある全ファイルの読み込み
+	std::filesystem::directory_iterator dirIt(kDirectoryPath_);
+	for (const auto& entry : dirIt) {
+		// ファイルパスの取得
+		const std::filesystem::path& filePath = entry.path();
+
+		// ファイル拡張子を取得
+		std::string extension = filePath.extension().string();
+
+		if (extension.compare(".json") != 0) { //!< .jsonファイル以外はスキップ
+			continue;
+		}
+
+		LoadFile(filePath.stem().string());
+	}
+}
+
+void GlobalVariables::LoadFile(const std::string& groupName) {
+	// 読み込むjsonファイルのフルパスの設定
+	std::string filePath = kDirectoryPath_ + groupName + ".json";
+
+	// ファイルを読み込み用に開く
+	std::ifstream ifs;
+	ifs.open(filePath);
+
+	if (ifs.fail()) { //!< ファイルが開けなかった場合
+		// ログwindowを出す
+		std::string msg = "Failed: open data file for read.";
+		MessageBoxA(nullptr, msg.c_str(), "GlobalVariables class", 0);
+		assert(false);
+		return;
+	}
+
+	json root;
+
+	// jsonデータ構造体に展開
+	ifs >> root;
+
+	ifs.close();
+
+	// グループの検索
+	json::iterator itGroup = root.find(groupName);
+	assert(itGroup != root.end()); //!< 未登録の確認
+
+	for (auto itItem = itGroup->begin(); itItem != itGroup->end(); ++itItem) {
+		// アイテム名の取得
+		const std::string& itemName = itItem.key();
+
+		if (itItem->is_number_integer()) { //!< int32_tの場合
+			int32_t value = itItem->get<int32_t>();
+			SetValue(groupName, itemName, value);
+
+		} else if (itItem->is_number_float()) { //!< floatの場合
+			double value = itItem->get<double>();
+			SetValue(groupName, itemName, static_cast<float>(value));
+
+		} else if (itItem->is_array() && itItem->size() == 3) { //!< 配列 && 配列サイズが3の場合
+			// Vector3fとして扱う
+			Vector3f value = {itItem->at(0), itItem->at(1), itItem->at(2)};
+			SetValue(groupName, itemName, value);
+		}
+	}
 }
 
 GlobalVariables* GlobalVariables::GetInstance() { 

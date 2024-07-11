@@ -99,7 +99,7 @@ private:
 	const ViewProjection* viewProj_ = nullptr;
 
 	/* parameters */
-	const float kMoveSpeed_ = 0.2f;
+	float moveSpeed_ = 0.2f;
 	const Vector3f kMoveLimit_ = {100.0f, 100.0f, 100.0f};
 	const float kDeadZone_ = 0.7f;
 	const float kRotateRate_ = 0.12f;
@@ -123,6 +123,8 @@ private:
 	//=========================================================================================
 	// private methods
 	//=========================================================================================
+
+	void ApplyGlobalVariables();
 
 	void Move();
 
