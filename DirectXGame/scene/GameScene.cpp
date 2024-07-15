@@ -82,6 +82,10 @@ void GameScene::Initialize() {
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Init();
 
+	// lockOnのptrを渡す
+	followCamera_->SetLockOn(lockOn_.get());
+	player_->SetLockOn(lockOn_.get());
+
 	// skydome
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Init(skydomeModel_.get());
@@ -107,6 +111,13 @@ void GameScene::Update() {
 	//!< 自機の更新処理
 	player_->Update();
 
+	//!< 敵の更新処理
+	for (auto& enemy : enemies_) {
+		enemy->Update();
+	}
+
+	lockOn_->Update(enemies_, viewProjection_);
+
 	//!< カメラの更新処理
 	if (isDebugCameraActive_) {
 		debugCamera_->Update();
@@ -120,13 +131,6 @@ void GameScene::Update() {
 	}
 
 	viewProjection_.TransferMatrix();
-	
-	//!< 敵の更新処理
-	for (auto& enemy : enemies_) {
-		enemy->Update();
-	}
-
-	lockOn_->Update(enemies_, viewProjection_);
 
 #ifdef _DEBUG
 
@@ -163,6 +167,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
 	player_->Draw(viewProjection_);
 	
 	for (auto& enemy : enemies_) {

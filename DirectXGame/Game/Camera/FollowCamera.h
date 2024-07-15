@@ -7,6 +7,11 @@
 #include "WorldTransform.h"
 #include "Input.h"
 
+//-----------------------------------------------------------------------------------------
+// forward
+//-----------------------------------------------------------------------------------------
+class LockOn;
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // FollowCamera class
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,6 +28,8 @@ public:
 
 	void SetTarget(const WorldTransform* target) { target_ = target; }
 
+	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
+
 	const ViewProjection& GetViewProjection() const { return viewProj_; }
 
 private:
@@ -31,8 +38,9 @@ private:
 	// private variables
 	//=========================================================================================
 
-	// デバック用input
+	//* external *//
 	Input* input_ = Input::GetInstance();
+	const LockOn* lockOn_ = nullptr;
 
 	// 追従対象
 	const WorldTransform* target_ = nullptr;
@@ -43,13 +51,11 @@ private:
 
 	/* parameter */
 
-	const Vector3f kOffset_ = {0.0f, 2.0f, -10.0f};
+	const Vector3f kOffset_ = {0.0f, 3.0f, -10.0f};
 	const float kRotSpeed_ = 0.04f;
 
 	//=========================================================================================
 	// private methods
 	//=========================================================================================
-
-	void Rotate();
 
 };

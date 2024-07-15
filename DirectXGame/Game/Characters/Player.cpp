@@ -13,6 +13,7 @@
 #include "Easing.h"
 
 #include "GlobalVariables.h"
+#include "LockOn.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Player class methods
@@ -108,7 +109,7 @@ void Player::Update() {
 	worldTransform_.translation_ += velocity_;
 
 	// プレイヤーの視点を移動方向に
-	targetAngle_ = std::atan2(moveDirection_.x, moveDirection_.z);
+	targetAngle_ = std::atan2(direction_.x, direction_.z);
 	worldTransform_.rotation_.y = LerpShortAngle(worldTransform_.rotation_.y, targetAngle_, kRotateRate_);
 
 	// transformの更新
@@ -187,7 +188,14 @@ void Player::Move() {
 			velocity_ = Matrix::TransformNormal(move, Matrix::MakeRotate(viewProj_->rotation_.y, kRotateBaseY));
 
 			// 移動方向を代入
-			moveDirection_ = velocity_;
+			direction_ = velocity_;
+
+		} else if (lockOn_ && lockOn_->GetTargetPosition().has_value()) { //!< スティックによる移動入力がない時 && ロックオンの対象がいる場合
+		
+			Vector3f lockOnPos = lockOn_->GetTargetPosition().value();
+
+			direction_ = lockOnPos - worldTransform_.translation_;
+
 		}
 
 		// hack: 別関数に分けたらよくなる...?
@@ -239,6 +247,7 @@ void Player::BehaviorRootUpdate() {
 
 void Player::BehaviorAttackInit() {
 	attackParameter_ = 0.0f;
+	attackMoveSpeed_ = 0.8f;
 }
 
 void Player::BehaviorAttackUpdate() {
@@ -258,6 +267,30 @@ void Player::BehaviorAttackUpdate() {
 
 	modelTransforms_[MODEL_LARM].rotation_.x = pi_v + std::lerp(0.0f, pi_v / 2.0f, easeT);
 	modelTransforms_[MODEL_RARM].rotation_.x = pi_v + std::lerp(0.0f, pi_v / 2.0f, easeT);
+
+	// ロックオン中, directionをlockOnしてる敵のほうに向かせる
+	if (lockOn_ && lockOn_->GetTargetPosition().has_value()) {
+		Vector3f lockOnPos = lockOn_->GetTargetPosition().value();
+		Vector3f sub = lockOnPos - worldTransform_.translation_;
+
+		// 距離
+		float distance = Vector::Length({sub.x, 0.0f, sub.z});
+
+		// 距離のしきい値
+		const float threshold = 1.0f;
+
+		if (distance > threshold) { //!< しきい値より離れてる場合のみ
+
+			direction_ = sub;
+
+			if (attackMoveSpeed_ > distance - threshold) { //!< しきい値を超える速さなら補正
+				attackMoveSpeed_ = 0.0f;
+			}
+		}
+	}
+
+	// 向いてる方向に少しずつ移動
+	velocity_ += Vector::Normalize({direction_.x, 0.0f, direction_.z}) * attackMoveSpeed_;
 
 }
 

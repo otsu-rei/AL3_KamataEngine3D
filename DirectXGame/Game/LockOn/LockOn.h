@@ -11,6 +11,7 @@
 // c++
 #include <memory>
 #include <list>
+#include <optional>
 
 // Game
 #include "Enemy.h"
@@ -41,6 +42,8 @@ public:
 	);
 
 	void Draw();
+
+	std::optional<Vector3f> GetTargetPosition() const;
 
 private:
 

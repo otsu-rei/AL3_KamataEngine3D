@@ -83,6 +83,14 @@ void LockOn::Draw() {
 
 }
 
+std::optional<Vector3f> LockOn::GetTargetPosition() const { 
+	if (target_) {
+		return target_->GetWorldCenterPosition();
+	}
+
+	return std::nullopt; //!< targetがいない場合, 無効値を返す
+}
+
 void LockOn::SearchTargetEnemy(
 	const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProj) {
 

@@ -25,6 +25,7 @@
 // forward
 //-----------------------------------------------------------------------------------------
 class GameScene;
+class LockOn;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Behavior enum class
@@ -67,6 +68,8 @@ public:
 
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
+	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
+
 	void SetParent(const WorldTransform* parent) {
 		worldTransform_.parent_ = parent;
 	}
@@ -98,6 +101,7 @@ private:
 	Input* input_ = Input::GetInstance();
 	GameScene* gameScene_ = nullptr;
 	const ViewProjection* viewProj_ = nullptr;
+	const LockOn* lockOn_ = nullptr;
 
 	/* parameters */
 	float moveSpeed_ = 0.2f;
@@ -116,7 +120,8 @@ private:
 	float floatingParameter_ = 0.0f;
 	float attackParameter_ = 0;
 	Vector3f velocity_ = {0.0f};
-	Vector3f moveDirection_ = {0.0f};
+	Vector3f direction_ = {0.0f};
+	float attackMoveSpeed_ = 0.0f;
 
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
