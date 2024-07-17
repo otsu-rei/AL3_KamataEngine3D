@@ -43,7 +43,7 @@ public:
 
 	void Term() override;
 
-	Vector3f GetWorldCenterPosition() const;
+	Vector3f GetCenterPosition() const override;
 
 private:
 

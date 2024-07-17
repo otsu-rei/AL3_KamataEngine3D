@@ -51,7 +51,7 @@ void Enemy::Draw(const ViewProjection& viewProj) {
 
 void Enemy::Term() {}
 
-Vector3f Enemy::GetWorldCenterPosition() const { 
+Vector3f Enemy::GetCenterPosition() const { 
 
 	const Vector3f offset = {0.0f, 1.0f, 0.0f};
 

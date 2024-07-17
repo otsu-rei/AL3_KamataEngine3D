@@ -82,6 +82,9 @@
     <Filter Include="Game\LockOn">
       <UniqueIdentifier>{3fbfb0b8-c025-42ec-a67b-135923f46925}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Collider">
+      <UniqueIdentifier>{e1161ebe-7e9a-41e4-bcbd-8c5f58cc6b96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -134,6 +137,12 @@
     </ClCompile>
     <ClCompile Include="Game\LockOn\LockOn.cpp">
       <Filter>Game\LockOn</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Collider\Collider.cpp">
+      <Filter>Game\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Collider\CollisionManager.cpp">
+      <Filter>Game\Collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -256,6 +265,12 @@
     </ClInclude>
     <ClInclude Include="Game\LockOn\LockOn.h">
       <Filter>Game\LockOn</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Collider\Collider.h">
+      <Filter>Game\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Collider\CollisionManager.h">
+      <Filter>Game\Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

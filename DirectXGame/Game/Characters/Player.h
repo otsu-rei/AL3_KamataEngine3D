@@ -61,10 +61,12 @@ public:
 	//! @brief 終了処理
 	void Term() override;
 
+	void OnCollision() override;
+
 	//! @brief ImGuiに設定
 	void SetOnImGui();
 
-	/* setter */
+	//* setter *//
 
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
@@ -77,6 +79,9 @@ public:
 	void SetViewProj(const ViewProjection* viewProj) {
 		viewProj_ = viewProj;
 	}
+
+	//* Getter *//
+	Vector3f GetCenterPosition() const override;
 
 private:
 

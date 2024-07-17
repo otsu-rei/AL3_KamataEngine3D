@@ -3,48 +3,41 @@
 //-----------------------------------------------------------------------------------------
 // include
 //-----------------------------------------------------------------------------------------
-// c++
-#include <cstdint>
-#include <vector>
-
-// engine
-#include "Model.h"
-#include "WorldTransform.h"
-#include "ViewProjection.h"
-
-// collider
-#include "Collider.h"
+// math
+#include <Vector3.h>
+ 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-// BaseCharacter Base class
+// Collider base class
 ////////////////////////////////////////////////////////////////////////////////////////////
-class BaseCharacter
-	: public Collider {
+class Collider {
 public:
 
 	//=========================================================================================
 	// public methods
 	//=========================================================================================
 
-	virtual void Init(const std::vector<Model*>& models) = 0;
+	virtual ~Collider() = default;
 
-	virtual void Update() = 0;
+	//! @brief 当たった時の処理
+	virtual void OnCollision() {}
 
-	virtual void Draw(const ViewProjection& viewProj) = 0;
+	//! @brief 中心座標の取得
+	virtual Vector3f GetCenterPosition() const = 0;
 
-	virtual void Term() = 0;
+	//! @brief 当たり判定の判定円を取得
+	float GetRadius() const { return collisionRadius_; }
 
-	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+	//! @brief 当たり判定の判定円の設定
+	void SetRadius(float radius) { collisionRadius_ = radius; }
 
-	virtual Vector3f GetCenterPosition() const override;
-
-protected:
+private:
 
 	//=========================================================================================
-	// protected variables
+	// private variables
 	//=========================================================================================
 
-	std::vector<Model*> models_;
-	WorldTransform      worldTransform_;
+	float collisionRadius_ = 0.5f; //!< 判定円
+
 
 };

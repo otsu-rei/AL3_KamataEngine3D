@@ -86,6 +86,9 @@ void GameScene::Initialize() {
 	followCamera_->SetLockOn(lockOn_.get());
 	player_->SetLockOn(lockOn_.get());
 
+	//* collisionManager *//
+	collisionManager_ = std::make_unique<CollisionManager>();
+
 	// skydome
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Init(skydomeModel_.get());
@@ -132,13 +135,24 @@ void GameScene::Update() {
 
 	viewProjection_.TransferMatrix();
 
+	// 当たり判定の登録
+	collisionManager_->Reset(); //!< 新しく登録するので
+
+	collisionManager_->AddCollider(player_.get());
+
+	for (const auto& enemy : enemies_) {
+		collisionManager_->AddCollider(enemy.get());
+	}
+
+	// 当たり判定の実行
+	collisionManager_->CheckAllCollisions();
+
 #ifdef _DEBUG
 
 	ImGui::Begin("debug");
 	ImGui::End();
 
 #endif // _DEBUG
-
 }
 
 void GameScene::Draw() {

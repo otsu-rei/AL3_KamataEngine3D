@@ -19,6 +19,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "LockOn.h"
+#include "CollisionManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -92,6 +93,9 @@ private: // メンバ変数
 
 	// enemy
 	std::list<std::unique_ptr<Enemy>> enemies_;
+
+	// collider
+	std::unique_ptr<CollisionManager> collisionManager_;
 
 	// lockOn
 	std::unique_ptr<LockOn> lockOn_;

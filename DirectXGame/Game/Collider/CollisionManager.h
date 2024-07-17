@@ -3,48 +3,40 @@
 //-----------------------------------------------------------------------------------------
 // include
 //-----------------------------------------------------------------------------------------
-// c++
-#include <cstdint>
-#include <vector>
-
-// engine
-#include "Model.h"
-#include "WorldTransform.h"
-#include "ViewProjection.h"
-
 // collider
 #include "Collider.h"
 
+// c++
+#include <list>
+
 ////////////////////////////////////////////////////////////////////////////////////////////
-// BaseCharacter Base class
+// CollisionManager class
 ////////////////////////////////////////////////////////////////////////////////////////////
-class BaseCharacter
-	: public Collider {
+class CollisionManager {
 public:
 
 	//=========================================================================================
 	// public methods
 	//=========================================================================================
 
-	virtual void Init(const std::vector<Model*>& models) = 0;
+	void Reset();
 
-	virtual void Update() = 0;
+	void CheckAllCollisions();
 
-	virtual void Draw(const ViewProjection& viewProj) = 0;
+	void AddCollider(Collider* collider);
 
-	virtual void Term() = 0;
-
-	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
-
-	virtual Vector3f GetCenterPosition() const override;
-
-protected:
+private:
 
 	//=========================================================================================
-	// protected variables
+	// private variables
 	//=========================================================================================
 
-	std::vector<Model*> models_;
-	WorldTransform      worldTransform_;
+	std::list<Collider*> colliders_;
+
+	//=========================================================================================
+	// private methods
+	//=========================================================================================
+
+	void CheckCollisionPair(Collider* a, Collider* b);
 
 };

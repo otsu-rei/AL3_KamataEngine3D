@@ -131,7 +131,11 @@ void Player::Draw(const ViewProjection& viewProj) {
 	}
 }
 
-void Player::Term() {  }
+void Player::Term() {}
+
+void Player::OnCollision() {
+	behaviorRequest_ = Behavior::kJump;
+}
 
 void Player::SetOnImGui() {
 
@@ -149,6 +153,11 @@ void Player::SetOnImGui() {
 		ImGui::TreePop();
 	}
 
+}
+
+Vector3f Player::GetCenterPosition() const { 
+	const Vector3f offset = {0.0f, 1.5f, 0.0f};
+	return Matrix::Transform(offset, worldTransform_.matWorld_);
 }
 
 //=========================================================================================
@@ -247,7 +256,7 @@ void Player::BehaviorRootUpdate() {
 
 void Player::BehaviorAttackInit() {
 	attackParameter_ = 0.0f;
-	attackMoveSpeed_ = 0.8f;
+	attackMoveSpeed_ = 0.4f;
 }
 
 void Player::BehaviorAttackUpdate() {

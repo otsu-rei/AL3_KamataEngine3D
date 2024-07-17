@@ -61,7 +61,7 @@ void LockOn::Update(
 	
 	if (target_) { //!< ロックオンされてる(継続)場合
 		// 敵のロックオン座標の取得
-		Vector3f worldPos = target_->GetWorldCenterPosition();
+		Vector3f worldPos = target_->GetCenterPosition();
 
 		// world -> screen 座標変換
 		Matrix4x4 vpvMatrix
@@ -85,7 +85,7 @@ void LockOn::Draw() {
 
 std::optional<Vector3f> LockOn::GetTargetPosition() const { 
 	if (target_) {
-		return target_->GetWorldCenterPosition();
+		return target_->GetCenterPosition();
 	}
 
 	return std::nullopt; //!< targetがいない場合, 無効値を返す
@@ -101,7 +101,7 @@ void LockOn::SearchTargetEnemy(
 	for (auto& enemy : enemies) {
 
 		// 中心座標の取得
-		Vector3f worldPos = enemy->GetWorldCenterPosition();
+		Vector3f worldPos = enemy->GetCenterPosition();
 
 		// world -> view 座標
 		Vector3f viewPos = Matrix::Transform(worldPos, viewProj.matView);
@@ -140,7 +140,7 @@ bool LockOn::IsTargetInRange(const ViewProjection& viewProj) {
 	}
 
 	// 中心座標の取得
-	Vector3f worldPos = target_->GetWorldCenterPosition();
+	Vector3f worldPos = target_->GetCenterPosition();
 
 	// world -> view 座標
 	Vector3f viewPos = Matrix::Transform(worldPos, viewProj.matView);
