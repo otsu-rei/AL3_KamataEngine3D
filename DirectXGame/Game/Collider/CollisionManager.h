@@ -8,6 +8,10 @@
 
 // c++
 #include <list>
+#include <memory>
+
+// engine
+#include "Model.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // CollisionManager class
@@ -19,7 +23,13 @@ public:
 	// public methods
 	//=========================================================================================
 
+	void Init();
+
+	void Draw(const ViewProjection& viewProj);
+
 	void Reset();
+
+	void UpdateWorldTransform();
 
 	void CheckAllCollisions();
 
@@ -32,6 +42,12 @@ private:
 	//=========================================================================================
 
 	std::list<Collider*> colliders_;
+
+	// debug用モデル
+	std::unique_ptr<Model> debugModel_;
+
+	//* member *//
+	bool isDisplay_ = true;
 
 	//=========================================================================================
 	// private methods

@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 void Enemy::Init(const std::vector<Model*>& models) {
+	Collider::Init();
 
 	assert(models.size() == kCountOfModelType);
 

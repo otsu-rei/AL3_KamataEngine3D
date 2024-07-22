@@ -48,7 +48,6 @@ void GlobalVariables::Update() {
 
 			// valueの取得
 			Item& item = itItem.second;
-
 			
 			if (std::holds_alternative<int32_t>(item)) { //!< int32_tの場合
 				int32_t* ptr = std::get_if<int32_t>(&item);
@@ -62,6 +61,9 @@ void GlobalVariables::Update() {
 				Vector3f* ptr = std::get_if<Vector3f>(&item);
 				ImGui::DragFloat3(itemName.c_str(), &ptr->x, 0.02f); //!< 仮で設定
 				
+			} else if (std::holds_alternative<bool>(item)) { //!< boolの場合
+				bool* ptr = std::get_if<bool>(&item);
+				ImGui::Checkbox(itemName.c_str(), ptr);
 			}
 		}
 
@@ -111,6 +113,9 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 		} else if (std::holds_alternative<Vector3f>(item)) { //!< Vector3fの場合
 			Vector3f value = std::get<Vector3f>(item);
 			root[groupName][itemName] = json::array({value.x, value.y, value.z});
+
+		} else if (std::holds_alternative<bool>(item)) { //!< boolの場合
+			root[groupName][itemName] = std::get<bool>(item);
 		}
 	}
 
@@ -206,6 +211,10 @@ void GlobalVariables::LoadFile(const std::string& groupName) {
 		} else if (itItem->is_array() && itItem->size() == 3) { //!< 配列 && 配列サイズが3の場合
 			// Vector3fとして扱う
 			Vector3f value = {itItem->at(0), itItem->at(1), itItem->at(2)};
+			SetValue(groupName, itemName, value);
+
+		} else if (itItem->is_boolean()) { //!< boolの場合
+			bool value = itItem->get<bool>();
 			SetValue(groupName, itemName, value);
 		}
 	}

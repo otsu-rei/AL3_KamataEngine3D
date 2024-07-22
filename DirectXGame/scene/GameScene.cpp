@@ -88,6 +88,7 @@ void GameScene::Initialize() {
 
 	//* collisionManager *//
 	collisionManager_ = std::make_unique<CollisionManager>();
+	collisionManager_->Init();
 
 	// skydome
 	skydome_ = std::make_unique<Skydome>();
@@ -134,6 +135,9 @@ void GameScene::Update() {
 	}
 
 	viewProjection_.TransferMatrix();
+
+	// worldTransfromの更新
+	collisionManager_->UpdateWorldTransform();
 
 	// 当たり判定の登録
 	collisionManager_->Reset(); //!< 新しく登録するので
@@ -190,6 +194,8 @@ void GameScene::Draw() {
 
 	skydome_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
+
+	collisionManager_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

@@ -5,7 +5,11 @@
 //-----------------------------------------------------------------------------------------
 // math
 #include <Vector3.h>
- 
+
+// engine
+#include "WorldTransform.h"
+#include "ViewProjection.h"
+#include "Model.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Collider base class
@@ -18,6 +22,12 @@ public:
 	//=========================================================================================
 
 	virtual ~Collider() = default;
+
+	void Init();
+
+	void Draw(Model* model, const ViewProjection& viewProj);
+
+	void UpdateWorldTransform();
 
 	//! @brief 当たった時の処理
 	virtual void OnCollision() {}
@@ -37,7 +47,9 @@ private:
 	// private variables
 	//=========================================================================================
 
-	float collisionRadius_ = 0.5f; //!< 判定円
+	float collisionRadius_ = 2.0f; //!< 判定円
+	// todo: 円の範囲をworldTransformのscaleにする
 
+	WorldTransform worldTransform_;
 
 };

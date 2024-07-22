@@ -16,14 +16,18 @@
 //-----------------------------------------------------------------------------------------
 // using
 //-----------------------------------------------------------------------------------------
-using Item = std::variant<int32_t, float, Vector3f>;
+using Item = std::variant<int32_t, float, Vector3f, bool>;
 using Group = std::unordered_map<std::string, Item>;
 
 //-----------------------------------------------------------------------------------------
 // concept
 //-----------------------------------------------------------------------------------------
 template <typename T>
-concept ItemType = std::same_as<T, int32_t> || std::same_as<T, float> || std::same_as<T, Vector3f>;
+concept ItemType
+	= std::same_as<T, int32_t>
+	|| std::same_as<T, float>
+	|| std::same_as<T, Vector3f>
+	|| std::same_as<T, bool>;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // GlobalVariables class
