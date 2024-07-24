@@ -83,8 +83,8 @@ void CollisionManager::CheckCollisionPair(Collider* a, Collider* b) {
 	float radius = a->GetRadius() + b->GetRadius();
 
 	if (distance < radius) {
-		a->OnCollision();
-		b->OnCollision();
+		a->OnCollision(b);
+		b->OnCollision(a);
 	}
 
 }

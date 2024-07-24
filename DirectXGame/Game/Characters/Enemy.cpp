@@ -11,6 +11,7 @@
 
 void Enemy::Init(const std::vector<Model*>& models) {
 	Collider::Init();
+	Collider::SetTypeId(CollisionTypeIdDef::kEnemy);
 
 	assert(models.size() == kCountOfModelType);
 

@@ -20,6 +20,7 @@
 #include "Enemy.h"
 #include "LockOn.h"
 #include "CollisionManager.h"
+#include "Effect.h"
 
 /// <summary>
 /// ゲームシーン
@@ -87,6 +88,9 @@ private: // メンバ変数
 	// weapon
 	std::unique_ptr<Model> weapon_;
 
+	// hiteffect
+	std::unique_ptr<Model> hitEffectModel_;
+
 	// player
 	std::unique_ptr<Player> player_;
 	uint32_t playerTextureHandle_;
@@ -105,5 +109,8 @@ private: // メンバ変数
 
 	// ground
 	std::unique_ptr<Ground> ground_;
+
+	// effect
+	std::unique_ptr<EffectManager> effectManager_;
 
 };

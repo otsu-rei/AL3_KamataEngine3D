@@ -51,7 +51,7 @@ private:
 
 	/* parameter */
 
-	const Vector3f kOffset_ = {0.0f, 3.0f, -10.0f};
+	const Vector3f kOffset_ = {0.0f, 8.0f, -20.0f};
 	const float kRotSpeed_ = 0.04f;
 
 	//=========================================================================================

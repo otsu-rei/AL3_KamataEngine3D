@@ -63,7 +63,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Game\Collider;$(ProjectDir)Game\LockOn;$(ProjectDir)Game\GlobalVariables;$(ProjectDir)Game\Characters;$(ProjectDir)Game\Camera;$(ProjectDir)Game\Ground;$(ProjectDir)Game\Skydome;$(ProjectDir)Game\Player;$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene;$(ProjectDir)math;$(ProjectDir)grid;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Game\Effect;$(ProjectDir)Game\Weapon;$(ProjectDir)Game\Collider;$(ProjectDir)Game\LockOn;$(ProjectDir)Game\GlobalVariables;$(ProjectDir)Game\Characters;$(ProjectDir)Game\Camera;$(ProjectDir)Game\Ground;$(ProjectDir)Game\Skydome;$(ProjectDir)Game\Player;$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene;$(ProjectDir)math;$(ProjectDir)grid;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -116,10 +116,13 @@
     <ClCompile Include="Game\Characters\Player.cpp" />
     <ClCompile Include="Game\Collider\Collider.cpp" />
     <ClCompile Include="Game\Collider\CollisionManager.cpp" />
+    <ClCompile Include="Game\Effect\Effect.cpp" />
+    <ClCompile Include="Game\Effect\HitEffect.cpp" />
     <ClCompile Include="Game\GlobalVariables\GlobalVariables.cpp" />
     <ClCompile Include="Game\Ground\Ground.cpp" />
     <ClCompile Include="Game\LockOn\LockOn.cpp" />
     <ClCompile Include="Game\Skydome\Skydome.cpp" />
+    <ClCompile Include="Game\Weapon\Hammer.cpp" />
     <ClCompile Include="grid\Grid.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\Easing.cpp" />
@@ -156,10 +159,13 @@
     <ClInclude Include="Game\Characters\Player.h" />
     <ClInclude Include="Game\Collider\Collider.h" />
     <ClInclude Include="Game\Collider\CollisionManager.h" />
+    <ClInclude Include="Game\Effect\Effect.h" />
+    <ClInclude Include="Game\Effect\HitEffect.h" />
     <ClInclude Include="Game\GlobalVariables\GlobalVariables.h" />
     <ClInclude Include="Game\Ground\Ground.h" />
     <ClInclude Include="Game\LockOn\LockOn.h" />
     <ClInclude Include="Game\Skydome\Skydome.h" />
+    <ClInclude Include="Game\Weapon\Hammer.h" />
     <ClInclude Include="grid\Grid.h" />
     <ClInclude Include="input\Input.h" />
     <ClInclude Include="math\Easing.h" />

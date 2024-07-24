@@ -58,12 +58,21 @@ void GameScene::Initialize() {
 
 	weapon_.reset(Model::CreateFromOBJ("weapon"));
 
+	hitEffectModel_.reset(Model::CreateFromOBJ("sphere"));
+
+	// effectmanager
+	effectManager_ = std::make_unique<EffectManager>();
+	effectManager_->Init();
+
 	//* player *//
 	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
 
 	player_ = std::make_unique<Player>();
-	/*player_->Init(playerModel_.get(), {0.0f, 0.0f, 30.0f});*/
-	player_->Init({headModel_.get(), bodyModel_.get(), lArmModel_.get(), rArmModel_.get(), weapon_.get()});
+	player_->Init({headModel_.get(), bodyModel_.get(), lArmModel_.get(), rArmModel_.get()});
+
+	player_->SetWeapon(weapon_.get());
+	player_->GetWeapon()->SetEffect(effectManager_.get(), hitEffectModel_.get());
+
 	player_->SetGameScene(this);
 	player_->SetViewProj(&followCamera_->GetViewProjection());
 
@@ -136,13 +145,16 @@ void GameScene::Update() {
 
 	viewProjection_.TransferMatrix();
 
-	// worldTransfromの更新
-	collisionManager_->UpdateWorldTransform();
-
 	// 当たり判定の登録
 	collisionManager_->Reset(); //!< 新しく登録するので
 
 	collisionManager_->AddCollider(player_.get());
+	
+	// 攻撃中なら登録する
+	if (player_->GetBehavior() == Behavior::kAttack) {
+		// todo: 1frameだけ判定が遅れることがある
+		collisionManager_->AddCollider(player_->GetWeaponCollider());
+	}
 
 	for (const auto& enemy : enemies_) {
 		collisionManager_->AddCollider(enemy.get());
@@ -150,6 +162,12 @@ void GameScene::Update() {
 
 	// 当たり判定の実行
 	collisionManager_->CheckAllCollisions();
+
+	// worldTransfromの更新
+	collisionManager_->UpdateWorldTransform();
+
+	// エフェクトの全更新
+	effectManager_->Update();
 
 #ifdef _DEBUG
 
@@ -196,6 +214,8 @@ void GameScene::Draw() {
 	ground_->Draw(viewProjection_);
 
 	collisionManager_->Draw(viewProjection_);
+
+	effectManager_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

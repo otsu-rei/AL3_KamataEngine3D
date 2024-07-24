@@ -12,6 +12,16 @@
 #include "Model.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
+// CollisionTypeIdDef enum class
+////////////////////////////////////////////////////////////////////////////////////////////
+enum class CollisionTypeIdDef : uint32_t {
+	kDefault,
+	kPlayer,
+	kPlayerWeapon,
+	kEnemy
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////
 // Collider base class
 ////////////////////////////////////////////////////////////////////////////////////////////
 class Collider {
@@ -30,7 +40,7 @@ public:
 	void UpdateWorldTransform();
 
 	//! @brief 当たった時の処理
-	virtual void OnCollision() {}
+	virtual void OnCollision([[maybe_unused]]Collider* othre) {}
 
 	//! @brief 中心座標の取得
 	virtual Vector3f GetCenterPosition() const = 0;
@@ -40,6 +50,11 @@ public:
 
 	//! @brief 当たり判定の判定円の設定
 	void SetRadius(float radius) { collisionRadius_ = radius; }
+
+	uint32_t GetTypeId() const { return typeId_; }
+
+	void SetTypeId(uint32_t typeId) { typeId_ = typeId; }
+	void SetTypeId(CollisionTypeIdDef collisionTypeIdDef) { typeId_ = static_cast<uint32_t>(collisionTypeIdDef); }
 
 private:
 
@@ -51,5 +66,7 @@ private:
 	// todo: 円の範囲をworldTransformのscaleにする
 
 	WorldTransform worldTransform_;
+
+	uint32_t typeId_ = 0u;
 
 };

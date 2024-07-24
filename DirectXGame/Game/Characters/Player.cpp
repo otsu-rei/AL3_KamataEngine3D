@@ -21,6 +21,7 @@
 
 void Player::Init(const std::vector<Model*>& models) {
 	Collider::Init();
+	Collider::SetTypeId(CollisionTypeIdDef::kPlayer);
 
 	assert(models.size() == kCountOfModelType);
 
@@ -29,7 +30,6 @@ void Player::Init(const std::vector<Model*>& models) {
 	worldTransform_.translation_ = {0.0f, 0.0f, 30.0f};
 
 	models_ = models;
-
 	
 	for (int i = 0; i < kCountOfModelType; ++i) {
 		modelTransforms_[i].Initialize();
@@ -46,18 +46,16 @@ void Player::Init(const std::vector<Model*>& models) {
 	modelTransforms_[MODEL_RARM].SetParent(&modelTransforms_[MODEL_BODY]); //!< world -> body -> this
 	modelTransforms_[MODEL_RARM].translation_ = {1.4f, 2.5f, 0.0f};
 
-	modelTransforms_[MODEL_WEAPON].SetParent(&worldTransform_); //!< world -> this
-	modelTransforms_[MODEL_WEAPON].translation_ = {0.0f, 2.4f, 0.0f};
-
 	// グループの追加
 	const std::string groupName = "Player";
 	globalVariables->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "lArm translation", modelTransforms_[MODEL_LARM].translation_);
 	globalVariables->AddItem(groupName, "rArm translation", modelTransforms_[MODEL_RARM].translation_);
-	globalVariables->AddItem(groupName, "weapon translation", modelTransforms_[MODEL_WEAPON].translation_);
 	globalVariables->AddItem(groupName, "move speed", moveSpeed_);
 
 	InitFloatingGimmick();
+
+	hammer_ = std::make_unique<Hammer>();
 }
 
 void Player::Update() {
@@ -124,17 +122,17 @@ void Player::Update() {
 
 void Player::Draw(const ViewProjection& viewProj) {
 	for (int i = 0; i < kCountOfModelType; ++i) {
-		if (i == MODEL_WEAPON && behavior_ != Behavior::kAttack) { //!< 攻撃中でしか描画しない
-			continue;
-		}
-
 		models_[i]->Draw(modelTransforms_[i], viewProj);
+	}
+	
+	if (behavior_ == Behavior::kAttack) { //!< 攻撃中の場合
+		hammer_->Draw(viewProj);
 	}
 }
 
 void Player::Term() {}
 
-void Player::OnCollision() {
+void Player::OnCollision([[maybe_unused]]Collider* other) {
 	behaviorRequest_ = Behavior::kJump;
 }
 
@@ -148,8 +146,6 @@ void Player::SetOnImGui() {
 		ImGui::Text("parts parmeter");
 		ImGui::DragFloat3("lArm translation", &modelTransforms_[MODEL_LARM].translation_.x, 0.01f);
 		ImGui::DragFloat3("rArm translation", &modelTransforms_[MODEL_RARM].translation_.x, 0.01f);
-
-		ImGui::DragFloat3("weapon translate", &modelTransforms_[MODEL_WEAPON].translation_.x, 0.01f);
 
 		ImGui::TreePop();
 	}
@@ -171,7 +167,6 @@ void Player::ApplyGlobalVariables() {
 
 	modelTransforms_[MODEL_LARM].translation_ = globalVariables->GetValue<Vector3f>(groupName, "lArm translation");
 	modelTransforms_[MODEL_RARM].translation_ = globalVariables->GetValue<Vector3f>(groupName, "rArm translation");
-	modelTransforms_[MODEL_WEAPON].translation_ = globalVariables->GetValue<Vector3f>(groupName, "weapon translation");
 	moveSpeed_ = globalVariables->GetValue<float>(groupName, "move speed");
 
 }
@@ -257,7 +252,7 @@ void Player::BehaviorRootUpdate() {
 
 void Player::BehaviorAttackInit() {
 	attackParameter_ = 0.0f;
-	attackMoveSpeed_ = 0.4f;
+	attackMoveSpeed_ = 0.1f;
 }
 
 void Player::BehaviorAttackUpdate() {
@@ -273,7 +268,11 @@ void Player::BehaviorAttackUpdate() {
 	float easeT = EaseOutBounce(t);
 	//!< todo: easingを入れてそれっぽく見せる
 
-	modelTransforms_[MODEL_WEAPON].rotation_.x = std::lerp(0.0f, pi_v / 2.0f, easeT);
+	Vector3f rotation = {0.0f};
+	rotation.x = std::lerp(0.0f, pi_v / 2.0f, easeT);
+
+	hammer_->SetRotation(rotation);
+	hammer_->Update();
 
 	modelTransforms_[MODEL_LARM].rotation_.x = pi_v + std::lerp(0.0f, pi_v / 2.0f, easeT);
 	modelTransforms_[MODEL_RARM].rotation_.x = pi_v + std::lerp(0.0f, pi_v / 2.0f, easeT);

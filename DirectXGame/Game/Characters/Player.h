@@ -21,6 +21,9 @@
 // character
 #include "BaseCharacter.h"
 
+// weapon
+#include "Hammer.h"
+
 //-----------------------------------------------------------------------------------------
 // forward
 //-----------------------------------------------------------------------------------------
@@ -61,7 +64,7 @@ public:
 	//! @brief 終了処理
 	void Term() override;
 
-	void OnCollision() override;
+	void OnCollision([[maybe_unused]]Collider* other) override;
 
 	//! @brief ImGuiに設定
 	void SetOnImGui();
@@ -80,8 +83,19 @@ public:
 		viewProj_ = viewProj;
 	}
 
+	void SetWeapon(Model* model) { // HACK:
+		hammer_->Init(model, &worldTransform_);
+	}
+
 	//* Getter *//
+
 	Vector3f GetCenterPosition() const override;
+
+	Collider* GetWeaponCollider() const { return hammer_.get(); }
+
+	Behavior GetBehavior() const { return behavior_; }
+
+	Hammer* GetWeapon() const { return hammer_.get(); }
 
 private:
 
@@ -93,7 +107,6 @@ private:
 		MODEL_HEAD,
 		MODEL_LARM,
 		MODEL_RARM,
-		MODEL_WEAPON,
 
 		kCountOfModelType
 	};
@@ -120,7 +133,7 @@ private:
 	const uint16_t kAttackTime_ = 60 /*frame*/ * 1 /*sec*/;
 
 
-	/* data */
+	//* member *//
 	float targetAngle_ = 0.0f;
 	float floatingParameter_ = 0.0f;
 	float attackParameter_ = 0;
@@ -132,6 +145,8 @@ private:
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
 	WorldTransform modelTransforms_[kCountOfModelType];
+
+	std::unique_ptr<Hammer> hammer_;
 
 	//=========================================================================================
 	// private methods
