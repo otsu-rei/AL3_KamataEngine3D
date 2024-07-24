@@ -253,6 +253,7 @@ void Player::BehaviorRootUpdate() {
 void Player::BehaviorAttackInit() {
 	attackParameter_ = 0.0f;
 	attackMoveSpeed_ = 0.1f;
+	hammer_->ClearRecord();
 }
 
 void Player::BehaviorAttackUpdate() {

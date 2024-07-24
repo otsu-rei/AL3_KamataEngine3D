@@ -49,17 +49,27 @@ void Hammer::Update() {
 
 void Hammer::Draw(const ViewProjection& viewProj) {
 
-	model_->Draw(localTransform_, viewProj);
+	model_->Draw(localTransform_, viewProj); }
+
+void Hammer::ClearRecord() {
+	record_.ClearRecord();
 }
 
 void Hammer::OnCollision([[maybe_unused]]Collider* other) {
-
-	if (effectManager_ == nullptr && effectModel_ == nullptr) { //!< manager modelが設定されてないとき
-		return;
-	}
 	
 	if (other->GetTypeId() == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) { //!< 当たった相手が敵だった場合
 		Enemy* enemy = static_cast<Enemy*>(other);
+		uint32_t serialId = enemy->GetSerialId();
+
+		if (record_.CheckRecord(serialId)) { //!< すでにあったってるかの確認
+			return;
+		}
+
+		record_.AddRecord(serialId);
+
+		if (effectManager_ == nullptr && effectModel_ == nullptr) { //!< manager modelが設定されてないとき
+			return;
+		}
 		
 		// hitEffectの生成
 		std::unique_ptr<HitEffect> newEffect = std::make_unique<HitEffect>();

@@ -31,7 +31,7 @@ public:
 	// public methods
 	//=========================================================================================
 
-	Enemy() = default;
+	Enemy();
 
 	~Enemy() { Term(); }
 
@@ -44,6 +44,8 @@ public:
 	void Term() override;
 
 	Vector3f GetCenterPosition() const override;
+
+	uint32_t GetSerialId() const { return serialNumber_; }
 
 private:
 
@@ -60,6 +62,8 @@ private:
 	// private variables
 	//=========================================================================================
 
+	static uint32_t nextSirialNumber_;
+
 	/* parameter */
 	const float kRotateRate_ = pi_v / 100.0f;
 	const float kRotateRadius_ = 10.0f;
@@ -67,6 +71,7 @@ private:
 
 	/* data */
 	float theta_ = 0.0f;
+	uint32_t serialNumber_;
 
 	WorldTransform modelTransforms_[kCountOfModelType];
 

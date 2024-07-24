@@ -116,6 +116,7 @@
     <ClCompile Include="Game\Characters\Player.cpp" />
     <ClCompile Include="Game\Collider\Collider.cpp" />
     <ClCompile Include="Game\Collider\CollisionManager.cpp" />
+    <ClCompile Include="Game\Collider\CollisionRecord.cpp" />
     <ClCompile Include="Game\Effect\Effect.cpp" />
     <ClCompile Include="Game\Effect\HitEffect.cpp" />
     <ClCompile Include="Game\GlobalVariables\GlobalVariables.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="Game\Characters\Player.h" />
     <ClInclude Include="Game\Collider\Collider.h" />
     <ClInclude Include="Game\Collider\CollisionManager.h" />
+    <ClInclude Include="Game\Collider\CollisionRecord.h" />
     <ClInclude Include="Game\Effect\Effect.h" />
     <ClInclude Include="Game\Effect\HitEffect.h" />
     <ClInclude Include="Game\GlobalVariables\GlobalVariables.h" />

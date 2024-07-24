@@ -11,6 +11,9 @@
 #include "ViewProjection.h"
 #include "Effect.h"
 
+// collider
+#include "CollisionRecord.h"
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Hammer class
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,6 +36,8 @@ public:
 	void Update();
 
 	void Draw(const ViewProjection& viewProj);
+
+	void ClearRecord();
 
 	void OnCollision([[maybe_unused]]Collider* other) override;
 
@@ -59,6 +64,7 @@ private:
 	//* member *//
 
 	WorldTransform localTransform_;
+	CollisionRecord record_;
 
 
 };
