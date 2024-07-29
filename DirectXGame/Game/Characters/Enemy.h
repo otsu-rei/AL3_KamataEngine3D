@@ -54,6 +54,7 @@ private:
 	////////////////////////////////////////////////////////////////////////////////////////////
 	enum ModelType {
 		MODEL_BODY,
+		MODEL_PROPELLER,
 
 		kCountOfModelType
 	};
@@ -74,5 +75,11 @@ private:
 	uint32_t serialNumber_;
 
 	WorldTransform modelTransforms_[kCountOfModelType];
+
+	//=========================================================================================
+	// private methods
+	//=========================================================================================
+
+	
 
 };

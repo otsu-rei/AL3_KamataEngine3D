@@ -38,6 +38,7 @@ void Enemy::Init(const std::vector<Model*>& models) {
 
 	// parts位置調整
 	modelTransforms_[MODEL_BODY].SetParent(&worldTransform_); //!< world -> this
+	modelTransforms_[MODEL_PROPELLER].SetParent(&worldTransform_);
 
 }
 
@@ -50,6 +51,9 @@ void Enemy::Update() {
 
 	worldTransform_.translation_ += velocity;
 	worldTransform_.UpdateMatrix();
+
+	modelTransforms_[MODEL_PROPELLER].rotation_.y += 0.2f;
+	modelTransforms_[MODEL_PROPELLER].rotation_.y = std::fmod(modelTransforms_[MODEL_PROPELLER].rotation_.y, pi_v * 2.0f);
 
 	for (int i = 0; i < kCountOfModelType; ++i) {
 		modelTransforms_[i].UpdateMatrix();

@@ -55,6 +55,7 @@ void GameScene::Initialize() {
 	rArmModel_.reset(Model::CreateFromOBJ("chara_rArm"));
 
 	enemyBodyModel_.reset(Model::CreateFromOBJ("enemy_body"));
+	enemyPropellerModel_.reset(Model::CreateFromOBJ("enemy_propeller"));
 
 	weapon_.reset(Model::CreateFromOBJ("weapon"));
 
@@ -82,7 +83,7 @@ void GameScene::Initialize() {
 	//* enemy *//
 	// 敵の追加
 	std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
-	enemy->Init({enemyBodyModel_.get()});
+	enemy->Init({enemyBodyModel_.get(), enemyPropellerModel_.get()});
 
 	// listに追加
 	enemies_.push_back(std::move(enemy));

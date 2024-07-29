@@ -84,6 +84,7 @@ private: // メンバ変数
 
 	// enemymodel
 	std::unique_ptr<Model> enemyBodyModel_;
+	std::unique_ptr<Model> enemyPropellerModel_;
 
 	// weapon
 	std::unique_ptr<Model> weapon_;
