@@ -24,9 +24,9 @@ void GlobalVariables::Update() {
 		return;
 	}
 
-	if (!ImGui::BeginMenuBar()) {
+	/*if (!ImGui::BeginMenuBar()) {
 		return;
-	}
+	}*/
 	
 	//!< 各gruopの取得
 	for (auto& itGroup : datas_) {
@@ -78,7 +78,6 @@ void GlobalVariables::Update() {
 		ImGui::EndMenu();
 	}
 
-	ImGui::EndMenuBar();
 	ImGui::End();
 }
 

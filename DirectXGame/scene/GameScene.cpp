@@ -70,9 +70,7 @@ void GameScene::Initialize() {
 
 	player_ = std::make_unique<Player>();
 	player_->Init({headModel_.get(), bodyModel_.get(), lArmModel_.get(), rArmModel_.get()});
-
-	player_->SetWeapon(weapon_.get());
-	player_->GetWeapon()->SetEffect(effectManager_.get(), hitEffectModel_.get());
+	player_->SetHammer(weapon_.get(), effectManager_.get(), hitEffectModel_.get());
 
 	player_->SetGameScene(this);
 	player_->SetViewProj(&followCamera_->GetViewProjection());
@@ -116,7 +114,6 @@ void GameScene::Update() {
 	ImGui::Begin("main");
 
 	ImGui::Checkbox("isDebugCameraActive", &isDebugCameraActive_);
-	player_->SetOnImGui();
 
 	ImGui::End();
 
@@ -153,8 +150,7 @@ void GameScene::Update() {
 	
 	// 攻撃中なら登録する
 	if (player_->GetBehavior() == Behavior::kAttack) {
-		// todo: 1frameだけ判定が遅れることがある
-		collisionManager_->AddCollider(player_->GetWeaponCollider());
+		collisionManager_->AddCollider(player_->GetHammer());
 	}
 
 	for (const auto& enemy : enemies_) {
