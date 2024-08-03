@@ -150,6 +150,20 @@ public:
 
 private:
 
+	////////////////////////////////////////////////////////////////////////////////////////////
+	// ConstAttack structure
+	////////////////////////////////////////////////////////////////////////////////////////////
+	struct ConstAttack {
+		uint32_t anticipationTime; //!< 振りかぶりの時間<frame>
+		uint32_t chargeTime;       //!< 溜め時間<frame>
+		uint32_t swingTime;        //!< 攻撃振り時間<frame>
+		uint32_t recoveryTime;     //!< 硬直時間<frame>
+		
+		float anticipationSpeed; //!< 振りかぶりの移動速度
+		float chargeSpeed;       //!< 溜めの移動速度
+		float swingSpeed;        //!< 攻撃振り移動速度
+	};
+
 	//=========================================================================================
 	// private variables
 	//=========================================================================================
@@ -158,11 +172,28 @@ private:
 
 	const uint16_t kAttackTime_ = 60 /*frame*/ * 1 /*sec*/;
 
+	static const int32_t kComboNum_ = 3; //!< publicに出してもよき
+	static const std::array<ConstAttack, kComboNum_> kConstAttacks_;
+
 	//* member *//
 
 	float attackParameter_ = 0;
 	float attackMoveSpeed_ = 0.0f;
+	int32_t comboIndex_  = 0;
+	int32_t inComboPhase = 0;
+	bool isNextCombo     = false;
 
+	//=========================================================================================
+	// private methods
+	//=========================================================================================
+
+	void InitCombo();
+	void UpdateCombo();
+
+	void ComboAnticipation(float t);
+	void ComboCharge(float t);
+	void ComboSwing(float t);
+	void ComboRecovery(float t);
 
 };
 
@@ -310,7 +341,7 @@ private:
 	float targetAngle_ = 0.0f;
 
 	// transforms
-	WorldTransform modelTransforms_[kCountOfModelType];
+	std::array<WorldTransform, kCountOfModelType> modelTransforms_;
 
 	// weapon
 	std::unique_ptr<Hammer> hammer_;
@@ -326,6 +357,8 @@ private:
 	void UpdateBehavior();
 
 	void ApplyGlobalVariables();
+
+	void InitModelTransfomrs();
 	
 	//=========================================================================================
 	// friend behavior

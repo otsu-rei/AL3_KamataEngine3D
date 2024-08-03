@@ -15,6 +15,17 @@
 #include "GlobalVariables.h"
 #include "LockOn.h"
 
+//=========================================================================================
+// static variables
+//=========================================================================================
+
+const std::array<PlayerBehaviorAttack::ConstAttack, PlayerBehaviorAttack::kComboNum_> PlayerBehaviorAttack::kConstAttacks_ = {{
+	{0, 0, 20, 10, 0.0f, 0.0f, 0.15f}, 
+	{0, 0, 25, 10, 0.2f, 0.0f, 0.15f},
+	{0, 20, 15, 30, 0.2f, 0.0f, 0.0f}
+	/* 振りかぶりの時間<frame>, 溜め時間<frame>, 攻撃振り時間<frame>, 硬直時間<frame>, 振りかぶりの移動速度, 溜めの移動速度, 攻撃振り移動速度 */
+}};
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // PlayerBehavior inheritance class methods
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,6 +34,7 @@ void PlayerBehaviorRoot::Init() {
 	behavior_ = Behavior::kRoot;
 
 	InitFloatingGimmick();
+	player_->InitModelTransfomrs();
 }
 
 void PlayerBehaviorRoot::Update() {
@@ -111,30 +123,207 @@ void PlayerBehaviorAttack::Init() {
 	behavior_ = Behavior::kAttack;
 
 	attackParameter_ = 0.0f;
-	attackMoveSpeed_ = 0.1f;
+	comboIndex_  = 0;
+	inComboPhase = 0;
+	isNextCombo  = false;
+
+	InitCombo();
+
 	player_->hammer_->ClearRecord();
 }
 
 void PlayerBehaviorAttack::Update() {
-	attackParameter_++;
 
-	if (attackParameter_ >= kAttackTime_) { //!< 攻撃の挙動が終了した時の処理
-		player_->behaviorRequest_ = Behavior::kRoot; //!< 元の状態に戻る
-		return;
+	UpdateCombo();
+
+	// inputの取得
+	auto input = Input::GetInstance();
+
+	// 次のコンボに進むかどうか
+	if (comboIndex_ < kComboNum_ - 1) { //!< コンボの上限に達していない場合
+
+		//! [pair]
+		//! first : 現在のゲームパッド状態
+		//! second: 前フレームのゲームパッド状態
+		std::pair<XINPUT_STATE, XINPUT_STATE> joyState;
+
+		//!< 現在と前フレームのゲームパッドの状態取得
+		if (input->GetJoystickState(0, joyState.first) && input->GetJoystickStatePrevious(0, joyState.second)) {
+			//!< 現在と前フレームのゲームパッドの状態が取得できた場合
+			
+			bool isTriggerAttackButton
+				= (joyState.first.Gamepad.wButtons & XINPUT_GAMEPAD_B) && !(joyState.second.Gamepad.wButtons & XINPUT_GAMEPAD_B);
+			//!< attackButton(Bボタン)がtriggerかどうかの確認.
+			
+			if (isTriggerAttackButton) { //!< triggerだった場合
+				// コンボ有効
+				isNextCombo = true;
+			}
+		}
 	}
 
-	float t = attackParameter_ / kAttackTime_; //!< 媒介変数化
-	float easeT = EaseOutBounce(t);
-	//!< todo: easingを入れてそれっぽく見せる
+	uint32_t totalAttickTime
+		= kConstAttacks_[comboIndex_].anticipationTime
+		+ kConstAttacks_[comboIndex_].chargeTime
+		+ kConstAttacks_[comboIndex_].swingTime
+		+ kConstAttacks_[comboIndex_].recoveryTime;
 
-	Vector3f rotation = {0.0f};
-	rotation.x = std::lerp(0.0f, pi_v / 2.0f, easeT);
+	// 規定の時間経過で通常行動に戻る
+	if (++attackParameter_ >= totalAttickTime) {
+		// コンボ継続なら次のコンボに進む
+		if (isNextCombo) {
+			// 攻撃にかかわる変数のリセット
+			isNextCombo      = false;
+			attackParameter_ = 0.0f;
+			comboIndex_++; //!< コンボ数の加算
 
-	player_->hammer_->SetRotation(rotation);
+			// この瞬間だけ方向転換できる
+			XINPUT_STATE joyState;
+
+			if (input->GetJoystickState(0, joyState)) {
+				Vector3f move = {
+					static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX,
+					0.0f,
+					static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX
+				};
+
+				player_->direction_ = Matrix::TransformNormal(move, Matrix::MakeRotate(player_->viewProj_->rotation_.y, kRotateBaseY));
+			}
+
+			// TODO: 次のコンボ用に各パーツの角度をここでリセット
+			InitCombo();
+
+		} else {
+			// コンボに進まないので通常状態に戻る
+			player_->behaviorRequest_ = Behavior::kRoot;
+		}
+	}
+
+}
+
+void PlayerBehaviorAttack::InitCombo() {
+	switch (comboIndex_) {
+		case 0:
+			break;
+
+		case 1:
+			break;
+
+		case 2:
+		default:
+
+			break;
+	}
+}
+
+void PlayerBehaviorAttack::UpdateCombo() {
+
+	//* combo 0: 右から左に振り
+	//* combo 1: 左から一周振り
+	//* combo 2: 上から振り
+
+	// 攻撃情報を参照取得
+	const auto& kConstAttack = kConstAttacks_[comboIndex_];
+
+	if (attackParameter_ < kConstAttack.anticipationTime) {
+		ComboAnticipation(attackParameter_ / kConstAttack.anticipationTime);
+
+	} else if (attackParameter_ - kConstAttack.anticipationTime < kConstAttack.chargeTime) {
+		ComboCharge((attackParameter_ - kConstAttack.anticipationTime) / kConstAttack.chargeTime);
+
+	} else if (attackParameter_ - kConstAttack.anticipationTime - kConstAttack.chargeTime < kConstAttack.swingTime) {
+		ComboSwing((attackParameter_ - kConstAttack.anticipationTime - kConstAttack.chargeTime) / kConstAttack.swingTime);
+
+	} else if (attackParameter_ - kConstAttack.anticipationTime - kConstAttack.chargeTime - kConstAttack.swingTime < kConstAttack.recoveryTime) {
+		ComboRecovery((attackParameter_ - kConstAttack.anticipationTime - kConstAttack.chargeTime - kConstAttack.swingTime) / kConstAttack.recoveryTime);
+	}
+}
+
+void PlayerBehaviorAttack::ComboAnticipation([[maybe_unused]]float t) {
+	switch (comboIndex_) {
+		case 0:
+			break;
+
+		case 1:
+			break;
+
+		case 2:
+		default:
+
+			break;
+	}
+}
+
+void PlayerBehaviorAttack::ComboCharge([[maybe_unused]]float t) {
+	switch (comboIndex_) {
+		case 0:
+			break;
+
+		case 1:
+			break;
+
+		case 2:
+	    default: {
+				
+			}
+			break;
+	}
+}
+
+void PlayerBehaviorAttack::ComboSwing([[maybe_unused]]float t) {
+
+	if (t == 0.0f) { //!< hack: 最初の1frameだけ通る
+		attackMoveSpeed_ = kConstAttacks_[comboIndex_].swingSpeed;
+	}
+
+	switch (comboIndex_) {
+		case 0: {
+				Vector3f rotation = {0.0f};
+				rotation.y = std::lerp(pi_v / 2.0f, -pi_v / 2.0f, t);
+				rotation.x = pi_v / 2.0f;
+
+				player_->hammer_->SetRotation(rotation);
+
+				for (auto& transform : player_->modelTransforms_) {
+			        transform.rotation_.y = rotation.y;
+		        }
+			}
+			break;
+
+		case 1: {
+				Vector3f rotation = {0.0f};
+				rotation.y = -pi_v / 2.0f + std::lerp(0.0f, pi_v * 2.0f, t); //!< 一周
+				rotation.x = pi_v / 2.0f;
+
+				player_->hammer_->SetRotation(rotation);
+
+		        for (auto& transform : player_->modelTransforms_) {
+			        transform.rotation_.y = rotation.y;
+		        }
+			}
+			break;
+
+		case 2:
+		default: {
+
+				float easeT = EaseOutBounce(t);
+
+				Vector3f rotation = {0.0f};
+		        rotation.x = std::lerp(0.0f, pi_v / 2.0f, easeT);
+
+				player_->hammer_->SetRotation(rotation);
+
+				for (auto& transform : player_->modelTransforms_) {
+			        transform.rotation_.y = 0.0f;
+		        }
+
+				player_->modelTransforms_[Player::MODEL_LARM].rotation_.x = pi_v + rotation.x;
+		        player_->modelTransforms_[Player::MODEL_RARM].rotation_.x = pi_v + rotation.x;
+			}
+			break;
+	}
+
 	player_->hammer_->Update();
-
-	player_->modelTransforms_[Player::MODEL_LARM].rotation_.x = pi_v + std::lerp(0.0f, pi_v / 2.0f, easeT);
-	player_->modelTransforms_[Player::MODEL_RARM].rotation_.x = pi_v + std::lerp(0.0f, pi_v / 2.0f, easeT);
 
 	// ロックオン中, directionをlockOnしてる敵のほうに向かせる
 	if (player_->lockOn_ && player_->lockOn_->GetTargetPosition().has_value()) {
@@ -159,6 +348,21 @@ void PlayerBehaviorAttack::Update() {
 
 	// 向いてる方向に少しずつ移動
 	player_->velocity_ += Vector::Normalize({player_->direction_.x, 0.0f, player_->direction_.z}) * attackMoveSpeed_;
+}
+
+void PlayerBehaviorAttack::ComboRecovery([[maybe_unused]]float t) {
+	switch (comboIndex_) {
+		case 0:
+			break;
+
+		case 1:
+			break;
+
+		case 2:
+		default:
+
+			break;
+	}
 }
 
 void PlayerBehaviorJump::Init() {
@@ -243,16 +447,7 @@ void Player::Init(const std::vector<Model*>& models) {
 		modelTransforms_[i].Initialize();
 	}
 
-	// parts位置調整
-	modelTransforms_[MODEL_BODY].SetParent(&worldTransform_); //!< world -> this
-
-	modelTransforms_[MODEL_HEAD].SetParent(&modelTransforms_[MODEL_BODY]); //!< world -> body -> this
-
-	modelTransforms_[MODEL_LARM].SetParent(&modelTransforms_[MODEL_BODY]); //!< world -> body -> this
-	modelTransforms_[MODEL_LARM].translation_ = {-1.4f, 2.5f, 0.0f};
-
-	modelTransforms_[MODEL_RARM].SetParent(&modelTransforms_[MODEL_BODY]); //!< world -> body -> this
-	modelTransforms_[MODEL_RARM].translation_ = {1.4f, 2.5f, 0.0f};
+	InitModelTransfomrs();
 
 	// グループの追加
 	const std::string groupName = "Player";
@@ -350,6 +545,26 @@ void Player::ApplyGlobalVariables() {
 	modelTransforms_[MODEL_LARM].translation_ = globalVariables->GetValue<Vector3f>(groupName, "lArm translation");
 	modelTransforms_[MODEL_RARM].translation_ = globalVariables->GetValue<Vector3f>(groupName, "rArm translation");
 
+}
+
+void Player::InitModelTransfomrs() {
+
+	for (auto& transform : modelTransforms_) {
+		transform.scale_ = {1.0f, 1.0f, 1.0f};
+		transform.rotation_ = {};
+		transform.translation_ = {};
+	}
+
+	// parts位置調整
+	modelTransforms_[MODEL_BODY].SetParent(&worldTransform_); //!< world -> this
+
+	modelTransforms_[MODEL_HEAD].SetParent(&modelTransforms_[MODEL_BODY]); //!< world -> body -> this
+
+	modelTransforms_[MODEL_LARM].SetParent(&modelTransforms_[MODEL_BODY]); //!< world -> body -> this
+	modelTransforms_[MODEL_LARM].translation_ = {-1.4f, 2.5f, 0.0f};
+
+	modelTransforms_[MODEL_RARM].SetParent(&modelTransforms_[MODEL_BODY]); //!< world -> body -> this
+	modelTransforms_[MODEL_RARM].translation_ = {1.4f, 2.5f, 0.0f};
 }
 
 
