@@ -12,15 +12,9 @@
 #include <memory>
 #include <sstream>
 
-// Game
-#include "FollowCamera.h"
-#include "Skydome.h"
-#include "Ground.h"
-#include "Player.h"
-#include "Enemy.h"
-#include "LockOn.h"
-#include "CollisionManager.h"
-#include "Effect.h"
+//* scene *//
+#include <SceneManager.h>
+#include <Scene_Title.h>
 
 /// <summary>
 /// ゲームシーン
@@ -54,6 +48,7 @@ public: // メンバ関数
 	void Draw();
 
 private: // メンバ変数
+
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
@@ -62,56 +57,7 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 
-	// camera
-	ViewProjection viewProjection_;
-
-	bool isDebugCameraActive_ = false;
-	std::unique_ptr<DebugCamera> debugCamera_;
-
-	std::unique_ptr<FollowCamera> followCamera_;
-
-	/// Game
-	//* model *//
-	std::unique_ptr<Model> cubeModel_;
-	std::unique_ptr<Model> skydomeModel_;
-	std::unique_ptr<Model> groundModel_;
-
-	// chara
-	std::unique_ptr<Model> bodyModel_;
-	std::unique_ptr<Model> headModel_;
-	std::unique_ptr<Model> lArmModel_;
-	std::unique_ptr<Model> rArmModel_;
-
-	// enemymodel
-	std::unique_ptr<Model> enemyBodyModel_;
-	std::unique_ptr<Model> enemyPropellerModel_;
-
-	// weapon
-	std::unique_ptr<Model> weapon_;
-
-	// hiteffect
-	std::unique_ptr<Model> hitEffectModel_;
-
-	// player
-	std::unique_ptr<Player> player_;
-	uint32_t playerTextureHandle_;
-
-	// enemy
-	std::list<std::unique_ptr<Enemy>> enemies_;
-
-	// collider
-	std::unique_ptr<CollisionManager> collisionManager_;
-
-	// lockOn
-	std::unique_ptr<LockOn> lockOn_;
-
-	// skydome
-	std::unique_ptr<Skydome> skydome_;
-
-	// ground
-	std::unique_ptr<Ground> ground_;
-
-	// effect
-	std::unique_ptr<EffectManager> effectManager_;
+	//* scene
+	std::unique_ptr<SceneManager> sceneManager_;
 
 };

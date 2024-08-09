@@ -1,24 +1,32 @@
 #pragma once
 
 //-----------------------------------------------------------------------------------------
+// define
+//-----------------------------------------------------------------------------------------
+#define MAYBE_UNUSED [[maybe_unused]]
+
+//-----------------------------------------------------------------------------------------
 // include
 //-----------------------------------------------------------------------------------------
-// math
+// Geometry
 #include <Vector3.h>
 
-// engine
-#include "WorldTransform.h"
-#include "ViewProjection.h"
-#include "Model.h"
+// c++
+#include <utility>
+#include <string>
+#include <unordered_map>
+#include <optional>
+
+// collisionDetection
+#include <CollisionDetection.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-// CollisionTypeIdDef enum class
+// ColliderObject enum
 ////////////////////////////////////////////////////////////////////////////////////////////
-enum class CollisionTypeIdDef : uint32_t {
-	kDefault,
-	kPlayer,
-	kPlayerWeapon,
-	kEnemy
+enum ColliderObjectType : uint32_t {
+	kNone   = 0,
+	kBox    = 1 << 0, //!< 障害物
+	kPlayer = 1 << 1, //!< Player
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,42 +39,91 @@ public:
 	// public methods
 	//=========================================================================================
 
-	virtual ~Collider() = default;
+	Collider() { Init(); }
+	virtual ~Collider() { Term(); }
 
 	void Init();
 
-	void Draw(Model* model, const ViewProjection& viewProj);
+	void Term();
 
-	void UpdateWorldTransform();
+	//* bounding setter *//
 
-	//! @brief 当たった時の処理
-	virtual void OnCollision([[maybe_unused]]Collider* othre) {}
+	void SetColliderBoundingSphere(const CollisionBoundings::Sphere& sphere = {.radius = 1.0f});
 
-	//! @brief 中心座標の取得
-	virtual Vector3f GetCenterPosition() const = 0;
+	void SetColliderBoundingAABB(const CollisionBoundings::AABB& aabb = {.localMin = {-0.5f, -0.5f, -0.5f}, .localMax = {0.5f, 0.5f, 0.5f}});
 
-	//! @brief 当たり判定の判定円を取得
-	float GetRadius() const { return collisionRadius_; }
+	//* collision states *//
 
-	//! @brief 当たり判定の判定円の設定
-	void SetRadius(float radius) { collisionRadius_ = radius; }
+	void CallOnCollisionMethods();
 
-	uint32_t GetTypeId() const { return typeId_; }
+	void OnCollision(Collider* other);
+	
+	//* collision getter *//
 
-	void SetTypeId(uint32_t typeId) { typeId_ = typeId; }
-	void SetTypeId(CollisionTypeIdDef collisionTypeIdDef) { typeId_ = static_cast<uint32_t>(collisionTypeIdDef); }
+	virtual const Vector3f& GetColliderPosition() const { return position_; } //!< 純粋仮想関数でもいいかも...
+
+	const CollisionBoundings::Boundings& GetBounding() const { return bounding_; }
+
+	//! @brief targetと相手のIdを比較して当たり判定が必要かどうか確認
+	bool ShouldCheckForCollision(const Collider* const other) const;
+
+	//* collision setter *//
+
+	//! @brief CollisionStateの変更
+	//! @param[in] collider 判定対象のptr
+	//! @param[in] isHit    現フレームの当たり判定を引数の値に変更(std::nulloptの場合は現在の値を変更しない)
+	//! @param[in] isPreHit 前フレームの当たり判定を引数の値に変更(std::nulloptの場合は現在の値を変更しない)
+	void SetCollisionState(
+		Collider* const collider,
+		const std::optional<bool>& isHit = std::nullopt, const std::optional<bool>& isPreHit = std::nullopt
+	);
+
+	//* collision methods *//
+
+	virtual void OnCollisionEnter(MAYBE_UNUSED Collider* const other) {}
+
+	virtual void OnCollisionExit(MAYBE_UNUSED Collider* const other) {}
+
+	//* imgui *//
+
+	void SetColliderImGuiCommand();
+
+protected:
+
+	//=========================================================================================
+	// protected variables
+	//=========================================================================================
+	
+	std::string colliderTag_ = "";
+
+	Vector3f position_ = {}; //!< ユーザー定義のpositionでもok
+
+	//! 当たり判定の判定情報
+	CollisionBoundings::Boundings bounding_;
+
+	//!< filter情報
+	uint32_t typeId_       = 0; //!< 自分のid
+	uint32_t targetTypeId_ = 0; //!< 判定対象とするtype
 
 private:
+
+	////////////////////////////////////////////////////////////////////////////////////////////
+	// CollisionState structure
+	////////////////////////////////////////////////////////////////////////////////////////////
+	struct CollisionState {
+		bool isHit, isPreHit;
+	};
 
 	//=========================================================================================
 	// private variables
 	//=========================================================================================
 
-	float collisionRadius_ = 2.0f; //!< 判定円
-	// todo: 円の範囲をworldTransformのscaleにする
+	//! [unordered_map]
+	//! key:   対象のcollider
+	//! value: 当たり判定結果
+	std::unordered_map<Collider*, CollisionState> states_;
 
-	WorldTransform worldTransform_;
+	//!< すり抜け等の管理flagが欲しい
 
-	uint32_t typeId_ = 0u;
 
 };

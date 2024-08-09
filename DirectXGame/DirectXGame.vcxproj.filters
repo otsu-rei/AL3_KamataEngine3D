@@ -62,34 +62,19 @@
       <UniqueIdentifier>{7f80c991-65c3-496f-b463-8660edf18bb3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game">
-      <UniqueIdentifier>{b9e8a66e-8e02-453f-b7c2-7a51ced9540d}</UniqueIdentifier>
+      <UniqueIdentifier>{c20b2560-f585-4544-83c2-2f2d770c2ef7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Skydome">
-      <UniqueIdentifier>{5931c94b-8a7d-4622-9ceb-6eedee43789b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Ground">
-      <UniqueIdentifier>{178f9c9c-3392-4f8c-90f3-09e67f7fc2ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Camera">
-      <UniqueIdentifier>{e9325d7c-13dd-466f-bcbb-47c5ef9354a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Characters">
-      <UniqueIdentifier>{fa5c80e3-e68c-4311-84c1-e0a229c4aaa2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\GlobalVariables">
-      <UniqueIdentifier>{d2dd8a00-5261-4add-ba5d-eb226cd8c372}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\LockOn">
-      <UniqueIdentifier>{3fbfb0b8-c025-42ec-a67b-135923f46925}</UniqueIdentifier>
+    <Filter Include="Game\Scene">
+      <UniqueIdentifier>{ced31b5d-2db1-44cc-a3ed-02b429a20f65}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game\Collider">
-      <UniqueIdentifier>{e1161ebe-7e9a-41e4-bcbd-8c5f58cc6b96}</UniqueIdentifier>
+      <UniqueIdentifier>{4d2a3c10-8f0e-4717-bfdd-535a75458b69}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Weapon">
-      <UniqueIdentifier>{3d9c5603-0f08-4419-a5b8-b91815fff662}</UniqueIdentifier>
+    <Filter Include="Game\Stage">
+      <UniqueIdentifier>{67f7229a-6730-4387-a221-67fd39572991}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Effect">
-      <UniqueIdentifier>{6beacf40-0c49-45b0-ad5b-9df75063b0d6}</UniqueIdentifier>
+    <Filter Include="Game\Entity">
+      <UniqueIdentifier>{580fade7-3c76-43e0-82b9-74b5a96b319d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -117,50 +102,38 @@
     <ClCompile Include="3d\WorldTransform.cpp">
       <Filter>ソース ファイル\3d</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Skydome\Skydome.cpp">
-      <Filter>Game\Skydome</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Ground\Ground.cpp">
-      <Filter>Game\Ground</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Camera\FollowCamera.cpp">
-      <Filter>Game\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Characters\BaseCharacter.cpp">
-      <Filter>Game\Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Characters\Player.cpp">
-      <Filter>Game\Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Characters\Enemy.cpp">
-      <Filter>Game\Characters</Filter>
-    </ClCompile>
     <ClCompile Include="math\Easing.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
-    <ClCompile Include="Game\GlobalVariables\GlobalVariables.cpp">
-      <Filter>Game\GlobalVariables</Filter>
+    <ClCompile Include="Game\Scene\IScene.cpp">
+      <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Game\LockOn\LockOn.cpp">
-      <Filter>Game\LockOn</Filter>
+    <ClCompile Include="Game\Scene\SceneManager.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\Scene_Title.cpp">
+      <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Game\Collider\Collider.cpp">
       <Filter>Game\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Collider\CollisionManager.cpp">
+    <ClCompile Include="Game\Collider\ColliderManager.cpp">
       <Filter>Game\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Weapon\Hammer.cpp">
-      <Filter>Game\Weapon</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Effect\HitEffect.cpp">
-      <Filter>Game\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Effect\Effect.cpp">
-      <Filter>Game\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Collider\CollisionRecord.cpp">
+    <ClCompile Include="Game\Collider\CollisionDetection.cpp">
       <Filter>Game\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Matrix4x4.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Quaternion.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Stage\Box.cpp">
+      <Filter>Game\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Entity\Player.cpp">
+      <Filter>Game\Entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -257,50 +230,38 @@
     <ClInclude Include="math\MyMath.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Skydome\Skydome.h">
-      <Filter>Game\Skydome</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Ground\Ground.h">
-      <Filter>Game\Ground</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Camera\FollowCamera.h">
-      <Filter>Game\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Characters\BaseCharacter.h">
-      <Filter>Game\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Characters\Player.h">
-      <Filter>Game\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Characters\Enemy.h">
-      <Filter>Game\Characters</Filter>
-    </ClInclude>
     <ClInclude Include="math\Easing.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="Game\GlobalVariables\GlobalVariables.h">
-      <Filter>Game\GlobalVariables</Filter>
+    <ClInclude Include="Game\Scene\IScene.h">
+      <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Game\LockOn\LockOn.h">
-      <Filter>Game\LockOn</Filter>
+    <ClInclude Include="Game\Scene\SceneManager.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\Scene_Title.h">
+      <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Game\Collider\Collider.h">
       <Filter>Game\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Collider\CollisionManager.h">
+    <ClInclude Include="Game\Collider\ColliderManager.h">
       <Filter>Game\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Weapon\Hammer.h">
-      <Filter>Game\Weapon</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Effect\HitEffect.h">
-      <Filter>Game\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Effect\Effect.h">
-      <Filter>Game\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Collider\CollisionRecord.h">
+    <ClInclude Include="Game\Collider\CollisionDetection.h">
       <Filter>Game\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="math\VectorComparison.h">
+      <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Quaternion.h">
+      <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Stage\Box.h">
+      <Filter>Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Entity\Player.h">
+      <Filter>Game\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
