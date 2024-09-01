@@ -3,7 +3,7 @@
 //-----------------------------------------------------------------------------------------
 // define
 //-----------------------------------------------------------------------------------------
-#define MAYBE_UNUSED [[maybe_unused]]
+#define _MAYBE_UNUSED [[maybe_unused]]
 
 //-----------------------------------------------------------------------------------------
 // include
@@ -27,6 +27,7 @@ enum ColliderObjectType : uint32_t {
 	kNone   = 0,
 	kBox    = 1 << 0, //!< 障害物
 	kPlayer = 1 << 1, //!< Player
+	kGoal   = 1 << 2, //!< Goal
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,9 +61,14 @@ public:
 	
 	//* collision getter *//
 
-	virtual const Vector3f& GetColliderPosition() const { return position_; } //!< 純粋仮想関数でもいいかも...
+	virtual const Vector3f& GetColliderPosition() const = 0; //!< システム実装で問題があるようなら仮想関数に変更
 
 	const CollisionBoundings::Boundings& GetBounding() const { return bounding_; }
+
+	//template<typename T> // fixme: boundingの型のみ指定できるように変更
+	//const T& GetBoundings();
+
+	uint32_t GetID() const { return typeId_; }
 
 	//! @brief targetと相手のIdを比較して当たり判定が必要かどうか確認
 	bool ShouldCheckForCollision(const Collider* const other) const;
@@ -80,9 +86,9 @@ public:
 
 	//* collision methods *//
 
-	virtual void OnCollisionEnter(MAYBE_UNUSED Collider* const other) {}
+	virtual void OnCollisionEnter(_MAYBE_UNUSED Collider* const other) {}
 
-	virtual void OnCollisionExit(MAYBE_UNUSED Collider* const other) {}
+	virtual void OnCollisionExit(_MAYBE_UNUSED Collider* const other) {}
 
 	//* imgui *//
 
@@ -95,8 +101,6 @@ protected:
 	//=========================================================================================
 	
 	std::string colliderTag_ = "";
-
-	Vector3f position_ = {}; //!< ユーザー定義のpositionでもok
 
 	//! 当たり判定の判定情報
 	CollisionBoundings::Boundings bounding_;

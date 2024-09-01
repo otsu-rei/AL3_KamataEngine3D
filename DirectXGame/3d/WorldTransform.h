@@ -58,6 +58,7 @@ public:
 
 	//! @brief 行列の計算 - 転送
 	void UpdateMatrix();
+	void UpdateBaseMat();
 
 	void SetParent(const WorldTransform* parent) { parent_ = parent; }
 

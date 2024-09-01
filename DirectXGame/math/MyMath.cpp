@@ -123,6 +123,42 @@ Vector3f Matrix::Transform(const Vector3f& vector, const Matrix4x4& matrix) {
 	return result;
 }
 
+Vector3f Matrix::TransformNormal(const Vector3f& v, const Matrix4x4& m) { 
+	Vector3f result = {
+	    v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],
+	    v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1],
+	    v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2],
+	};
+
+	return result;
+}
+
+Matrix4x4 Matrix::DirectionToDirection(const Vector3f& from, const Vector3f& to) {
+
+	Vector3f n = Vector::Normalize(Vector::Cross(from, to));
+	float cos  = Vector::Dot(from, to);
+	float sin  = Vector::Norm(Vector::Cross(from, to));
+
+	return {
+	    n.x * n.x * (1.0f - cos) + cos,
+	    n.x * n.y * (1.0f - cos) + n.z * sin,
+	    n.x * n.z * (1.0f - cos) - n.y * sin,
+	    0.0f,
+	    n.x * n.y * (1.0f - cos) - n.z * sin,
+	    n.y * n.y * (1.0f - cos) + cos,
+	    n.y * n.z * (1.0f - cos) + n.x * sin,
+	    0.0f,
+	    n.x * n.z * (1.0f - cos) + n.y * sin,
+	    n.y * n.z * (1.0f - cos) - n.x * sin,
+	    n.z * n.z * (1.0f - cos) + cos,
+	    0.0f,
+	    0.0f,
+	    0.0f,
+	    0.0f,
+	    1.0f
+	};
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Vector namespace methods
@@ -138,7 +174,21 @@ Vector3f Vector::Normalize(const Vector3f& v) {
 	return {v.x / length, v.y / length, v.z / length};
 }
 
+Vector2f Vector::Normalize(const Vector2f& v) {
+	float length = std::sqrt(v.x * v.x + v.y * v.y);
+	
+	if (length == 0.0f) {
+		return {0.0f, 0.0f};
+	}
+
+	return {v.x / length, v.y / length};
+}
+
 float Vector::Length(const Vector3f& v) { return std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z); }
+
+float Vector::Norm(const Vector3f& v) { 
+	return std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);\
+}
 
 float Vector::Dot(const Vector3f& x, const Vector3f& y) { return x.x * y.x + x.y * y.y + x.z * y.z; }
 
@@ -182,6 +232,16 @@ Vector3f Vector::Clamp(const Vector3f& v, const Vector3f& min, const Vector3f& m
 
 	return result;
 
+}
+
+bool Vector::IsNaN(const Vector3f& v) {
+	Flag3 flag = {
+	    std::isnan(v.x),
+	    std::isnan(v.y),
+	    std::isnan(v.z),
+	};
+
+	return Any(flag);
 }
 
 Vector3f CatmullRomInterpolation(

@@ -3,30 +3,28 @@
 //-----------------------------------------------------------------------------------------
 // include
 //-----------------------------------------------------------------------------------------
+// Collider
 #include <Collider.h>
 
 // engine
-#include <WorldTransform.h>
-#include <Model.h>
-
-// c++
-#include <memory>
+#include "WorldTransform.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-// Box class
+// FieldFace class
 ////////////////////////////////////////////////////////////////////////////////////////////
-class Box : public Collider {
+class FieldFace
+	: public Collider {
 public:
 
 	//=========================================================================================
 	// public methods
 	//=========================================================================================
 
-	void Init();
+	void Init(const Vector3f& normal, const Vector3f& fieldScale);
 
-	void Draw(const ViewProjection& viewProj);
-
-	const Vector3f& GetColliderPosition() const override { return transform_.translation_; }
+	const Vector3f& GetColliderPosition() const override {
+		return transform_.translation_;
+	}
 
 private:
 
@@ -34,7 +32,6 @@ private:
 	// private variables
 	//=========================================================================================
 
-	std::unique_ptr<Model> model_;
 	WorldTransform transform_;
-	
+
 };

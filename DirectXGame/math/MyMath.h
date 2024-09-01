@@ -4,8 +4,10 @@
 // include
 //-----------------------------------------------------------------------------------------
 #include "Vector3.h"
+#include "Vector2.h"
 #include "Matrix4x4.h"
 #include "Quaternion.h"
+#include "VectorComparison.h"
 
 // c++
 #include <vector>
@@ -40,6 +42,9 @@ namespace Matrix { // 行列用関数
 	//* transform *//
 
 	Vector3f Transform(const Vector3f& v, const Matrix4x4& m);
+	Vector3f TransformNormal(const Vector3f& v, const Matrix4x4& m);
+
+	Matrix4x4 DirectionToDirection(const Vector3f& from, const Vector3f& to);
 
 }
 
@@ -48,10 +53,11 @@ namespace Matrix { // 行列用関数
 ////////////////////////////////////////////////////////////////////////////////////////////
 namespace Vector {
 
-	/// Vector3 ///
 	Vector3f Normalize(const Vector3f& v);
+	Vector2f Normalize(const Vector2f& v);
 	
 	float Length(const Vector3f& v);
+	float Norm(const Vector3f& v);
 	
 	float Dot(const Vector3f& x, const Vector3f& y);
 	
@@ -64,6 +70,8 @@ namespace Vector {
 	Vector3f Slerp(const Vector3f& x, const Vector3f& y, float s);
 
 	Vector3f Clamp(const Vector3f& v, const Vector3f& min, const Vector3f& max);
+
+	bool IsNaN(const Vector3f& v);
 
 }
 

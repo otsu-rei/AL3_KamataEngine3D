@@ -6,9 +6,20 @@
 // base
 #include <IScene.h>
 
+// c++
+#include <memory>
+
+// engine
+#include <Sprite.h>
+#include <Model.h>
+#include <WorldTransform.h>
+#include <DebugCamera.h>
+
 // Game
-#include "Stage/Box.h"
-#include "Entity/Player.h"
+#include <Player.h>
+#include <Field.h>
+#include <GameCamera.h>
+#include <TitleModels.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Scene_Title class
@@ -41,7 +52,13 @@ private:
 	// private variables
 	//=========================================================================================
 
-	std::unique_ptr<Box> box1_;
+	/*std::unique_ptr<Model> model_;
+	WorldTransform transform_;*/
+
+	std::unique_ptr<TitleModels> models_;
+
+	std::unique_ptr<Field> field_;
 	std::unique_ptr<Player> player_;
+	std::unique_ptr<GameCamera> gameCamera_;
 
 };

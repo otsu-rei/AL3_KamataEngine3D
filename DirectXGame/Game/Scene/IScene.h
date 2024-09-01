@@ -15,6 +15,14 @@
 #include "ViewProjection.h"
 #include "DebugCamera.h"
 
+//-----------------------------------------------------------------------------------------
+// consept
+//-----------------------------------------------------------------------------------------
+class IScene;
+
+template<class T>
+concept DerivedFormIScene = std::is_base_of_v<IScene, T>; //!< ISceneに継承してるクラスのみのtemplate
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // IScene base class
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +56,12 @@ public:
 
 	std::unique_ptr<IScene>& GetNextScene() { return nextScene_; }
 
+	template <DerivedFormIScene T>
+	void SetNextScene() {
+		nextScene_ = std::make_unique<T>();
+		nextScene_->Init();
+	}
+
 protected:
 
 	//=========================================================================================
@@ -56,7 +70,7 @@ protected:
 
 	std::unique_ptr<IScene> nextScene_ = nullptr;
 
-	//* external *//
+	//* external *// //<! staticにしてもいいかも
 
 	DirectXCommon* dxCommon_ = DirectXCommon::GetInstance();
 	Input* input_ = Input::GetInstance();
@@ -65,7 +79,7 @@ protected:
 	//* camera *//
 	ViewProjection viewProjection_;
 
-	bool isDebugCameraActive_ = true;
+	bool isDebugCameraActive_ = false;
 	std::unique_ptr<DebugCamera> debugCamera_;
 
 };

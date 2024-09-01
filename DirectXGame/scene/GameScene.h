@@ -16,6 +16,9 @@
 #include <SceneManager.h>
 #include <Scene_Title.h>
 
+//* BackGround *//
+#include <Background.h>
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -59,5 +62,7 @@ private: // メンバ変数
 
 	//* scene
 	std::unique_ptr<SceneManager> sceneManager_;
+
+	std::unique_ptr<Background> background_;
 
 };

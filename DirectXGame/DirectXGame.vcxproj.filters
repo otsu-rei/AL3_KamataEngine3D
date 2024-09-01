@@ -76,6 +76,18 @@
     <Filter Include="Game\Entity">
       <UniqueIdentifier>{580fade7-3c76-43e0-82b9-74b5a96b319d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Object">
+      <UniqueIdentifier>{76dfd23e-a08f-4f63-8f1a-3a0f5d7563f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Camera">
+      <UniqueIdentifier>{0351f8d5-8c4e-41d6-ab47-dc4ebb1004f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI">
+      <UniqueIdentifier>{30fbb6f7-4348-4bdb-8b85-6c9cee06acdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Adapter">
+      <UniqueIdentifier>{5d02b33b-4f80-4f10-9fb7-c8a8654acd82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -129,11 +141,50 @@
     <ClCompile Include="math\Quaternion.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Stage\Box.cpp">
-      <Filter>Game\Stage</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Entity\Player.cpp">
       <Filter>Game\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Field.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\FieldFace.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Camera\GameCamera.cpp">
+      <Filter>Game\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="math\MathCollider.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Goal.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Box.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\Background.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Stage\StageEditer.cpp">
+      <Filter>Game\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\Scene_Game.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Adapter\Json.cpp">
+      <Filter>Game\Adapter</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Adapter\Random.cpp">
+      <Filter>Game\Adapter</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\AudioManager.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Stage\StageManager.cpp">
+      <Filter>Game\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\TitleModels.cpp">
+      <Filter>Game\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -257,11 +308,50 @@
     <ClInclude Include="math\Quaternion.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Stage\Box.h">
-      <Filter>Game\Stage</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Entity\Player.h">
       <Filter>Game\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Field.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\FieldFace.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Camera\GameCamera.h">
+      <Filter>Game\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="math\MathCollider.h">
+      <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Goal.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Box.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\Background.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Stage\StageEditer.h">
+      <Filter>Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\Scene_Game.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Adapter\Json.h">
+      <Filter>Game\Adapter</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Adapter\Random.h">
+      <Filter>Game\Adapter</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\AudioManager.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Stage\StageManager.h">
+      <Filter>Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\TitleModels.h">
+      <Filter>Game\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

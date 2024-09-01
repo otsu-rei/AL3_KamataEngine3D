@@ -1,0 +1,63 @@
+#pragma once
+
+//-----------------------------------------------------------------------------------------
+// Include
+//-----------------------------------------------------------------------------------------
+// externals
+#include <json.hpp>
+
+// c++
+#include <fstream>
+#include <cassert>
+
+// Geometry
+#include <Vector3.h>
+
+//=========================================================================================
+// using
+//=========================================================================================
+using Json = nlohmann::json;
+
+////////////////////////////////////////////////////////////////////////////////////////////
+// JsonAdapter class
+////////////////////////////////////////////////////////////////////////////////////////////
+class JsonAdapter {
+public:
+
+	//=========================================================================================
+	// public variables
+	//=========================================================================================
+
+	static const std::string directory_;
+
+	//=========================================================================================
+	// public methods
+	//=========================================================================================
+
+	//* file option *//
+
+	//! @brief Jsonファイル読み込み
+	//! 
+	//! @param[in] path ファイルパス. directory_ + path
+	//! 
+	//! @return Json型を返却
+	static Json ReadJson(const std::string& path);
+
+	//! @brief Jsonファイル書き込み
+	//! 
+	//! @param[in] path ファイルパス. directory_ + path
+	//! @param[in] data Jsonデータ
+	static void WriteJson(const std::string& path, const Json& root);
+
+	//! @brief Jsonファイル上書き
+	//! 
+	//! @param[in] path ファイルパス. directory_ + path
+	//! @param[in] data Jsonデータ
+	static void OverwriteJson(const std::string& path, const Json& root);
+
+	//* to json methods *//
+
+	static Json ToJson(const Vector3f& v);
+	static Vector3f JsonTo(const Json& object);
+
+};

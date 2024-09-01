@@ -19,6 +19,14 @@ void WorldTransform::UpdateMatrix() {
 	TransferMatrix();
 }
 
+void WorldTransform::UpdateBaseMat() {
+	if (parent_) {
+		matWorld_ *= parent_->matWorld_;
+	}
+
+	TransferMatrix();
+}
+
 Vector3f WorldTransform::GetTransform() const {
 	Vector3f result;
 	result.x = matWorld_.m[3][0];

@@ -52,7 +52,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\External\DirectXTex\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\External\nlohmann;$(ProjectDir)..\External\DirectXTex\include;$(ProjectDir)..\External\imgui;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)lib\KamataEngineLib\$(Configuration);$(ProjectDir)..\External\DirectXTex\lib\$(Configuration);$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)..\Generated\Outputs\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
@@ -63,7 +63,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Game\Collider;$(ProjectDir)Game\Scene;$(ProjectDir)Game;$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene;$(ProjectDir)math;$(ProjectDir)grid;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Game\Adapter;$(ProjectDir)Game\Stage;$(ProjectDir)Game\UI;$(ProjectDir)Game\Camera;$(ProjectDir)Game\Object;$(ProjectDir)Game\Entity;$(ProjectDir)Game\Collider;$(ProjectDir)Game\Scene;$(ProjectDir)Game;$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene;$(ProjectDir)math;$(ProjectDir)grid;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -86,7 +86,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene;$(ProjectDir)math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Game\Adapter;$(ProjectDir)Game\Stage;$(ProjectDir)Game\UI;$(ProjectDir)Game\Camera;$(ProjectDir)Game\Object;$(ProjectDir)Game\Entity;$(ProjectDir)Game\Collider;$(ProjectDir)Game\Scene;$(ProjectDir)Game;$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene;$(ProjectDir)math;$(ProjectDir)grid;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -110,17 +110,30 @@
     <ClCompile Include="3d\WorldTransform.cpp" />
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
+    <ClCompile Include="Game\Adapter\Json.cpp" />
+    <ClCompile Include="Game\Adapter\Random.cpp" />
+    <ClCompile Include="Game\Camera\GameCamera.cpp" />
     <ClCompile Include="Game\Collider\Collider.cpp" />
     <ClCompile Include="Game\Collider\ColliderManager.cpp" />
     <ClCompile Include="Game\Collider\CollisionDetection.cpp" />
     <ClCompile Include="Game\Entity\Player.cpp" />
+    <ClCompile Include="Game\Object\Box.cpp" />
+    <ClCompile Include="Game\Object\Field.cpp" />
+    <ClCompile Include="Game\Object\FieldFace.cpp" />
+    <ClCompile Include="Game\Object\Goal.cpp" />
+    <ClCompile Include="Game\Object\TitleModels.cpp" />
     <ClCompile Include="Game\Scene\IScene.cpp" />
     <ClCompile Include="Game\Scene\SceneManager.cpp" />
+    <ClCompile Include="Game\Scene\Scene_Game.cpp" />
     <ClCompile Include="Game\Scene\Scene_Title.cpp" />
-    <ClCompile Include="Game\Stage\Box.cpp" />
+    <ClCompile Include="Game\Stage\StageEditer.cpp" />
+    <ClCompile Include="Game\Stage\StageManager.cpp" />
+    <ClCompile Include="Game\UI\Background.cpp" />
+    <ClCompile Include="Game\UI\AudioManager.cpp" />
     <ClCompile Include="grid\Grid.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\Easing.cpp" />
+    <ClCompile Include="math\MathCollider.cpp" />
     <ClCompile Include="math\Matrix4x4.cpp" />
     <ClCompile Include="math\MyMath.cpp" />
     <ClCompile Include="math\Quaternion.cpp" />
@@ -150,17 +163,30 @@
     <ClInclude Include="base\StringUtility.h" />
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\WinApp.h" />
+    <ClInclude Include="Game\Adapter\Json.h" />
+    <ClInclude Include="Game\Adapter\Random.h" />
+    <ClInclude Include="Game\Camera\GameCamera.h" />
     <ClInclude Include="Game\Collider\Collider.h" />
     <ClInclude Include="Game\Collider\ColliderManager.h" />
     <ClInclude Include="Game\Collider\CollisionDetection.h" />
     <ClInclude Include="Game\Entity\Player.h" />
+    <ClInclude Include="Game\Object\Box.h" />
+    <ClInclude Include="Game\Object\Field.h" />
+    <ClInclude Include="Game\Object\FieldFace.h" />
+    <ClInclude Include="Game\Object\Goal.h" />
+    <ClInclude Include="Game\Object\TitleModels.h" />
     <ClInclude Include="Game\Scene\IScene.h" />
     <ClInclude Include="Game\Scene\SceneManager.h" />
+    <ClInclude Include="Game\Scene\Scene_Game.h" />
     <ClInclude Include="Game\Scene\Scene_Title.h" />
-    <ClInclude Include="Game\Stage\Box.h" />
+    <ClInclude Include="Game\Stage\StageEditer.h" />
+    <ClInclude Include="Game\Stage\StageManager.h" />
+    <ClInclude Include="Game\UI\Background.h" />
+    <ClInclude Include="Game\UI\AudioManager.h" />
     <ClInclude Include="grid\Grid.h" />
     <ClInclude Include="input\Input.h" />
     <ClInclude Include="math\Easing.h" />
+    <ClInclude Include="math\MathCollider.h" />
     <ClInclude Include="math\Matrix4x4.h" />
     <ClInclude Include="math\MyMath.h" />
     <ClInclude Include="math\Quaternion.h" />

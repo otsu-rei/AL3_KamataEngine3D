@@ -16,12 +16,14 @@
 #include "Grid.h"
 #include "MyMath.h"
 #include "ColliderManager.h"
+#include "AudioManager.h"
 
 
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-}	
+	AudioManager::GetInstance()->Term();
+}
 
 
 void GameScene::Initialize() {
@@ -35,12 +37,18 @@ void GameScene::Initialize() {
 	scene->Init();
 	sceneManager_->Init(scene);
 
+	background_ = std::make_unique<Background>();
+	background_->Init();
+
+	AudioManager::GetInstance()->Init();
+	AudioManager::GetInstance()->PlayAudio("bgm", true, 0.2f);
+
 }
 
 void GameScene::Update() {
 
 	sceneManager_->Update();
-
+	background_->Update();
 }
 
 void GameScene::Draw() {
@@ -55,6 +63,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
+	background_->Draw();
 	sceneManager_->DrawBackSprite();
 
 	// スプライト描画後処理
@@ -77,7 +86,7 @@ void GameScene::Draw() {
 	Model::PostDraw();
 
 	sceneManager_->DrawLine();
-	ColliderManager::GetInstance()->DrawColliders();
+	//ColliderManager::GetInstance()->DrawColliders();
 
 #pragma endregion
 

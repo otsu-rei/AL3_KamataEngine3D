@@ -10,13 +10,12 @@
 // ColliderManager class methods
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void ColliderManager::Init() {
-}
+void ColliderManager::Init() { colliders_.clear(); }
 
 void ColliderManager::Term() {
 }
 
-void ColliderManager::Update() {
+void ColliderManager::UpdateAllCollider() {
 	CheckAllCollision(); //!< 全当たり判定の計算
 
 	for (auto& collider : colliders_) { //!< collider関数の呼び出し
@@ -28,6 +27,35 @@ void ColliderManager::DrawColliders() {
 	for (const auto& collider : colliders_) {
 		DrawCollider(collider);
 	}
+}
+
+void ColliderManager::UpdateTargetCollider(Collider* target) {
+	//!< targetとcollidersとの全当たり判定
+	//!< targetだけとの当たり時判定なので他のcolliderは子の当たり判定で何も影響されない
+	for (auto itr = colliders_.begin(); itr != colliders_.end(); ++itr) {
+
+		// itrからcolliderの取得
+		Collider* other = *itr;
+		
+		// otherとの当たり判定が必須かどうかの確認
+		bool isTargeting = target->ShouldCheckForCollision(other);
+
+		if (!isTargeting) { //!< 必要ではないので次
+			continue;
+		}
+
+		// 当たり判定
+		bool isCollision = CollisionDetection::CheckCollision(
+			target->GetColliderPosition(), target->GetBounding(),
+			other->GetColliderPosition(), other->GetBounding()
+		);
+
+		if (isCollision) { //!< 衝突してた場合
+			target->OnCollision(other);
+		}
+	}
+
+	target->CallOnCollisionMethods();
 }
 
 ColliderManager* ColliderManager::GetInstance() {

@@ -29,15 +29,21 @@ public:
 
 	void Term();
 
-	void Update();
+	void UpdateAllCollider();
 
 	void DrawColliders();
+
+	void UpdateTargetCollider(Collider* target);
 
 	//* collders container *//
 
 	void SetCollider(Collider* collider) { colliders_.emplace(collider); }
 
 	void EraseCollider(Collider* collider) { colliders_.erase(collider); }
+
+	//* getter *//
+
+	const std::unordered_set<Collider*>& GetColliders() const { return colliders_; } //!< あんまりしたくない
 
 	static ColliderManager* GetInstance(); // test
 
@@ -57,7 +63,6 @@ private:
 	//=========================================================================================
 
 	void CheckAllCollision();
-
 	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
 
 	void DrawCollider(const Collider* const collider) const;
